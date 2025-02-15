@@ -1,0 +1,185 @@
+
+
+December 18 2024
+{
+
+    export default function Index() {
+    return (
+        /*
+        <View style={styles.container}>
+        
+        <Text>Edit app/index.tsx to edit this screen.</Text>
+        </View>
+        */
+
+        <SafeAreaProvider>
+        <SafeAreaView style={styles.container} edges={['top']}>
+            <ScrollView style={styles.scrollView}>
+            <Text>Hello</Text>
+            <Text style={{fontSize:32}}>Platform: {Platform.OS === 'ios' ? 'ios' : 'android'}</Text>
+            <Text style={{fontSize:24}}>Platform but with if user-defined function: {ReturnPlatform()}</Text>
+            <Text style={styles.text}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Duis aute irure dolor in
+                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                culpa qui officia deserunt mollit anim id est laborum.
+            </Text>
+            </ScrollView>
+            <StatusBar style='dark' /> {/* Sets the color of the icons at the top like wifi, battery, time */}
+        </SafeAreaView>
+    </SafeAreaProvider>
+    );
+    }
+
+    function ReturnPlatform () {
+    let plat = 's';
+    if (Platform.OS === 'ios') {
+        plat = 'ios';
+    } else {
+        plat = 'android';
+    }
+
+    return <Text>{plat + Platform.OS}</Text>;
+    };
+
+    const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#dcd',
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    scrollView: {
+        //flexGrow: 1,
+        backgroundColor: 'pink',
+        //height: 16000,
+    },
+    text: {
+        fontSize: 42,
+        padding: 12,
+    },
+    });
+
+}
+
+
+December 18 2024
+{
+    import { StatusBar } from "expo-status-bar";
+    import { useState } from 'react';
+    import { Platform, StyleSheet, ScrollView, Text, View, TextInput, Button,
+    TouchableOpacity 
+
+    } from "react-native";
+    import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+
+    export default function Index() {
+    /*Notes
+    View doesnt have onpress, touchableopacity is used within view for that as an alternative for a button
+    */
+
+
+    /*text is the variable, "" is the default value, setText is the helper function that updated the variable*/
+    const [text, setText] = useState("") 
+    return (
+        
+
+        <SafeAreaProvider>
+        <SafeAreaView style={styles.container} edges={['top']}>
+            <ScrollView style={styles.scrollView}>
+            <Text>Hello</Text>
+            <Text style={{fontSize:32}}>Platform: {Platform.OS === 'ios' ? 'ios' : 'android'}</Text>
+            <Text style={{fontSize:24}}>Platform but with if user-defined function: {ReturnPlatform()}</Text>
+
+            <View style={styles.pinkContainer}>
+                <TextInput 
+                defaultValue={text}
+                onChangeText={txt=>setText(txt)}
+                style={{borderWidth: 1, padding: 10}}
+                />
+                <Button title="press me" onPress={()=>console.log("Hello World")} />
+
+                <TouchableOpacity
+                style={styles.TObtn}
+                onPress={()=> {console.log("Hello Mars, Hello ${text}"); console.log(`Hello Mars, Hello ${text}`);}}
+
+                >
+                <Text style={{color:'white'}}>Click me too</Text>
+
+                </TouchableOpacity>
+
+            </View>
+
+
+            <Text style={styles.text}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Duis aute irure dolor in
+                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                culpa qui officia deserunt mollit anim id est laborum.
+            </Text>
+            </ScrollView>
+            <StatusBar style='dark' /> {/* Sets the color of the icons at the top like wifi, battery, time */}
+        </SafeAreaView>
+    </SafeAreaProvider>
+    );
+    }
+
+    function ReturnPlatform () {
+    let plat = 's';
+    if (Platform.OS === 'ios') {
+        plat = 'ios';
+    } else {
+        plat = 'android';
+    }
+
+    return <Text>{plat + Platform.OS}</Text>;
+    };
+
+    const styles = StyleSheet.create({
+    pinkContainer: {
+        backgroundColor: 'pink',
+        height: 1600,
+        padding: 20
+    },
+    TObtn: {
+        padding: 10,
+        backgroundColor: 'purple',
+        width: 150,
+        height: 100,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#dcd',
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    scrollView: {
+        //flexGrow: 1,
+        backgroundColor: 'pink',
+        //height: 16000,
+    },
+    text: {
+        fontSize: 42,
+        padding: 12,
+    },
+    });
+
+}
+
+
+
+
+
+
+
+
+
+
