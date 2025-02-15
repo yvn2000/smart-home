@@ -190,11 +190,11 @@ export default function DeviceAdd() {
                                                     <MaterialCommunityIcons
                                                         name={deviceLogo}
                                                         size={60}
-                                                        color={newDeviceLogo === deviceLogo ? 'white' : 'black'}
+                                                        color={newDeviceLogo === deviceLogo ? 'black' : 'black'}
                                                     />
                                                     <Text
                                                         style={{
-                                                            fontWeight: 'bold', color: newDeviceLogo === deviceLogo ? 'white' : 'black',
+                                                            fontWeight: 'bold', color: newDeviceLogo === deviceLogo ? 'black' : 'black',
                                                             flexWrap: 'wrap'
                                                         }}>
                                                         {deviceName}
@@ -220,7 +220,7 @@ export default function DeviceAdd() {
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', padding: 30, borderRadius: 25, alignItems: 'center', justifyContent: 'center' }]}
-                                        onPress={{}}
+                                        onPress={() => {}}
                                     >
                                         <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'white' }}>Cancel</Text>
                                     </TouchableOpacity>
