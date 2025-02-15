@@ -180,7 +180,7 @@ export default function DeviceAdd() {
                                                         styles.deviceType,
                                                         styles.shadow,
                                                         {
-                                                            backgroundColor: newDeviceLogo === deviceLogo ? 'rgb(216, 75, 255)' : 'rgb(235, 235, 235)',
+                                                            backgroundColor: newDeviceLogo === deviceLogo ? 'rgb(255, 3, 184)' : 'rgb(235, 235, 235)',
                                                         },
                                                     ]}
                                                     onPress={() => {
