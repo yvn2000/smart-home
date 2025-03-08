@@ -97,6 +97,7 @@ export default function Login() {
                 await AsyncStorage.setItem('statsAccess', data.has_stats_access);
                 await AsyncStorage.setItem('petAccess', data.has_pet_access);
                 await AsyncStorage.setItem('first_name', data.user_name);
+                await AsyncStorage.setItem('guestCode', null);
                 navigation.navigate("Houses")
             } else {
                 //Alert.alert("Error", data.error || "Login failed.");

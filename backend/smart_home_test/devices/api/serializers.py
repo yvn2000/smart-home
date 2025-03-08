@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from ..models import Room, Device, Energy, User, House, GuestCode, Automation, Pet
+from ..models import Room, Device, Energy, User, House, GuestCode, Automation, Pet, Thermo
 
 from ..models import (
-    AirConditioner, Light, Television, AirPurifier, Thermostat, Blinds, SmartLock,
+    AirConditioner, Light, Television, AirPurifier, Blinds, SmartLock,
     Fridge, WashingMachine, Oven, Speaker, CoffeeMaker, Roomba, Room, Device
 )
 
@@ -83,7 +83,10 @@ class AutomationSerializer(serializers.ModelSerializer):
 
 
 
-
+class ThermoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Thermo
+        fields = ['thermo_id', 'temperature', 'mode', 'code']
 
 
 
@@ -117,10 +120,6 @@ class AirPurifierSerializer(serializers.ModelSerializer):
         model = AirPurifier
         fields = '__all__'
 
-class ThermostatSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Thermostat
-        fields = '__all__'
 
 class BlindsSerializer(serializers.ModelSerializer):
     class Meta:

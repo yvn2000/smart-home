@@ -5,7 +5,7 @@ from .models import User, House, GuestCode, Pet
 
 
 from .models import (
-    AirConditioner, Light, Television, AirPurifier, Thermostat, Blinds, SmartLock,
+    AirConditioner, Light, Television, AirPurifier, Thermo, Blinds, SmartLock,
     Fridge, WashingMachine, Oven, Speaker, CoffeeMaker, Roomba, Room, Device
 )
 
@@ -27,7 +27,7 @@ admin.site.register(AirConditioner)
 admin.site.register(Light)
 admin.site.register(Television)
 admin.site.register(AirPurifier)
-admin.site.register(Thermostat)
+admin.site.register(Thermo)
 admin.site.register(Blinds)
 admin.site.register(SmartLock)
 admin.site.register(Fridge)

@@ -1,5 +1,5 @@
 
-import { useLinkBuilder, useTheme } from '@react-navigation/native';
+import { useLinkBuilder} from '@react-navigation/native';
 import { PlatformPressable } from '@react-navigation/elements';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -15,6 +15,8 @@ import { Dimensions, View, Image, Text, Platform, StyleSheet, LayoutChangeEvent 
 import Animated, { useSharedValue, useAnimatedStyle, interpolate, withSpring } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useTheme } from "../components/themes/theme";
+
 
 
 
@@ -22,6 +24,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 
 export default function TabBar({ state, descriptors, navigation }) {
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
 
     //Centering the bar depending on the window size dimensions
     const maxBarWidth = 800;
@@ -112,7 +130,7 @@ export default function TabBar({ state, descriptors, navigation }) {
 
 
 
-    const { colors } = useTheme();
+    //const { colors } = useTheme();
     const { buildHref } = useLinkBuilder();
 
     return (
@@ -123,6 +141,15 @@ export default function TabBar({ state, descriptors, navigation }) {
                 maxWidth: maxBarWidth,
                 left: Platform.OS == 'web' ? tabBarLeft : '5%',
                 height: Platform.OS == 'web' ? 80 : '7%',
+                backgroundColor: theme=='dark' ? 'rgb(32, 34, 84)' : 'rgb(255,255,255)',
+                shadowColor: theme=='dark' ? 'rgb(49, 49, 88)' : '#7F5Df0',
+                shadowOffset: {
+                    width: 0,
+                    height: 10,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.5,
+                elevation: 5,
 
             }]}>
             <Animated.View style={[animatedBGStyle, {

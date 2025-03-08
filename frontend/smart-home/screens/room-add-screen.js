@@ -162,17 +162,21 @@ export default function RoomAdd() {
                             <View style={[styles.mainContainer]}>
 
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: 30 }}
+                                    style={{ fontWeight: 'bold', fontSize: 30, color:'rgb(255, 3, 184)' }}
                                 >
                                     Add Room
                                 </Text>
 
                                 <TextInput
-                                    style={[styles.shadow, styles.input]}
+                                    style={[styles.shadow, styles.input, 
+                                        {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white', borderColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white',
+                                            color:theme=='dark' ? 'white' : 'black',
+                                        }]}
                                     placeholder="Room Name"
                                     placeholderTextColor={'rgb(156, 156, 156)'}
                                     value={newRoomName}
                                     onChangeText={setNewRoomName}
+                                    
                                 />
 
 
@@ -255,7 +259,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5Df0',
         shadowOffset: {
             width: 0,
-            height: 10,
+            height: 5,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
@@ -346,7 +350,7 @@ const styles = StyleSheet.create({
 
 
     darkMode: {
-        backgroundColor: "#4A4A4A",
+        backgroundColor: 'rgb(17, 18, 44)',
     },
     lightMode: {
         backgroundColor: "rgb(245, 238, 246)",

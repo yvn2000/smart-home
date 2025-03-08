@@ -54,6 +54,7 @@ export default function SettingsScreen() {
   useEffect(() => {
     getHouse()
     fetchGuestCodes();
+    setLoading(false)
   }, [house_id])
 
 
@@ -86,7 +87,7 @@ export default function SettingsScreen() {
     return newCode;
   };
 
-  
+
   const addGuestCode = async () => {
     await fetchGuestCodes(); // Refresh guest codes first
     const newCode = generateUniqueGuestCode();
@@ -116,6 +117,13 @@ export default function SettingsScreen() {
   }, []);
   */
 
+  if (loading) {
+    return (
+      <View>
+        <Text>Not Loaded Yet</Text>
+      </View>
+    )
+  }
 
 
 
@@ -130,30 +138,110 @@ export default function SettingsScreen() {
       <View style={[styles.screen, themeMode, { position: 'absolute', justifyContent: 'flex-start', flexDirection: 'row' }]}>
 
 
-        <ScrollView style={[styles.flatlist]} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
+        <ScrollView style={[styles.flatlist, { marginTop: 50 }]} contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
 
 
 
-          <TouchableOpacity style={[styles.card, styles.resize]} onPress={() => {//console.log(`Opening setting card for ${id}`); 
-            //navigation.navigate(link);
-          }}>
-            <Text style={styles.text} >Account</Text>
-            <Ionicons name="caret-forward-outline" size={22} color={'rgba(33, 32, 32, 0.9)'} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.card, styles.resize]} onPress={() => {//console.log(`Opening setting card for ${id}`); 
-            //navigation.navigate(link);
-          }}>
-            <Text style={styles.text} >Privacy</Text>
-            <Ionicons name="caret-forward-outline" size={22} color={'rgba(33, 32, 32, 0.9)'} />
-          </TouchableOpacity>
-
-          <View style={[styles.card, styles.resize, { justifyContent: 'space-between' }]}>
-            <View style={[{ alignItems: 'center', flexDirection: 'row' }]}>
-              <Text style={styles.text} >Theme</Text>
-              <Ionicons name="caret-forward-outline" size={22} color={'rgba(33, 32, 32, 0.9)'} />
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%'
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              navigation.navigate("SettingsItem", {
+                house_id: house_id,
+                setting_name: "Account",
+                logo: "account-circle-outline"
+              });
+            }}>
+            <MaterialCommunityIcons name="account-circle-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Account</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
             </View>
-            <View style={[styles.buttonContainer]}>
+
+
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%'
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              navigation.navigate("SettingsItem", {
+                house_id: house_id,
+                setting_name: "Social",
+                logo: "share-variant-outline"
+              });
+            }}>
+            <MaterialCommunityIcons name="share-variant-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Social</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
+            </View>
+
+
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%'
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              navigation.navigate("SettingsItem", {
+                house_id: house_id,
+                setting_name: "Language & Region",
+                logo: "web",
+              });
+            }}>
+            <MaterialCommunityIcons name="web" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Language & Region</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
+            </View>
+          </TouchableOpacity>
+
+
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%'
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              navigation.navigate("SettingsItem", {
+                house_id: house_id,
+                setting_name: "Guest Codes",
+                logo: "account-group",
+              });
+            }}>
+            <MaterialCommunityIcons name="account-group" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Guest Codes</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
+            </View>
+          </TouchableOpacity>
+
+
+
+
+
+
+
+
+
+
+          <View style={[styles.card, styles.resize, {
+            justifyContent: 'space-between',
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'
+          }]}>
+            <View style={[{ alignItems: 'center', flexDirection: 'row', gap: '19%', }]}>
+              <MaterialCommunityIcons name="theme-light-dark" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+              <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Theme</Text>
+            </View>
+            <View style={[styles.buttonContainer,]}>
               <TouchableOpacity style={[styles.buttonLight]} onPress={() => { toggleTheme("light") }} >
                 <Text style={styles.buttonText}>Light</Text>
               </TouchableOpacity>
@@ -166,47 +254,90 @@ export default function SettingsScreen() {
             </View>
           </View>
 
-
-          <View style={[styles.card, {gap:'40%'}]}>
-            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
-              style={[{
-                alignItems: 'center', flexDirection: 'row',
-                backgroundColor: 'rgb(216, 75, 255)', borderRadius: 30,
-                padding: 30,
-              }]}>
-                <TouchableOpacity onPress={()=>{addGuestCode()}}
-                  style={{width:'100%', height:'100%', alignItems:'center', justifyContent:'center'}}>
-                <Text style={[styles.text, { fontSize: 20, color: 'white', fontWeight: 'bold' }]} >Generate Guest Codes</Text>
-                </TouchableOpacity>
-              
-            </LinearGradient>
-
-
-            <ScrollView style={{ maxHeight: 200, marginBottom: 10 }}>
-                {guestCodes.length > 0 ? (
-                    guestCodes.map((code, index) => (
-                        <Text key={index} style={{ fontSize: 16, padding: 5 }}>
-                            {code}
-                        </Text>
-                    ))
-                ) : (
-                    <Text>No guest codes found.</Text>
-                )}
-            </ScrollView>
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%'
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              navigation.navigate("SettingsItem", {
+                house_id: house_id,
+                setting_name: "Tutorial",
+                logo: "school-outline",
+              });
+            }}>
+            <MaterialCommunityIcons name="school-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Tutorial</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
+            </View>
+          </TouchableOpacity>
 
 
+
+
+
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%'
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              navigation.navigate("SettingsItem", {
+                house_id: house_id,
+                setting_name: "Terms & Conditions",
+                logo: "file-document-edit-outline",
+              });
+            }}>
+            <MaterialCommunityIcons name="file-document-edit-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Terms & Conditions?</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
+            </View>
+          </TouchableOpacity>
+
+
+
+
+
+
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%',
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+
+            }}>
+            <MaterialCommunityIcons name="delete" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Delete House</Text>
+          </TouchableOpacity>
+
+
+
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%',
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              navigation.navigate("LoginScreen");
+              AsyncStorage.clear();
+              toggleTheme("light");
+            }}>
+            <MaterialCommunityIcons name="logout" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Logout</Text>
+          </TouchableOpacity>
+
+
+
+
+
+          <View style={{ height: 300 }}>
 
           </View>
 
 
-
-
-          <TouchableOpacity style={[styles.card, styles.resize]} onPress={() => {//console.log(`Opening setting card for ${id}`); 
-            navigation.navigate("LoginScreen");
-          }}>
-            <Text style={styles.text} >Logout</Text>
-            <Ionicons name="caret-forward-outline" size={22} color={'rgba(33, 32, 32, 0.9)'} />
-          </TouchableOpacity>
 
 
 
@@ -250,6 +381,11 @@ const styles = StyleSheet.create({
     borderColor: 'red',
     borderWidth: 3,
   },
+  mainContainer: {
+    alignItems: 'center',     //horizontal
+    //gap: 20,
+    width: '100%',
+  },
   flatlist: {
     //justifyContent: 'center',
     //alignItems: 'center',
@@ -270,6 +406,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 35,
+    fontWeight: 'bold',
   },
   card: {
     width: '90%',
@@ -310,7 +447,7 @@ const styles = StyleSheet.create({
     width: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgb(83, 83, 83)',
+    backgroundColor: 'rgb(17, 18, 44)',
     borderWidth: 1,
     borderColor: 'rgb(167, 167, 167)',
     borderRadius: 10,
@@ -333,7 +470,7 @@ const styles = StyleSheet.create({
 
 
   darkMode: {
-    backgroundColor: "#4A4A4A",
+    backgroundColor: 'rgb(17, 18, 44)',
   },
   lightMode: {
     backgroundColor: "rgb(245, 238, 246)",

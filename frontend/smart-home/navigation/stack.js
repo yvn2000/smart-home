@@ -10,6 +10,7 @@ import LoginScreen from "../screens/login-screen";
 import Sample from "../screens/sample";
 import Home from "../screens/home-screen";
 import SettingsScreen from "../screens/settings";
+import SettingsItemScreen from "../screens/settings-item";
 
 import DevicesScreen from "../screens/devices-screen";
 import RoomAdd from "../screens/room-add-screen";
@@ -161,6 +162,7 @@ export const SettingsStack = () => {
             screenOptions={{headerShown: false, animation:'slide_from_right' }}
         >
             <Stack.Screen name="Settings" component={SettingsScreen}/>
+            <Stack.Screen name="SettingsItem" component={SettingsItemScreen} />
             <Stack.Screen name="Sample" component={Sample}/>
         </Stack.Navigator>
     )

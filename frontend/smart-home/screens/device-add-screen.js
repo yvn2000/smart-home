@@ -73,7 +73,6 @@ export default function DeviceAdd() {
         { "Lights": 'lamp-outline' },
         { "TV": 'television' },
         { "Air Purifier": 'air-filter' },
-        { "Thermostat": 'thermostat' },
         { "Blinds": 'blinds' },
         { "Door Locks": 'door' },
         { "Refrigerator": 'fridge-outline' },
@@ -121,13 +120,17 @@ export default function DeviceAdd() {
                             <View style={[styles.mainContainer]}>
 
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: 30 }}
+                                    style={{ fontWeight: 'bold', fontSize: 30, color:'rgb(255, 3, 184)' }}
                                 >
                                     Add Device
                                 </Text>
 
                                 <TextInput
-                                    style={[styles.shadow, styles.input]}
+                                    style={[styles.shadow, styles.input, {
+                                        backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white',
+                                        borderColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white',
+                                        color:theme=='dark' ? 'rgb(255, 255, 255)' : 'black',
+                                    }]}
                                     placeholder="Device Name"
                                     placeholderTextColor={'rgb(156, 156, 156)'}
                                     value={newDeviceName}
@@ -135,7 +138,7 @@ export default function DeviceAdd() {
                                 />
 
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: 20 }}
+                                    style={{ fontWeight: 'bold', fontSize: 20, color:theme=='dark' ? 'white' : 'black' }}
                                 >
                                     {'<-'} Choose Device {'->'}
                                 </Text>
@@ -163,7 +166,7 @@ export default function DeviceAdd() {
                                                         styles.deviceType,
                                                         styles.shadow,
                                                         {
-                                                            backgroundColor: newDeviceLogo === deviceLogo ? 'rgb(255, 3, 184)' : 'rgb(235, 235, 235)',
+                                                            backgroundColor: newDeviceLogo === deviceLogo ? 'rgb(255, 3, 184)' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(235, 235, 235)'),
                                                         },
                                                     ]}
                                                     onPress={() => {
@@ -173,11 +176,11 @@ export default function DeviceAdd() {
                                                     <MaterialCommunityIcons
                                                         name={deviceLogo}
                                                         size={60}
-                                                        color={newDeviceLogo === deviceLogo ? 'white' : 'black'}
+                                                        color={newDeviceLogo === deviceLogo ? 'white' : (theme=='dark' ? 'white' : 'black')}
                                                     />
                                                     <Text
                                                         style={{
-                                                            fontWeight: 'bold', color: newDeviceLogo === deviceLogo ? 'white' : 'black',
+                                                            fontWeight: 'bold', color: newDeviceLogo === deviceLogo ? 'white' : (theme=='dark' ? 'white' : 'black'),
                                                             flexWrap: 'wrap'
                                                         }}>
                                                         {deviceName}
@@ -266,7 +269,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5Df0',
         shadowOffset: {
             width: 0,
-            height: 10,
+            height: 5,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
@@ -357,7 +360,7 @@ const styles = StyleSheet.create({
 
 
     darkMode: {
-        backgroundColor: "#4A4A4A",
+        backgroundColor: 'rgb(17, 18, 44)',
     },
     lightMode: {
         backgroundColor: "rgb(245, 238, 246)",

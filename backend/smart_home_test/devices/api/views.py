@@ -14,14 +14,14 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from ..models import User
-from ..models import House, GuestCode, Pet
-from .serializers import UserSerializer, HouseSerializer, GuestCodeSerializer, PetSerializer
+from ..models import House, GuestCode, Pet, Thermo
+from .serializers import UserSerializer, HouseSerializer, GuestCodeSerializer, PetSerializer, ThermoSerializer
 
 from ..models import Room, Device, Energy, ActivityLog, Automation
 from django.utils.timezone import now, localtime
 
 from ..models import (
-    AirConditioner, Light, Television, AirPurifier, Thermostat, Blinds, SmartLock,
+    AirConditioner, Light, Television, AirPurifier, Blinds, SmartLock,
     Fridge, WashingMachine, Oven, Speaker, CoffeeMaker, Roomba
 )
 
@@ -29,7 +29,7 @@ from .serializers import RoomSerializer, DeviceSerializer, EnergySerializer, Aut
 
 from .serializers import (
     AirConditionerSerializer, LightSerializer, TelevisionSerializer,
-    AirPurifierSerializer, ThermostatSerializer, BlindsSerializer,
+    AirPurifierSerializer, BlindsSerializer,
     SmartLockSerializer, FridgeSerializer, WashingMachineSerializer,
     OvenSerializer, SpeakerSerializer, CoffeeMakerSerializer, RoombaSerializer,
 )
@@ -229,6 +229,63 @@ class GuestLoginView(APIView):
         #return Response({"message": "Guest login successful", "house": house.name}, status=status.HTTP_200_OK)
 
 
+class UserProfileView(APIView):
+    """
+    Get First Name, Last Name and User Type.
+    """
+
+    def post(self, request):
+        token = request.data.get("token")  # Token sent in the body
+
+        if not token:
+            return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Decode the JWT token without any authentication checks
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']  # Extract the user ID from the token
+            user = User.objects.get(id=user_id)  # Get the user object by the user_id
+
+            first_name = user.first_name
+            last_name = user.last_name
+            user_type = user.user_type
+
+
+            return Response({"first_name": first_name, "last_name": last_name, "user_type":user_type}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateUserNameView(APIView):
+    """
+    Update First Name and Last Name.
+    """
+
+    def post(self, request):
+        token = request.data.get("token")  # Token sent in the body
+
+        if not token:
+            return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Decode the JWT token without any authentication checks
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']  # Extract the user ID from the token
+            user = User.objects.get(id=user_id)  # Get the user object by the user_id
+
+            newFirst = request.data.get("firstName")
+            newLast = request.data.get("lastName")
+
+            user.first_name = newFirst
+            user.last_name = newLast
+
+            user.save()
+
+
+            return Response({"message": "User Name Updated"}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 #House
@@ -363,6 +420,127 @@ class AssignExistingHouseView(APIView):
         return Response({"message": "User assigned to house successfully"}, status=status.HTTP_200_OK)
 
 
+#Thermostat
+
+class AddThermostatView(APIView):
+    def post(self, request, house_id):
+        house = get_object_or_404(House, id=house_id)
+        thermo_code = request.data.get("code")
+
+        print(thermo_code)
+        
+        # Check if house already has a thermostat
+        if hasattr(house, 'thermostat'):
+            return Response(
+                {"error": "House already has a thermostat"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validate input data
+        temperature = 22.0
+        mode = 'Cool'
+
+        print(mode, temperature)
+        
+        try:
+            temperature = float(temperature)
+        except (TypeError, ValueError):
+            return Response(
+                {"error": "Invalid temperature value"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if mode not in dict(Thermo.MODE_CHOICES):
+            return Response(
+                {"error": "Invalid thermostat mode"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if len(thermo_code)!=10:
+            return Response(
+                {"error": "Invalid thermostat code: not 10 characters"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Create thermostat
+        thermostat = Thermo.objects.create(
+            house=house,
+            temperature=temperature,
+            mode=mode,
+            code=thermo_code,
+        )
+
+        print(thermostat)
+        
+        return Response({
+            "id": thermostat.thermo_id,
+            "temperature": thermostat.temperature,
+            "mode": thermostat.mode,
+            "code": thermostat.code,
+        }, status=status.HTTP_201_CREATED)
+
+class DeleteThermostatView(APIView):
+    def delete(self, request, house_id):
+        house = get_object_or_404(House, id=house_id)
+        
+        if not hasattr(house, 'thermostat'):
+            return Response(
+                {"error": "No thermostat exists for this house"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        house.thermostat.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UpdateThermostatView(APIView):
+     def post(self, request, house_id):
+
+        try:
+            house = get_object_or_404(House, id=house_id)
+            thermostat = house.thermostat
+            temp = request.data.get("temperature")
+            newMode = request.data.get("mode")
+        except Thermo.DoesNotExist:
+            return Response({"error": "Thermostat not found"}, status=status.HTTP_404_NOT_FOUND)
+        except House.DoesNotExist:
+            return Response({"error": "House not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            thermostat.temperature=float(temp)
+            thermostat.mode=newMode
+            thermostat.save()
+            return Response({
+                "temperature": thermostat.temperature,
+                "mode": thermostat.mode,
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            print(str(e))
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class GetThermostatView(APIView):
+     def get(self, request, house_id):
+
+        try:
+            house = get_object_or_404(House, id=house_id)
+            thermostat = house.thermostat
+        except Thermo.DoesNotExist:
+            return Response({"error": "Thermostat not found"}, status=status.HTTP_404_NOT_FOUND)
+        except House.DoesNotExist:
+            return Response({"error": "House not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({
+            "temperature": thermostat.temperature,
+            "mode": thermostat.mode,
+            "code": thermostat.code,
+        }, status=status.HTTP_201_CREATED)
+
+
+
+
+
 
 class AddGuestCodeView(APIView):
     def post(self, request, house_id):
@@ -395,7 +573,29 @@ class ListGuestCodesView(APIView):
         serializer = GuestCodeSerializer(guest_codes, many=True)
         return Response({"house": house.name, "guest_codes": serializer.data}, status=status.HTTP_200_OK)
 
+class DeleteGuestCodeView(APIView):
+    def delete(self, request, house_id):
+        try:
+            house = House.objects.get(id=house_id)
+            code = request.data.get("code")
 
+            
+            if not code or not code.isdigit() or len(code) != 4:
+                return Response({"error": "Guest code must be a 4-digit number."}, status=status.HTTP_400_BAD_REQUEST)
+
+            
+            try:
+                guest_code = GuestCode.objects.get(house=house, code=code)
+                guest_code.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+                
+            except GuestCode.DoesNotExist:
+                return Response({"error": "Guest code does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        except House.DoesNotExist:
+            return Response({"error": "House not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        
 
 
 
@@ -467,9 +667,6 @@ class AddDeviceView(APIView):
             elif logo == 'air-filter':
                 #AirFilterSerializer(data=request.data).is_valid(raise_exception=True)
                 AirPurifier.objects.create(**serializer.validated_data)
-            elif logo == 'thermostat':
-                #ThermostatSerializer(data=request.data).is_valid(raise_exception=True)
-                Thermostat.objects.create(**serializer.validated_data)
             elif logo == 'blinds':
                 #BlindsSerializer(data=request.data).is_valid(raise_exception=True)
                 Blinds.objects.create(**serializer.validated_data)
@@ -510,40 +707,6 @@ class DeleteDeviceView(APIView):
 
             device = Device.objects.get(device_id=device_id)
 
-            '''
-            logo = device.logo
-
-            # Check the logo and delete the respective device model instance
-            if logo == 'air-conditioner':
-                AirConditioner.objects.get(device_id=device_id).delete()
-            elif logo == 'lamp-outline':
-                Lamp.objects.get(device_id=device_id).delete()
-            elif logo == 'television':
-                Television.objects.get(device_id=device_id).delete()
-            elif logo == 'air-filter':
-                AirFilter.objects.get(device_id=device_id).delete()
-            elif logo == 'thermostat':
-                Thermostat.objects.get(device_id=device_id).delete()
-            elif logo == 'blinds':
-                Blinds.objects.get(device_id=device_id).delete()
-            elif logo == 'door':
-                Door.objects.get(device_id=device_id).delete()
-            elif logo == 'fridge-outline':
-                Fridge.objects.get(device_id=device_id).delete()
-            elif logo == 'washing-machine':
-                WashingMachine.objects.get(device_id=device_id).delete()
-            elif logo == 'toaster-oven':
-                ToasterOven.objects.get(device_id=device_id).delete()
-            elif logo == 'speaker':
-                Speaker.objects.get(device_id=device_id).delete()
-            elif logo == 'coffee-maker-outline':
-                CoffeeMaker.objects.get(device_id=device_id).delete()
-            elif logo == 'robot-vacuum':
-                RobotVacuum.objects.get(device_id=device_id).delete()
-            #else:
-                #return Response({'error': 'Invalid logo type'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            '''
 
 
             device.delete()
@@ -714,37 +877,7 @@ class UpdateDeviceStatusView(APIView):
                 except AirPurifier.DoesNotExist:
                     pass
 
-            if not device_type:
-                try:
-                    device_type = Thermostat.objects.get(device_id=device_id)
-
-                    house_id = device_type.room.house.id  # Direct access
-
-                    house = House.objects.get(pk=house_id)
-                    pet = house.pet
-
-                    old_health = device_type.get_health_status()
-
-                    if (status_bool==True):
-                        if (device.power_save==True):
-                            device.energy_consumption = device_type.base_energy
-                        else:
-                            device.energy_consumption = device_type.base_energy + device.extra_energy
-                    else:
-                        device.energy_consumption = 0
-                    device.save()
-
-                    new_health = Thermostat.objects.get(device_id=device_id).get_health_status()
-                    #print("Old Health: ", old_health, ", New Health: ", new_health)
-
-                    if ((old_health=='Sick' or old_health=='Faulty') and (new_health=='Healthy')):
-                        pet.actual_xp += 5
-                                    
-                    pet.save()
-
-
-                except Thermostat.DoesNotExist:
-                    pass
+            
 
             if not device_type:
                 try:
@@ -1400,12 +1533,6 @@ class GetDeviceInfoView(APIView):
                 except AirPurifier.DoesNotExist:
                     pass
 
-            if not device:
-                try:
-                    device = Thermostat.objects.get(device_id=device_id)
-                    device_type = 'Thermostat'
-                except Thermostat.DoesNotExist:
-                    pass
 
             if not device:
                 try:
@@ -1476,8 +1603,6 @@ class GetDeviceInfoView(APIView):
                 serializer = TelevisionSerializer(device)
             elif device_type == 'AirPurifier':
                 serializer = AirPurifierSerializer(device)
-            elif device_type == 'Thermostat':
-                serializer = ThermostatSerializer(device)
             elif device_type == 'Blinds':
                 serializer = BlindsSerializer(device)
             elif device_type == 'SmartLock':
@@ -1536,12 +1661,6 @@ class GetDeviceHealthView(APIView):
                 except AirPurifier.DoesNotExist:
                     pass
 
-            if not device:
-                try:
-                    device = Thermostat.objects.get(device_id=device_id)
-                    device_type = 'Thermostat'
-                except Thermostat.DoesNotExist:
-                    pass
 
             if not device:
                 try:
@@ -1791,17 +1910,6 @@ class UpdateDeviceView(APIView):
                         serializer.save()
                         return Response({'message': 'Device updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
                 except AirPurifier.DoesNotExist:
-                    pass
-
-            if not device:
-                try:
-                    device = Thermostat.objects.get(device_id=device_id)
-                    device_type = 'Thermostat'
-                    serializer = ThermostatSerializer(device, data=request.data, partial=True)
-                    if serializer.is_valid():
-                        serializer.save()
-                        return Response({'message': 'Device updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
-                except Thermostat.DoesNotExist:
                     pass
 
             if not device:
@@ -2085,13 +2193,6 @@ class GetDeviceInfoView(APIView):
 
             if not device:
                 try:
-                    device = Thermostat.objects.get(device_id=device_id)
-                    device_type = 'Thermostat'
-                except Thermostat.DoesNotExist:
-                    pass
-
-            if not device:
-                try:
                     device = Blinds.objects.get(device_id=device_id)
                     device_type = 'Blinds'
                 except Blinds.DoesNotExist:
@@ -2159,8 +2260,6 @@ class GetDeviceInfoView(APIView):
                 serializer = TelevisionSerializer(device, data=request.data, partial=True)
             elif device_type == 'AirPurifier':
                 serializer = AirPurifierSerializer(device, data=request.data, partial=True)
-            elif device_type == 'Thermostat':
-                serializer = ThermostatSerializer(device, data=request.data, partial=True)
             elif device_type == 'Blinds':
                 serializer = BlindsSerializer(device, data=request.data, partial=True)
             elif device_type == 'SmartLock':

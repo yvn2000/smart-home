@@ -405,12 +405,12 @@ export default function DevicesScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20, justifyContent: 'center' }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
                                     Device Control
                                 </Text>
                                 {true &&
 
-                                    <View style={[{ position: 'absolute', alignSelf: 'flex-end', paddingRight: 10 }]}>
+                                    <View style={[{ position: 'absolute', alignSelf: 'flex-end', paddingRight: 10, }]}>
                                         <TouchableOpacity style={[{}]} onPress={toggleDropdown}>
                                             <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={'rgb(255, 3, 184)'} />
                                         </TouchableOpacity>
@@ -420,12 +420,33 @@ export default function DevicesScreen() {
                                             onBackdropPress={() => setDropdownVisible(false)} // Close when tapping outside
                                             animationIn="fadeInDown"
                                             animationOut="fadeOutUp"
-                                            backdropOpacity={0.1}
+                                            backdropOpacity={0.3}
                                             style={[{}]}
                                         >
 
-                                            <View style={[styles.shadow, styles.dropdownContainer]}>
-                                                {/* Custom View Items */}
+                                            <View style={[styles.dropdownContainer, {borderRadius:30,}]}>
+                                                <TouchableOpacity style={styles.dropdownItem}
+                                                    onPress={() => {
+                                                        setDropdownVisible(false)
+                                                        navigation.navigate("Room-Add", {
+                                                            houseId: house_id,
+                                                            setRoomCount: setRoomCount,
+                                                            onAddSuccess: () => {
+                                                                fetchRooms2();
+                                                                fetchDevices();
+                                                            }
+                                                            //addRoom: addRoom,
+                                                            //allRooms: allRooms,
+                                                            //setRooms, setRooms
+                                                        })
+                                                    }}
+                                                >
+                                                    <View style={{ backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10, 
+                                                        flexDirection: 'row', alignItems: 'center', gap: 10, borderTopLeftRadius:30, borderTopRightRadius:30 }}>
+                                                        <MaterialCommunityIcons name="plus" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                        <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Add Room</Text>
+                                                    </View>
+                                                </TouchableOpacity>
                                                 <TouchableOpacity style={styles.dropdownItem}
                                                     onPress={() => {
                                                         setDropdownVisible(false)
@@ -434,9 +455,9 @@ export default function DevicesScreen() {
                                                         })
                                                     }}
                                                 >
-                                                    <View style={{ backgroundColor: 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                        <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={"black"} />
-                                                        <Text style={{ color: 'black', fontWeight: 'bold' }}>Automations List</Text>
+                                                    <View style={{ backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                                        <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                        <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Automations List</Text>
                                                     </View>
                                                 </TouchableOpacity>
 
@@ -450,8 +471,8 @@ export default function DevicesScreen() {
 
                                                 }}>
                                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
-                                                        style={{ backgroundColor: 'red', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                        <MaterialCommunityIcons name="home-remove-outline" size={Platform.OS == 'web' ? 70 : 20} color={"white"} />
+                                                        style={{ backgroundColor: 'red', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10, borderBottomLeftRadius:30, borderBottomRightRadius:30 }}>
+                                                        <MaterialCommunityIcons name="home-remove-outline" size={Platform.OS == 'web' ? 70 : 20} color={'white'} />
                                                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Delete Room</Text>
                                                     </LinearGradient>
                                                 </TouchableOpacity>
@@ -487,9 +508,9 @@ export default function DevicesScreen() {
                                                 <View style={[{ alignItems: 'center', marginLeft: 20, height: (Platform.OS == 'web') ? 80 : 50 }]}>
 
 
-                                                    <LinearGradient colors={[(item.room_id == currentRoom) ? 'rgb(255, 3, 184)' : 'rgb(255, 255, 255)', 'transparent']}
+                                                    <LinearGradient colors={[(item.room_id == currentRoom) ? 'rgb(255, 3, 184)' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'), 'transparent']}
                                                         style={[styles.room, {
-                                                            backgroundColor: (item.room_id == currentRoom) ? 'rgb(216, 75, 255)' : 'rgb(255, 255, 255)',
+                                                            backgroundColor: (item.room_id == currentRoom) ? 'rgb(216, 75, 255)' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'),
                                                             padding: 0,
                                                         }]}
                                                     >
@@ -509,7 +530,7 @@ export default function DevicesScreen() {
                                                             <Text style={[{
                                                                 //width:50,
                                                                 fontSize: Platform.OS == 'web' ? 30 : 10,
-                                                                color: (item.room_id == currentRoom) ? 'rgb(255, 255, 255)' : 'rgb(3, 3, 3)'
+                                                                color: (item.room_id == currentRoom) ? 'rgb(255, 255, 255)' : (theme=='dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)')
                                                             }]}>
                                                                 {item.name}
                                                             </Text>
@@ -531,7 +552,7 @@ export default function DevicesScreen() {
 
                                             <TouchableOpacity
                                                 style={[styles.room,
-                                                { backgroundColor: 'rgb(255, 255, 255)', aspectRatio: 1,
+                                                { backgroundColor: (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'), aspectRatio: 1,
                                                     padding: 10, marginLeft: 20, flexDirection:'row' }]}
                                                 onPress={() => {
                                                     navigation.navigate("Room-Add", {
@@ -546,7 +567,7 @@ export default function DevicesScreen() {
                                                         //setRooms, setRooms
                                                     })
                                                 }}>
-                                                <MaterialCommunityIcons name="plus" size={40} />
+                                                <MaterialCommunityIcons name="plus" size={40} color={(theme=='dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)')} />
                                             </TouchableOpacity>
 
 
@@ -574,9 +595,9 @@ export default function DevicesScreen() {
 
 
 
-                                    <View style={[{ width: Platform.OS == 'web' ? '50%' : '100%' }]}>
+                                    <View style={[{ width: Platform.OS == 'web' ? '50%' : '100%', justifyContent:'center' }]}>
 
-                                        {Platform.OS == 'web' &&
+                                        {Platform.OS == 'web' && false &&
                                             <View style={[{
                                                 height: '50%',
                                                 width: '100%',
@@ -731,7 +752,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5Df0',
         shadowOffset: {
             width: 0,
-            height: 10,
+            height: 5,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
@@ -764,7 +785,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5Df0',
         shadowOffset: {
             width: 0,
-            height: 5,
+            height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
@@ -819,7 +840,7 @@ const styles = StyleSheet.create({
 
 
     darkMode: {
-        backgroundColor: "#4A4A4A",
+        backgroundColor: 'rgb(17, 18, 44)',
     },
     lightMode: {
         backgroundColor: "rgb(245, 238, 246)",

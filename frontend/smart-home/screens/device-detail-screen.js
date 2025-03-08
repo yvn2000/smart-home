@@ -429,11 +429,11 @@ export default function DeviceDetail() {
                                     onBackdropPress={() => setDropdownVisible(false)} // Close when tapping outside
                                     animationIn="zoomInRight"
                                     animationOut="zoomOutRight"
-                                    backdropOpacity={0.1}
+                                    backdropOpacity={0.3}
                                     style={[{}]}
                                 >
 
-                                    <View style={[styles.shadow, styles.dropdownContainer]}>
+                                    <View style={[styles.shadow, styles.dropdownContainer, {borderRadius:30}]}>
                                         {/* Custom View Items */}
                                         <TouchableOpacity style={styles.dropdownItem}
                                             onPress={() => {
@@ -443,21 +443,23 @@ export default function DeviceDetail() {
                                                     device_id: device_id,
                                                 })
                                             }}>
-                                            <View style={{ backgroundColor: 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color='rgb(216, 75, 255)' />
-                                                <Text style={{ color: 'black', fontWeight: 'bold' }}>Automation</Text>
+                                            <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                borderTopLeftRadius:30, borderTopRightRadius:30, backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'
+                                             }}>
+                                                <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Automation</Text>
                                             </View>
                                         </TouchableOpacity>
 
                                         <TouchableOpacity style={styles.dropdownItem}
                                             onPress={() => {
-                                                toggleDropdown();
+                                                //toggleDropdown();
                                                 togglePowerSave();
                                                 
                                             }}>
-                                            <View style={{ backgroundColor: powerSave ? 'yellow' : 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                <Ionicons name="flash-outline" color='rgb(216, 75, 255)' size={Platform.OS == 'web' ? 70 : 20} />
-                                                <Text style={{ color: 'black', fontWeight: 'bold' }}>Energy Mode</Text>
+                                            <View style={{ backgroundColor: powerSave ? 'yellow' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'white'), padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                                <Ionicons name="flash-outline" color={powerSave ? 'rgb(255, 187, 0)' : (theme=='dark' ? 'white' : 'rgb(255, 3, 184)')} size={Platform.OS == 'web' ? 70 : 20} />
+                                                <Text style={{ color: powerSave ? 'rgb(255, 187, 0)' : (theme=='dark' ? 'white' : 'rgb(255, 3, 184)'), fontWeight: 'bold' }}>Energy Mode</Text>
                                             </View>
                                         </TouchableOpacity>
 
@@ -466,9 +468,9 @@ export default function DeviceDetail() {
                                             navigation.goBack();
                                             navigation.navigate("StatisticsStack");
                                         }}>
-                                            <View style={{ backgroundColor: 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                <MaterialCommunityIcons name="chart-line" size={Platform.OS == 'web' ? 70 : 20} color='rgb(216, 75, 255)' />
-                                                <Text style={{ color: 'black', fontWeight: 'bold' }}>Statistics</Text>
+                                            <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white' }}>
+                                                <MaterialCommunityIcons name="chart-line" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Statistics</Text>
                                             </View>
                                         </TouchableOpacity>
 
@@ -478,7 +480,9 @@ export default function DeviceDetail() {
                                             navigation.goBack();
                                         }}>
                                             <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
-                                                style={{ backgroundColor: 'red', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                                style={{ backgroundColor: 'red', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                    borderBottomLeftRadius:30, borderBottomRightRadius:30
+                                                 }}>
                                                 <MaterialCommunityIcons name="delete" size={Platform.OS == 'web' ? 70 : 20} color={"white"} />
                                                 <Text style={{ color: 'white', fontWeight: 'bold' }}>Delete Device</Text>
                                             </LinearGradient>
@@ -505,7 +509,7 @@ export default function DeviceDetail() {
                                 <Text style={{ fontSize: 14 }}>temperature {temp}</Text>
                                 */}
 
-                                <View style={[styles.shadow, styles.statsBar]}>
+                                <View style={[styles.shadow, styles.statsBar, {backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
 
                                     <View style={[{ width: '33.33333%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', padding: 10 }]}>
                                         <MaterialCommunityIcons name="battery-medium" size={Platform.OS == 'web' ? 60 : 40} color={'rgba(216, 75, 255, 0.9)'} />
@@ -521,6 +525,7 @@ export default function DeviceDetail() {
                                                 /* Idk why, but the bold weight for text is necessary else the last word doesnt show up on android, idk */
                                                 fontWeight: 'bold',
                                                 fontSize: Platform.OS == 'web' ? 30 : 15,
+                                                color: theme=='dark' ? 'rgb(255, 255, 255)' : 'black'
                                             }} >
                                                 69%
                                             </Text>
@@ -554,6 +559,7 @@ export default function DeviceDetail() {
                                                 /* Idk why, but the bold weight for text is necessary else the last word doesnt show up on android, idk */
                                                 fontWeight: 'bold',
                                                 fontSize: Platform.OS == 'web' ? 30 : 15,
+                                                color:theme=='dark' ? 'rgb(255, 255, 255)' : 'black'
                                             }} >
                                                 12 Hrs
                                             </Text>
@@ -648,7 +654,9 @@ export default function DeviceDetail() {
                                     <View style={[styles.options]}>
 
                                         <View style={[{ width: '25%', aspectRatio: 1, padding: 20 }]}>
-                                            <TouchableOpacity style={[styles.shadow, styles.optionButton]}
+                                            <TouchableOpacity style={[styles.shadow, styles.optionButton,
+                                                {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}
+                                            ]}
                                                 onPress={() => {
                                                     navigation.navigate("DeviceAuto", {
                                                         device: device,
@@ -660,18 +668,22 @@ export default function DeviceDetail() {
                                         </View>
 
                                         <View style={[{ width: '25%', aspectRatio: 1, padding: 20, }]}>
-                                            <TouchableOpacity style={[styles.shadow, styles.optionButton, powerSave && {backgroundColor:'yellow'}]}
+                                            <TouchableOpacity style={[styles.shadow, styles.optionButton, powerSave && {backgroundColor:'yellow'},
+                                                !powerSave && {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}
+                                            ]}
                                                 onPress={() => {
                                                     //Make a popup box to confirm energy saving mode
                                                     togglePowerSave()
 
                                                 }}>
-                                                <Ionicons name="flash-outline" color='rgb(216, 75, 255)' size={70} />
+                                                <Ionicons name="flash-outline" color={'rgb(216, 75, 255)'} size={70} />
                                             </TouchableOpacity>
                                         </View>
 
                                         <View style={[{ width: '25%', aspectRatio: 1, padding: 20 }]}>
-                                            <TouchableOpacity style={[styles.shadow, styles.optionButton]}
+                                            <TouchableOpacity style={[styles.shadow, styles.optionButton,
+                                                {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}
+                                            ]}
                                                 onPress={() => {
                                                     navigation.goBack();
                                                     navigation.navigate("StatisticsStack");
@@ -739,7 +751,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5Df0',
         shadowOffset: {
             width: 0,
-            height: 10,
+            height: 5,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
@@ -837,7 +849,7 @@ const styles = StyleSheet.create({
 
 
     darkMode: {
-        backgroundColor: "#4A4A4A",
+        backgroundColor: 'rgb(17, 18, 44)',
     },
     lightMode: {
         backgroundColor: "rgb(245, 238, 246)",

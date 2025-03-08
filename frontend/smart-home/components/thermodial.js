@@ -16,7 +16,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { DUMMY_DATA } from "../data/dummy-device-data";
 
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle, Line, Path } from 'react-native-svg';
 
 import Animated, {
     useSharedValue, useAnimatedStyle, withRepeat, withTiming,
@@ -27,7 +27,7 @@ import Animated, {
 import { LinearGradient } from 'expo-linear-gradient';
 
 
-export default function ThermoDial( { changeable, radiusIn, minValueIn, maxValueIn, tempValue } ) {
+export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueIn, tempValue, house_id, thermMode }) {
 
     const [windowDimensions, setWindowDimensions] = useState(Dimensions.get("window"));
     //console.log(windowDimensions)
@@ -56,7 +56,97 @@ export default function ThermoDial( { changeable, radiusIn, minValueIn, maxValue
 
 
 
-    const [deviceInfo, setDeviceInfo] = useState({});
+
+    const [boolThermo, setBoolThermo] = useState(false);
+
+    const [thermoTemp, setThermoTemp] = useState(tempValue)
+    const [thermoMode, setThermoMode] = useState(thermMode)
+    const [thermoCode, setThermoCode] = useState('')
+
+
+
+    useEffect(()=> {
+        updateThermo(thermoMode)
+    }, [thermoMode])
+
+
+
+
+    useEffect(() => {
+        getThermo()
+    }, [house_id])
+
+    useEffect(() => {
+        setVal(thermoTemp)
+    }, [thermoTemp])
+
+
+
+
+
+
+    const getThermo = async () => {
+
+        try {
+            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/get-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/get-thermostat/`
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (response.ok) {
+                setThermoTemp(data.temperature)
+                setThermoMode(data.mode)
+                setThermoCode(data.code)
+                setBoolThermo(true)
+            }
+
+
+        }
+
+        catch (error) {
+            //setError("Network error, please try again.");
+            console.log(error)
+        }
+        finally {
+
+        }
+
+
+
+    }
+
+    const updateThermo = async (mode) => {
+        try {
+            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/update-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/update-thermostat/`
+
+            //console.log(mode)
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ temperature: value, mode: mode }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                await getThermo()
+            }
+
+
+        }
+
+        catch (error) {
+            //setError("Network error, please try again.");
+            console.log(error)
+        }
+        finally {
+
+        }
+    }
+
+
+
+
+
     const [loading, setLoading] = useState(true); // Track loading state
 
 
@@ -67,8 +157,11 @@ export default function ThermoDial( { changeable, radiusIn, minValueIn, maxValue
     const [value, setVal] = useState(tempValue);
     const minValue = minValueIn;
     const maxValue = maxValueIn;
-    const prog = useSharedValue(value / maxValue);            
+    const prog = useSharedValue(value / maxValue);
 
+    useEffect(() => {
+        updateThermo(thermoMode)
+    }, [value])
 
     //const [radius, setRadius] = useState(Platform.OS == 'web' ? (((windowDimensions.width / 10) < 1500) ? windowDimensions.width / 12 : 100) : 0.25 * windowDimensions.width)
     const radius = radiusIn;
@@ -165,65 +258,143 @@ export default function ThermoDial( { changeable, radiusIn, minValueIn, maxValue
 
             </View>
         </View>*/
-        <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 20 }]}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', gap: 30, }}>
+            <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 20 }]}>
 
-            {changeable==true && <TouchableOpacity
-                onPress={() => {
-                    changeValue(1, "plus")
-                }}>
-                <Text style={{ fontSize: 0.4 * radius }}>+</Text>
-            </TouchableOpacity>}
-            <View>
-                <View style={[styles.container, styles.shadow]}>
-                    <Svg width={2 * radius + strokeWidth} height={2 * radius + strokeWidth}>
-                        {/* Background Circle */}
-                        <Circle
-                            cx={radius + strokeWidth / 2}
-                            cy={radius + strokeWidth / 2}
-                            r={radius}
-                            stroke="#ddd"
-                            strokeWidth={strokeWidth}
-                            fill='rgba(255, 255, 255, 0.9)'
-                            style={styles.shadow}
-                        />
-                        {/* Progress Circle */}
-                        <AnimatedCircle
-                            cx={radius + strokeWidth / 2}
-                            cy={radius + strokeWidth / 2}
-                            r={radius}
-                            stroke='rgb(255, 3, 184)'
-                            //stroke='rgba(216, 75, 255, 1)'
-                            strokeWidth={strokeWidth}
-                            strokeDasharray={`${circum}`}
-                            animatedProps={animatedProps}
-                            fill='none'
-                            strokeLinecap="round"
-                            transform={`rotate(90 ${radius + strokeWidth / 2} ${radius + strokeWidth / 2})`} // Rotate the progress
-                        />
-                        
-                    </Svg>
-                    <View
-                        style={[styles.centerCircle, { width: radius * 2, height: radius * 2 }]}
-                        {...panResponder.panHandlers}
-                    >
-                        <Text style={[styles.temperature, { fontSize: 0.3 * radius }]}>{value}°C</Text>
-                        <Text style={[styles.temperature, { fontSize: 0.1 * radius }]}>Thermostat</Text>
+                {changeable == true && <TouchableOpacity style={{ marginLeft: 10, }}
+                    onPress={() => {
+                        changeValue(1, "plus")
+                    }}>
+                    <Text style={{ fontSize: 0.4 * radius, color: 'rgb(255, 3, 184)' }}>+</Text>
+                </TouchableOpacity>}
+                <View>
+                    <View style={[styles.container, styles.shadow]}>
+                        <Svg width={2 * radius + strokeWidth} height={2 * radius + strokeWidth}>
+                            {/* Background Circle */}
+                            <Circle
+                                cx={radius + strokeWidth / 2}
+                                cy={radius + strokeWidth / 2}
+                                r={radius}
+                                stroke="#ddd"
+                                strokeWidth={strokeWidth}
+                                fill='rgba(255, 255, 255, 0.9)'
+                                style={styles.shadow}
+                            />
+                            {/* Progress Circle */}
+                            <AnimatedCircle
+                                cx={radius + strokeWidth / 2}
+                                cy={radius + strokeWidth / 2}
+                                r={radius}
+                                stroke='rgb(255, 3, 184)'
+                                //stroke='rgba(216, 75, 255, 1)'
+                                strokeWidth={strokeWidth}
+                                strokeDasharray={`${circum}`}
+                                animatedProps={animatedProps}
+                                fill='none'
+                                strokeLinecap="round"
+                                transform={`rotate(90 ${radius + strokeWidth / 2} ${radius + strokeWidth / 2})`} // Rotate the progress
+                            />
 
-                        <View style={{position:'absolute', bottom:0.4*radius}}>
-                        <MaterialCommunityIcons name={value>(maxValue/2) ? "weather-sunny" :"snowflake"} color='rgb(255, 3, 184)' size={0.2 * radius} />
+                        </Svg>
+                        <View
+                            style={[styles.centerCircle, { width: radius * 2, height: radius * 2 }]}
+                            {...panResponder.panHandlers}
+                        >
+                            <Text style={[styles.temperature, { fontSize: 0.3 * radius }]}>{value}°C</Text>
+                            <Text style={[styles.temperature, { fontSize: 0.1 * radius }]}>Thermostat</Text>
+
+                            <View style={{ position: 'absolute', bottom: 0.4 * radius }}>
+                                <MaterialCommunityIcons name={value > (maxValue / 2) ? "weather-sunny" : "snowflake"} color='rgb(255, 3, 184)' size={0.2 * radius} />
+                            </View>
+
+                            {/*<Text style={styles.temperature}>Circum:{circum}</Text>*/}
                         </View>
-                        
-                        {/*<Text style={styles.temperature}>Circum:{circum}</Text>*/}
                     </View>
                 </View>
+
+                {changeable == true && <TouchableOpacity style={{ marginRight: 10 }}
+                    onPress={() => {
+                        changeValue(1, "minus")
+                    }}>
+                    <Text style={{ fontSize: 0.4 * radius, color: 'rgb(255, 3, 184)' }}>-</Text>
+                </TouchableOpacity>}
+
             </View>
 
-            {changeable==true && <TouchableOpacity
-                onPress={() => {
-                    changeValue(1, "minus")
-                }}>
-                <Text style={{ fontSize: 0.4 * radius }}>-</Text>
-            </TouchableOpacity>}
+
+
+            <View style={{ flexDirection: 'row', gap: 15 }}>
+
+                <TouchableOpacity
+                    style={{
+                        aspectRatio: 1
+                    }}
+                    onPress={() => {
+                        updateThermo('Cool')
+                    }}
+
+                >
+
+                    <LinearGradient colors={[thermoMode=='Cool' ? 'rgb(255, 3, 184)' : 'rgb(95, 95, 95)', 'transparent']}
+                        style={{
+                            backgroundColor: thermoMode=='Cool' ? 'rgb(216, 75, 255)' : 'rgb(95, 95, 95)',
+                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:20
+                        }}
+                    >
+                        <MaterialCommunityIcons name={"snowflake"} size={50} color={'white'} />
+
+                    </LinearGradient>
+
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={{
+                        aspectRatio: 1
+                    }}
+                    onPress={() => {
+                        updateThermo('Heat')
+                    }}
+
+                >
+
+                    <LinearGradient colors={[thermoMode=='Heat' ? 'rgb(255, 3, 184)' : 'rgb(95, 95, 95)', 'transparent']}
+                        style={{
+                            backgroundColor: thermoMode=='Heat' ? 'rgb(216, 75, 255)' : 'rgb(95, 95, 95)',
+                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:20
+                        }}
+                    >
+                        <MaterialCommunityIcons name={"weather-sunny"} size={50} color={'white'} />
+
+                    </LinearGradient>
+
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={{
+                        aspectRatio: 1
+                    }}
+                    onPress={() => {
+                        updateThermo('Fan')
+                    }}
+
+                >
+
+                    <LinearGradient colors={[thermoMode=='Fan' ? 'rgb(255, 3, 184)' : 'rgb(95, 95, 95)', 'transparent']}
+                        style={{
+                            backgroundColor: thermoMode=='Fan' ? 'rgb(216, 75, 255)' : 'rgb(95, 95, 95)',
+                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:20
+                        }}
+                    >
+                        <MaterialCommunityIcons name={"fan"} size={50} color={'white'} />
+
+                    </LinearGradient>
+
+                </TouchableOpacity>
+
+                
+
+            </View>
+
 
         </View>
 
@@ -255,7 +426,7 @@ const styles = StyleSheet.create({
     temperature: {
         fontWeight: 'bold',
         //color: 'rgb(216, 75, 255)',
-        color:'rgb(255, 3, 184)',
+        color: 'rgb(255, 3, 184)',
     },
     shadow: {
         //shadow
@@ -267,7 +438,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
         elevation: 5,
-        borderRadius:500,
+        borderRadius: 500,
     },
 
 

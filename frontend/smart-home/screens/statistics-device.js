@@ -417,8 +417,8 @@ export default function DeviceStatisticsScreen() {
                                         style={[{}]}
                                     >
 
-                                        <View style={[styles.shadow, styles.dropdownContainer]}>
-                                            <View style={[styles.shadow, styles.recommend, {}]}>
+                                        <View style={[styles.shadow, styles.dropdownContainer, {}]}>
+                                            <View style={[styles.shadow, styles.recommend, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
                                                 <Text style={[styles.recText, { alignSelf: 'center' }]}>--- Recommendations ---</Text>
                                                 {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 00:00 - 00:00</Text>}
                                                 {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• {device.name} has been running for too long, turn it off?</Text>}
@@ -511,7 +511,7 @@ export default function DeviceStatisticsScreen() {
                                         </View>
                                     </LinearGradient>
 
-                                    <View style={[styles.shadow, styles.homePanel]}>
+                                    <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'black' : 'black' }]}>
 
                                         <View style={{ padding: 20 }}>
                                             <Text style={{ color: 'rgb(147, 147, 147)' }}>---- {name} Energy Consumption ----</Text>
@@ -521,7 +521,7 @@ export default function DeviceStatisticsScreen() {
 
                                             <View style={[styles.graphStats, { width: '100%', overflow: 'hidden' }]}>
 
-                                                <View style={[{ paddingTop: 20, paddingBottom: 20, paddingLeft: 10, width: '100%' }]}>
+                                                <View style={[{ paddingTop: 20, paddingBottom: 20, paddingLeft: 10, width: '100%', backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
 
 
@@ -686,7 +686,7 @@ export default function DeviceStatisticsScreen() {
                                     </View>
                                 </LinearGradient>
 
-                                <View style={[styles.shadow, styles.homePanel]}>
+                                <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
 
                                     <View style={{ padding: 20 }}>
                                         <Text style={{ color: 'rgb(147, 147, 147)' }}>---- {name} Energy Consumption ----</Text>
@@ -717,9 +717,14 @@ export default function DeviceStatisticsScreen() {
                                                     textColor={'rgb(255, 3, 184)'}
                                                     textShiftY={-10}
                                                     textShiftX={-5}
+                                                    xAxisColor={'gray'}
 
                                                     yAxisLabelSuffix=' kWh '
                                                     yAxisLabelWidth={80}
+                                                    yAxisColor={'gray'}
+
+                                                    xAxisLabelTextStyle={{ color: "gray" }}
+                                                    yAxisTextStyle={{ color: "gray" }}
 
 
                                                     //maxValue={250}
@@ -795,7 +800,7 @@ export default function DeviceStatisticsScreen() {
                                             <View style={{ height: 20 }}></View>
 
 
-                                            <View style={[styles.shadow, styles.recommend, {}]}>
+                                            <View style={[styles.shadow, styles.recommend, {backgroundColor:theme=='dark' ? 'rgb(39, 41, 112)' : 'rgb(243, 243, 243)'}]}>
                                                 <Text style={[styles.recText, { alignSelf: 'center' }]}>--- Recommendations ---</Text>
                                                 {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 00:00 - 00:00</Text>}
                                                 {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• {device.name} has been running for too long, turn it off?</Text>}
@@ -912,7 +917,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5Df0',
         shadowOffset: {
             width: 0,
-            height: 10,
+            height: 5,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
@@ -1071,7 +1076,7 @@ const styles = StyleSheet.create({
 
 
     darkMode: {
-        backgroundColor: "#4A4A4A",
+        backgroundColor: 'rgb(17, 18, 44)',
     },
     lightMode: {
         backgroundColor: "rgb(245, 238, 246)",

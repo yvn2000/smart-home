@@ -65,7 +65,7 @@ class House(models.Model):
     landlord = models.ForeignKey(User, related_name="managed_houses", on_delete=models.CASCADE, limit_choices_to={'user_type': User.LANDLORD})
     
     def __str__(self):
-        return self.name
+        return f"ID: {self.id}, House Name: {self.name} "
 
 
 
@@ -177,6 +177,37 @@ class Pet(models.Model):
         return sorted(self.unlocked_bgs, key=lambda x: int(x[2:]))
 
 
+class Thermo(models.Model):
+    thermo_id = models.AutoField(primary_key=True)
+    MODE_CHOICES = [
+        ('Cool', 'Cool'),
+        ('Fan', 'Fan'),
+        ('Heat', 'Heat'),
+    ]
+
+    house = models.OneToOneField(
+        House,
+        related_name='thermostat',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    temperature = models.FloatField(default=22.0)
+    mode = models.CharField(
+        max_length=4,
+        choices=MODE_CHOICES,
+        default='Cool'
+    )
+    code = models.CharField(
+        max_length=10,
+        default=0,
+    )
+
+    def __str__(self):
+        return f"Thermostat for {self.house.name} - {self.mode} mode"   
+
+
+
 class GuestCode(models.Model):
     house = models.ForeignKey(House, related_name="guest_codes", on_delete=models.CASCADE)
     code = models.CharField(max_length=4)  # 4-digit guest code
@@ -217,7 +248,7 @@ class Device(models.Model):
     def get_concrete_device(self):
         """Returns the concrete device instance"""
         for model in [AirConditioner, Light, Television, AirPurifier,
-                     Thermostat, Blinds, SmartLock, Fridge,
+                      Blinds, SmartLock, Fridge,
                      WashingMachine, Oven, Speaker, CoffeeMaker, Roomba]:
             try:
                 return model.objects.get(device_id=self.device_id)
@@ -357,23 +388,6 @@ class Speaker(Device):
     max_volume = models.IntegerField(default=100)
     audio_source = models.CharField(max_length=20, choices=[('Spotify', 'Spotify'), ('Apple Music', 'Apple Music')], default='Spotify')
     base_energy = models.FloatField(default=36)  # Energy in kWh per second
-
-    def get_health_status(self):
-        threshold = self.base_energy * 1.5  # 2x base energy limit
-
-        if self.energy_consumption <= threshold:
-            return "Healthy"
-        elif threshold < self.energy_consumption <= threshold * 1.5:  
-            return "Sick"
-        else:
-            return "Faulty"
-
-class Thermostat(Device):
-    temperature = models.FloatField(default=20)
-    fan_speed = models.CharField(max_length=10, choices=[('Auto', 'Auto'), ('Low', 'Low'), ('Medium', 'Medium'), ('High', 'High')], default='Low')
-    mode = models.CharField(max_length=10, choices=[('Cool', 'Cool'), ('Dry', 'Dry'), ('Fan', 'Fan'), ('Heat', 'Heat')], default='Cool')
-    humidity_level = models.CharField(max_length=10, choices=[('Low', 'Low'), ('Moderate', 'Moderate'), ('High', 'High')], default='Moderate')
-    base_energy = models.FloatField(default=72)  # Energy in kWh per second
 
     def get_health_status(self):
         threshold = self.base_energy * 1.5  # 2x base energy limit

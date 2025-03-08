@@ -198,7 +198,7 @@ export default function DailySummaryScreen() {
                             </TouchableOpacity>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20, top: Platform.OS=='web' ? 0 : -30 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
                                     Today's Activity Summary
                                 </Text>
                             </View>
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
 
 
     darkMode: {
-        backgroundColor: "#4A4A4A",
+        backgroundColor: 'rgb(17, 18, 44)',
     },
     lightMode: {
         backgroundColor: "rgb(245, 238, 246)",

@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 
 import { StatusBar } from "expo-status-bar";
 import {
@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTheme } from "../components/themes/theme";
 
 import LavaLampBackground from "../components/themes/lava-lamp-bg";
@@ -453,6 +453,21 @@ export default function StatisticsScreen() {
     const [loading, setLoading] = useState(true);
     const [currentRoomName, setCurrentRoomName] = useState('')
 
+    useFocusEffect(
+            useCallback(() => {
+                const reloadData = async () => {
+                    const id = await getHouse() // Get fresh ID on focus
+                    if (id) {
+                        //console.log("Reloading data for house:", id)
+                        await fetchRooms2()
+                        await fetchDevices2()
+                    }
+                }
+                reloadData()
+                setLoading(false)
+            }, []) // Still empty array - we're using latest state in callbacks
+        )
+
 
     const getHouse = async () => {
         setHouseId(await AsyncStorage.getItem("house_id"))
@@ -735,7 +750,7 @@ export default function StatisticsScreen() {
                                 </View>
 
                                 <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                    <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', }}>
+                                    <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
                                         Statistics
                                     </Text>
                                 </View>
@@ -1241,7 +1256,7 @@ export default function StatisticsScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
                                     Statistics
                                 </Text>
                             </View>
@@ -1249,7 +1264,7 @@ export default function StatisticsScreen() {
                             <View style={[styles.mainContainer]}>
 
 
-                                <View style={[styles.shadow, styles.homePanel]}>
+                                <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
 
                                     <View style={{ padding: 20 }}>
                                         <Text style={{ color: 'rgb(147, 147, 147)' }}>---- Home Statistics ----</Text>
@@ -1267,10 +1282,10 @@ export default function StatisticsScreen() {
                                                         onPress={() => {
                                                             handleLeftArrow()
                                                         }}>
-                                                        <MaterialCommunityIcons name="chevron-left" size={40} />
+                                                        <MaterialCommunityIcons name="chevron-left" size={40} color={theme=='dark' ? 'white' : 'dark'} />
                                                     </TouchableOpacity>
 
-                                                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+                                                    <Text style={{ fontSize: 20, fontWeight: 'bold', color:theme=='dark' ? 'white' : 'dark' }}>
                                                         Week {currentWeek}
                                                     </Text>
 
@@ -1278,7 +1293,7 @@ export default function StatisticsScreen() {
                                                         onPress={() => {
                                                             handleRightArrow()
                                                         }}>
-                                                        <MaterialCommunityIcons name="chevron-right" size={40} />
+                                                        <MaterialCommunityIcons name="chevron-right" size={40} color={theme=='dark' ? 'white' : 'dark'} />
                                                     </TouchableOpacity>
 
                                                 </View>
@@ -1369,12 +1384,12 @@ export default function StatisticsScreen() {
 
                                                     <View style={[{ justifyContent: 'center' }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Current</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'rgb(0, 0, 0)' }}>1.5 kW</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>1.5 kW</Text>
                                                     </View>
 
                                                     <View style={[{ justifyContent: 'center', }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(149, 149, 149)' }}>Today</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'rgb(0, 0, 0)' }}>20 kWh</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>20 kWh</Text>
                                                     </View>
 
                                                 </LinearGradient>
@@ -1404,12 +1419,12 @@ export default function StatisticsScreen() {
 
                                                     <View style={[{ justifyContent: 'center' }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Per kWh</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'rgb(0, 0, 0)' }}>$0.29</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>$0.29</Text>
                                                     </View>
 
                                                     <View style={[{ justifyContent: 'center', }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Weekly</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'rgb(0, 0, 0)' }}>$261</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>$261</Text>
                                                     </View>
 
                                                 </LinearGradient>
@@ -1501,7 +1516,7 @@ export default function StatisticsScreen() {
 
                                 <View style={[styles.deviceStats, { paddingBottom: 200 }]}>
 
-                                    <View style={{ padding: 20, backgroundColor: 'rgb(245, 238, 246)', borderRadius: 500, marginBottom: 10 }}>
+                                    <View style={{ padding: 20, backgroundColor: theme=='dark' ? 'rgb(17, 18, 44)' : 'rgb(245, 238, 246)', borderRadius: 500, marginBottom: 10 }}>
                                         <Text style={{ color: 'rgb(147, 147, 147)' }}>---- Device Statistics ----</Text>
                                     </View>
 
@@ -1522,17 +1537,17 @@ export default function StatisticsScreen() {
                                                 <TouchableOpacity onPress={() => { setCurrentRoom(room.room_id) }}>
                                                     <LinearGradient
                                                         colors={[
-                                                            (currentRoom == room.room_id) ? 'rgb(255, 3, 184)' : 'white', 'transparent'
+                                                            (currentRoom == room.room_id) ? 'rgb(255, 3, 184)' : theme=="dark" ? 'rgb(26, 28, 77)' : 'white', 'transparent'
                                                         ]}
                                                         style={[styles.roomButton, styles.shadow, {
-                                                            backgroundColor: (currentRoom == room.room_id) ? 'rgb(216, 75, 255)' : 'white'
+                                                            backgroundColor: (currentRoom == room.room_id) ? 'rgb(216, 75, 255)' : theme=="dark" ? 'rgb(26, 28, 77)' : 'white'
                                                         }]}
                                                     >
 
                                                         <Text style={{
                                                             fontWeight: 'bold',
                                                             fontSize: 18,
-                                                            color: (currentRoom == room.room_id) ? 'white' : 'black'
+                                                            color: (currentRoom == room.room_id) ? 'white' : theme=="dark" ? 'white' : 'black'
                                                         }}>
                                                             {room.name}
                                                         </Text>
@@ -1669,7 +1684,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5Df0',
         shadowOffset: {
             width: 0,
-            height: 10,
+            height: 5,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
@@ -1773,7 +1788,7 @@ const styles = StyleSheet.create({
 
 
     darkMode: {
-        backgroundColor: "#4A4A4A",
+        backgroundColor: 'rgb(17, 18, 44)',
     },
     lightMode: {
         backgroundColor: "rgb(245, 238, 246)",

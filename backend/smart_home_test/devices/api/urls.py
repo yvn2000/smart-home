@@ -12,12 +12,14 @@ from .views import (
 
     TokenRefreshView,
 
-    LandlordListView, UserAccessView,
+    LandlordListView, UserAccessView, UserProfileView, UpdateUserNameView,
 
     RegisterUserView, LoginView, GuestLoginView,
     AddHouseView, AssignExistingHouseView,
 
-    AddGuestCodeView, ListGuestCodesView,
+    AddThermostatView, DeleteThermostatView, UpdateThermostatView, GetThermostatView,
+
+    AddGuestCodeView, ListGuestCodesView, DeleteGuestCodeView,
 
     ListHousesView, AddHouseView, DeleteHouseView,
 
@@ -37,6 +39,8 @@ urlpatterns = [
 
     path('landlords/', LandlordListView.as_view(), name='landlord-list'),
     path('user-has-access/', UserAccessView.as_view(), name='user-has-access'),
+    path('get-profile/', UserProfileView.as_view(), name='get-profile'),
+    path('update-user-name/', UpdateUserNameView.as_view(), name='user-name'),
 
     path('register/', RegisterUserView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
@@ -49,6 +53,13 @@ urlpatterns = [
 
     path('houses/<int:house_id>/add-guest/', AddGuestCodeView.as_view(), name='add-guest'),
     path('houses/<int:house_id>/list-guests/', ListGuestCodesView.as_view(), name='list-guest'),
+    path('houses/<int:house_id>/delete-guest/', DeleteGuestCodeView.as_view(), name='delete-guest'),
+
+    #Thermostat
+    path('houses/<int:house_id>/add-thermostat/', AddThermostatView.as_view(), name='add-thermo'),
+    path('houses/<int:house_id>/delete-thermostat/', DeleteThermostatView.as_view(), name='del-thermo'),
+    path('houses/<int:house_id>/update-thermostat/', UpdateThermostatView.as_view(), name='update-thermo'),
+    path('houses/<int:house_id>/get-thermostat/', GetThermostatView.as_view(), name='get-thermo'),
 
 
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

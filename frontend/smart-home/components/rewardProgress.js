@@ -17,10 +17,14 @@ import Animated, { Easing, useSharedValue, withTiming, useAnimatedStyle, runOnJS
 import Sparkle from "../components/sparkle";
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { useTheme } from "../components/themes/theme";
+
 
 export default function Rewards({ rewards, updateRewardStatus, actual_xp, max_xp }) {
 
     const navigation = useNavigation()
+
+    const { theme, toggleTheme } = useTheme()
 
     const [windowDimensions, setWindowDimensions] = useState(Dimensions.get('window'));
     const scrollViewRef = useRef(null);//so that the scrollview autoscrolls based on the progress circle point
@@ -159,7 +163,7 @@ export default function Rewards({ rewards, updateRewardStatus, actual_xp, max_xp
             <ScrollView
                 ref={scrollViewRef}     //for autoscroll
                 horizontal={true}
-                style={[styles.shadow, styles.progressCard]}
+                style={[styles.shadow, styles.progressCard, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}
                 contentContainerStyle={{ alignItems: 'center' }}
             >
 
@@ -236,7 +240,8 @@ export default function Rewards({ rewards, updateRewardStatus, actual_xp, max_xp
 
                 </View>
             </ScrollView>
-
+            
+            {/*
             <View style={[{flexDirection: 'row', gap:10, top:10 }]}>
                 <TouchableOpacity
                     style={{ height: 20, width: 50, backgroundColor: 'gray', alignItems: 'center' }}
@@ -263,6 +268,7 @@ export default function Rewards({ rewards, updateRewardStatus, actual_xp, max_xp
                     <Text style={{ color: 'white' }}>Max</Text>
                 </TouchableOpacity>
             </View>
+            */}
 
         </View>
     );

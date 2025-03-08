@@ -73,6 +73,7 @@ export default function Guest() {
                 if (guestCodes.includes(code.join(''))) {
                     console.log("Success", "Login successful!");
                     //navigation.navigate("GuestDashboard", { house_id, code }); // Navigate to Guest Home
+                    await AsyncStorage.setItem('guestCode', code.join(''));
                     await AsyncStorage.setItem('deviceAccess', true);
                     await AsyncStorage.setItem('statsAccess', false);
                     await AsyncStorage.setItem('petAccess', true);
@@ -124,7 +125,7 @@ export default function Guest() {
                         selectionColor={'rgb(216, 75, 255)'}
                         value={house_id}
                         onChangeText={(text) => setHouseId(text)}
-                        maxLength={1}
+                        //maxLength={1}
                         keyboardType="numeric"
                     />
                     <View style={{ height: '10%' }}></View>
