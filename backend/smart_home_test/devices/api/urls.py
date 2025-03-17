@@ -7,12 +7,12 @@ from .views import (
     GetDeviceActivityView, UpdateDeviceStatusView, 
     UpdateEnergyConsumptionView, 
     GetDeviceInfoView, UpdateDeviceView,
-    SetEnergyConsumptionView, GetDeviceHealthView,
+    SetEnergyConsumptionView, GetDeviceHealthView, HouseEnergyView,
     GetTodaysAllDevicesActivityView,
 
     TokenRefreshView,
 
-    LandlordListView, UserAccessView, UserProfileView, UpdateUserNameView,
+    LandlordListView, UserAccessView, UserProfileView, UpdateUserNameView, UpdateUserNoobView,
 
     RegisterUserView, LoginView, GuestLoginView,
     AddHouseView, AssignExistingHouseView,
@@ -41,6 +41,7 @@ urlpatterns = [
     path('user-has-access/', UserAccessView.as_view(), name='user-has-access'),
     path('get-profile/', UserProfileView.as_view(), name='get-profile'),
     path('update-user-name/', UpdateUserNameView.as_view(), name='user-name'),
+    path('update-user-noob/', UpdateUserNoobView.as_view(), name='user-noob'),
 
     path('register/', RegisterUserView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
@@ -90,6 +91,7 @@ urlpatterns = [
     path('energy/<int:device_id>/', EnergyListView.as_view(), name='energy-detail'),
     path('device/<int:device_id>/update_energy/', UpdateEnergyConsumptionView.as_view(), name='update-energy-consumption'),
     path('device/<int:device_id>/set_energy/', SetEnergyConsumptionView.as_view(), name='set-energy-consumption'),
+    path('houses/<int:house_id>/total-energy/', HouseEnergyView.as_view(), name='house-energy'),
 
 
     #activity

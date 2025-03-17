@@ -21,6 +21,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
+    new_user = models.BooleanField(default=True)
 
     # Guests log in using a 4-digit code (only applicable for guests)
     guest_code = models.CharField(max_length=4, blank=True, null=True, unique=False)  
@@ -241,6 +242,10 @@ class Device(models.Model):
     extra_energy = models.FloatField(default=0)  # Energy in kWh per second
     #health = models.CharField(max_length=20, choices=[('Healthy', 'Healthy'), ('Sick', 'Sick'), ('Faulty', 'Faulty')], default='Healthy')
     power_save = models.BooleanField(default=False)
+    code = models.CharField(
+        max_length=10,
+        default=0,
+    )
 
     def __str__(self):
         return f"{self.name} ({self.room.name}, {self.room.house.name})"
@@ -313,7 +318,7 @@ class Energy(models.Model):
 
     def update_average(self):
         # Calculate average energy from the 5 values
-        self.average = (self.energy1 + self.energy2 + self.energy3 + self.energy4 + self.energy5 + self.energy6 + self.energy7) / 5
+        self.average = (self.energy1 + self.energy2 + self.energy3 + self.energy4 + self.energy5 + self.energy6 + self.energy7) / 7
         self.save()
 
     def __str__(self):

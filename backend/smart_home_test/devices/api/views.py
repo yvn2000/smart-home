@@ -190,10 +190,12 @@ class LoginView(APIView):
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
             "user_name": user.first_name,
+            "last_name": user.last_name,
             "user_type": user.user_type,
             "has_device_access": user.has_access_to_device_control(),
             "has_stats_access": user.has_access_to_statistics(),
             "has_pet_access": user.has_access_to_pet(),
+            "isNew": user.new_user,
         }, status=status.HTTP_200_OK)
 
 
@@ -288,6 +290,36 @@ class UpdateUserNameView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UpdateUserNoobView(APIView):
+    def post(self, request):
+        token = request.data.get("token")  # Token sent in the body
+
+        if not token:
+            return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Decode the JWT token without any authentication checks
+            access_token = AccessToken(token)
+            user_id = access_token['user_id']  # Extract the user ID from the token
+            user = User.objects.get(id=user_id)  # Get the user object by the user_id
+
+            noobility = request.data.get("noobility")
+
+            if noobility == False:
+                print("Not a Noob >:)")
+                return Response({"message": "Not a Noob >:)"}, status=status.HTTP_200_OK)
+
+            user.new_user = False
+
+            user.save()
+
+
+            return Response({"message": "User Noobility Updated"}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 #House
 
 class ListHousesView(APIView):
@@ -376,10 +408,13 @@ class DeleteHouseView(APIView):
     Delete a house (for Home Owner).
     """
 
-    permission_classes = [IsAuthenticated]  # Only authenticated users can access
+    #permission_classes = [IsAuthenticated]  # Only authenticated users can access
 
     def delete(self, request, house_id):
-        user = request.user
+        token = request.data.get("token")
+        access_token = AccessToken(token)
+        user_id = access_token['user_id']  # Extract the user ID from the token
+        user = User.objects.get(id=user_id)  # Get the user object by the user_id
         try:
             house = House.objects.get(id=house_id)
         except House.DoesNotExist:
@@ -387,6 +422,7 @@ class DeleteHouseView(APIView):
 
         # Only Home Owners can delete their own houses
         if house.owner != user:
+            print("You can only delete your own house.")
             return Response({"error": "You can only delete your own house."}, status=status.HTTP_403_FORBIDDEN)
 
         house.delete()
@@ -1423,6 +1459,56 @@ class EnergyListView(APIView):
             energy_data = Energy.objects.all()
             serializer = EnergySerializer(energy_data, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
+class HouseEnergyView(APIView):
+    def get(self, request, house_id):
+        try:
+            house = House.objects.get(pk=house_id)
+            
+            # Get all devices in the house through rooms
+            devices = Device.objects.filter(room__house=house)
+            
+            total_energy = 0
+            total_energy_1 = 0
+            total_energy_2 = 0
+            total_energy_3 = 0
+            total_energy_4 = 0
+            total_energy_5 = 0
+            total_energy_6 = 0
+            total_energy_7 = 0
+            device_count = 0
+            
+            for device in devices:
+                try:
+                    energy = Energy.objects.get(device=device)
+                    total_energy += energy.energy1
+                    total_energy_1 += energy.energy1
+                    total_energy_2 += energy.energy2
+                    total_energy_3 += energy.energy3
+                    total_energy_4 += energy.energy4
+                    total_energy_5 += energy.energy5
+                    total_energy_6 += energy.energy6
+                    total_energy_7 += energy.energy7
+                    device_count += 1
+                except Energy.DoesNotExist:
+                    continue
+            
+            return Response({
+                "house_id": house_id,
+                "total_devices": device_count,
+                "total_energy": total_energy,
+                "total_energy1": total_energy_1,
+                "total_energy2": total_energy_2,
+                "total_energy3": total_energy_3,
+                "total_energy4": total_energy_4,
+                "total_energy5": total_energy_5,
+                "total_energy6": total_energy_6,
+                "total_energy7": total_energy_7,
+                "average_energy": total_energy / device_count if device_count > 0 else 0
+            }, status=status.HTTP_200_OK)
+            
+        except House.DoesNotExist:
+            return Response({"error": "House not found"}, status=status.HTTP_404_NOT_FOUND)
 
 class UpdateEnergyConsumptionView(APIView):
     def patch(self, request, device_id):

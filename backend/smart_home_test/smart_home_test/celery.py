@@ -20,7 +20,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 app.conf.beat_schedule = {
     'update-device-energy-every-5-seconds': {
         'task': 'devices.tasks.update_device_energy',  # Correct task path
-        'schedule': 2.0,  # Run every 5 seconds
+        'schedule': 5.0,  # Run every 5 seconds
     },
 }
 
