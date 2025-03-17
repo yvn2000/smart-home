@@ -235,15 +235,26 @@ export default function DevicesScreen() {
                     if (savedCurrentRoom) {
                         const savedRoomId = parseInt(savedCurrentRoom, 10);
                         const roomExists = fetchedRooms.some(room => room.room_id === savedRoomId);
-                        newCurrentRoom = roomExists ? savedRoomId : fetchedRooms[0].room_id;
+                        newCurrentRoom = roomExists ? savedRoomId : (fetchedRooms.length!=0 ? fetchedRooms[0].room_id : 0);
                     } else {
-                        newCurrentRoom = fetchedRooms[0].room_id;
+                        if (fetchedRooms.length!=0) {
+                            newCurrentRoom = fetchedRooms[0].room_id;
+                        }
+                        else {
+                            newCurrentRoom = 0
+                        }
                     }
                     // Force devices update
-                    setCurrentRoom(newCurrentRoom);
+                    if (fetchedRooms.length!=0) {
+                        setCurrentRoom(newCurrentRoom);
+                        //const roomData = rooms.find(item => item.room_id === currentRoom);
+                        const roomData = fetchedRooms.find(room => room.room_id === newCurrentRoom);
+                        setDevices(roomData?.devices || []);
+                    }
+                    //setCurrentRoom(newCurrentRoom);
                     //const roomData = rooms.find(item => item.room_id === currentRoom);
-                    const roomData = fetchedRooms.find(room => room.room_id === newCurrentRoom);
-                    setDevices(roomData?.devices || []);
+                    //const roomData = fetchedRooms.find(room => room.room_id === newCurrentRoom);
+                    //setDevices(roomData?.devices || []);
                 }
             };
 
