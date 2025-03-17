@@ -50,107 +50,6 @@ export default function DevicesScreen() {
 
 
 
-    /*
-    const [allRooms, setRooms] = useState([]);
-    const [currentRoom, setCurrentRoom] = useState(null);
-    
-
-    const fetchRooms = async () => {
-        try {
-            const response = await fetch(Platform.OS == 'android' ? "http://10.0.2.2:8000/api/rooms/" : "http://127.0.0.1:8000/api/rooms/");
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            //console.log("Fetched Rooms:", data);
-            setRooms(data);
-
-        } catch (err) {
-            //setError(err.message);
-        }
-    };
-
-
-
-    useEffect(() => {
-        fetchRooms();
-    }, []);
-
-
-    useEffect(() => {
-        if (allRooms.length > 0 && !currentRoom) {
-            setCurrentRoom(allRooms[0].room_id); // Set first room's ID only if currentRoom is undefined or null
-        }
-    }, [allRooms]);
-
-
-    
-
-    const addRoom = async (room) => {
-        const newRoom = {
-            //name: `Room ${allRooms.length + 1}`,
-            name: (room === undefined || room.trim() === "") ? `Room ${allRooms.length + 1}` : room,
-            temperature: 22,
-        };
-
-        try {
-            const response = await fetch(Platform.OS == 'android' ? `http://10.0.2.2:8000/api/add-room/` : `http://127.0.0.1:8000/api/add-room/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newRoom),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const addedRoom = await response.json();
-            setRooms((prevRooms) => [...prevRooms, addedRoom]);
-        } catch (error) {
-            console.error('Error adding room:', error.message);
-            Alert.alert('Error', 'Could not add room.');
-        }
-    };
-
-
-    const deleteRoom = async () => {
-        if (allRooms.length === 0) {
-            Alert.alert('No rooms to delete');
-            return;
-        }
-
-        try {
-            //const response = await fetch(`${API_BASE_URL}/delete-room/${lastRoom.room_id}/`, {
-            const response = await fetch(
-                Platform.OS == 'android' ? `http://10.0.2.2:8000/api/delete-room/${currentRoom}/` : `http://127.0.0.1:8000/api/delete-room/${currentRoom}/`,
-                {
-                    method: 'DELETE',
-                });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            setRooms((prevRooms) => {
-                const updatedRooms = prevRooms.filter(room => room.room_id !== currentRoom);
-                // Set the new current room if there are remaining rooms
-                const newCurrentRoom = updatedRooms.length > 0 ? updatedRooms[0].room_id : null;
-                setCurrentRoom(newCurrentRoom);  // Update current room
-                return updatedRooms;
-            });
-        } catch (error) {
-            console.error('Error deleting room:', error.message);
-            Alert.alert('Error', 'Could not delete room.');
-        }
-    };
-
-    */
-
-
-
-
 
 
     const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -219,18 +118,25 @@ export default function DevicesScreen() {
     }
 
     const getHouse = async () => {
-        setHouseId(await AsyncStorage.getItem("house_id"))
+        const houseid = await AsyncStorage.getItem("house_id")
+        setHouseId(houseid)
         //console.log("houseID " + house_id)
         //setLoading(false)
+        /*
         if (house_id != 0) {
             fetchRooms2()
         }
+            */
+        return houseid;
 
     }
 
+
+    /*
     useEffect(() => {
-        getHouse()
+        const id = getHouse()
     }, [house_id])
+    */
 
 
 
@@ -240,35 +146,52 @@ export default function DevicesScreen() {
     const [devices, setDevices] = useState([])
 
 
-    const fetchRooms2 = async () => {
+    const fetchRooms2 = async (house_id) => {
 
         const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/rooms/` : `http://10.0.2.2:8000/api/houses/${house_id}/rooms/`
 
         try {
             const response = await fetch(roomsUrl);
+            console.log(response)
+            console.log("House_id" + house_id)
+            console.log("response fetched")
             const data = await response.json();
-
+            console.log(data)
+            console.log("data fetched")
             const stringData = JSON.stringify(data)
             const arrayData = JSON.parse(stringData)
 
             if (response.ok) {
+                console.log("Rooms Fetched")
                 setRooms2(arrayData);
+
+                //setRooms2(data);
+
+
                 //console.log("Data: " + arrayData)
                 //console.log(rooms)
                 //console.log(stringData[0].room_id)
                 //console.log(rooms[0].room_id)
                 //console.log("Data: "+stringData)
                 //console.log("Rooms: "+rooms)
+
+                /*
                 if (data.length > 0 && !currentRoom) {
+                    console.log("currentRoom: " + currentRoom)
                     setCurrentRoom(data[0].room_id);
                 }
+                */
+
+                return arrayData;
+
+
             } else {
                 //setError(data.error || "Failed to fetch rooms");
                 console.log(data.error || "Failed to fetch rooms")
             }
         } catch (error) {
             //setError("Network error, please try again.");
-            console.log(error)
+            console.log("Error:" + error)
         } finally {
 
             //setLoading(false);
@@ -286,7 +209,7 @@ export default function DevicesScreen() {
                 }
             }
 
-            if (pres == false) {
+            if (pres == false && !currentRoom) {
                 setCurrentRoom(rooms[0].room_id); // Set first room's ID only if currentRoom is undefined or null
                 setCurrentRoomName(rooms[0].name)
             }
@@ -297,12 +220,29 @@ export default function DevicesScreen() {
         useCallback(() => {
             let isActive = true;
 
+            console.log("currentRoom upon return: " + currentRoom)
+
             const refresh = async () => {
-                await getHouse();
-                await fetchRooms2();
-                if (isActive) {
+                const id = await getHouse();
+                const fetchedRooms = await fetchRooms2(id);
+
+                // Retrieve saved currentRoom
+                const savedCurrentRoom = await AsyncStorage.getItem('currentRoom');
+                let newCurrentRoom = null;
+
+
+                if (isActive && id) {
+                    if (savedCurrentRoom) {
+                        const savedRoomId = parseInt(savedCurrentRoom, 10);
+                        const roomExists = fetchedRooms.some(room => room.room_id === savedRoomId);
+                        newCurrentRoom = roomExists ? savedRoomId : fetchedRooms[0].room_id;
+                    } else {
+                        newCurrentRoom = fetchedRooms[0].room_id;
+                    }
                     // Force devices update
-                    const roomData = rooms.find(item => item.room_id === currentRoom);
+                    setCurrentRoom(newCurrentRoom);
+                    //const roomData = rooms.find(item => item.room_id === currentRoom);
+                    const roomData = fetchedRooms.find(room => room.room_id === newCurrentRoom);
                     setDevices(roomData?.devices || []);
                 }
             };
@@ -312,14 +252,24 @@ export default function DevicesScreen() {
             return () => {
                 isActive = false;
             };
-        }, [house_id, currentRoom]) // Add proper dependencies
+        }, [])//[house_id, currentRoom]) // Add proper dependencies
     );
 
+
+    // Add useEffect to persist currentRoom
+    useEffect(() => {
+        const saveCurrentRoom = async () => {
+            if (currentRoom !== null) {
+                await AsyncStorage.setItem('currentRoom', currentRoom.toString());
+            }
+        };
+        saveCurrentRoom();
+    }, [currentRoom]);
 
 
     useEffect(() => {
 
-        fetchRooms2()
+        fetchRooms2(house_id)
 
         //console.log("fethced rooms")
 
@@ -386,6 +336,7 @@ export default function DevicesScreen() {
 
 
 
+
     return (
 
 
@@ -405,7 +356,7 @@ export default function DevicesScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20, justifyContent: 'center' }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>
                                     Device Control
                                 </Text>
                                 {true &&
@@ -424,7 +375,7 @@ export default function DevicesScreen() {
                                             style={[{}]}
                                         >
 
-                                            <View style={[styles.dropdownContainer, {borderRadius:30,}]}>
+                                            <View style={[styles.dropdownContainer, { borderRadius: 30, }]}>
                                                 <TouchableOpacity style={styles.dropdownItem}
                                                     onPress={() => {
                                                         setDropdownVisible(false)
@@ -441,13 +392,15 @@ export default function DevicesScreen() {
                                                         })
                                                     }}
                                                 >
-                                                    <View style={{ backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10, 
-                                                        flexDirection: 'row', alignItems: 'center', gap: 10, borderTopLeftRadius:30, borderTopRightRadius:30 }}>
-                                                        <MaterialCommunityIcons name="plus" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
-                                                        <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Add Room</Text>
+                                                    <View style={{
+                                                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10,
+                                                        flexDirection: 'row', alignItems: 'center', gap: 10, borderTopLeftRadius: Platform.OS == 'web' ? 30 : 20, borderTopRightRadius: Platform.OS == 'web' ? 30 : 20
+                                                    }}>
+                                                        <MaterialCommunityIcons name="plus" size={Platform.OS == 'web' ? 70 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                        <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Add Room</Text>
                                                     </View>
                                                 </TouchableOpacity>
-                                                <TouchableOpacity style={styles.dropdownItem}
+                                                {rooms.length != 0 && <TouchableOpacity style={styles.dropdownItem}
                                                     onPress={() => {
                                                         setDropdownVisible(false)
                                                         navigation.navigate("RoomAuto", {
@@ -455,13 +408,13 @@ export default function DevicesScreen() {
                                                         })
                                                     }}
                                                 >
-                                                    <View style={{ backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                        <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
-                                                        <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Automations List</Text>
+                                                    <View style={{ backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                                        <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                        <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Automations List</Text>
                                                     </View>
-                                                </TouchableOpacity>
+                                                </TouchableOpacity>}
 
-                                                <TouchableOpacity style={{}} onPress={() => {
+                                                {rooms.length != 0 && <TouchableOpacity style={{}} onPress={() => {
                                                     toggleDropdown()
                                                     navigation.navigate("Room-Delete", {
                                                         roomName: currentRoomName,
@@ -471,11 +424,11 @@ export default function DevicesScreen() {
 
                                                 }}>
                                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
-                                                        style={{ backgroundColor: 'red', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10, borderBottomLeftRadius:30, borderBottomRightRadius:30 }}>
+                                                        style={{ backgroundColor: 'red', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10, borderBottomLeftRadius: Platform.OS == 'web' ? 30 : 20, borderBottomRightRadius: Platform.OS == 'web' ? 30 : 20 }}>
                                                         <MaterialCommunityIcons name="home-remove-outline" size={Platform.OS == 'web' ? 70 : 20} color={'white'} />
                                                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Delete Room</Text>
                                                     </LinearGradient>
-                                                </TouchableOpacity>
+                                                </TouchableOpacity>}
 
                                             </View>
 
@@ -495,7 +448,7 @@ export default function DevicesScreen() {
                                     <View style={[styles.roomScroller, (Platform.OS != 'web') && { height: 55 }]}>
 
                                         <ScrollView
-                                            showsHorizontalScrollIndicator={Platform.OS=='web' ? true : false}
+                                            showsHorizontalScrollIndicator={Platform.OS == 'web' ? true : false}
                                             horizontal={true}
                                             style={[{
                                                 width: '100%',
@@ -508,9 +461,9 @@ export default function DevicesScreen() {
                                                 <View style={[{ alignItems: 'center', marginLeft: 20, height: (Platform.OS == 'web') ? 80 : 50 }]}>
 
 
-                                                    <LinearGradient colors={[(item.room_id == currentRoom) ? 'rgb(255, 3, 184)' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'), 'transparent']}
+                                                    <LinearGradient colors={[(item.room_id == currentRoom) ? 'rgb(255, 3, 184)' : (theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'), 'transparent']}
                                                         style={[styles.room, {
-                                                            backgroundColor: (item.room_id == currentRoom) ? 'rgb(216, 75, 255)' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'),
+                                                            backgroundColor: (item.room_id == currentRoom) ? 'rgb(216, 75, 255)' : (theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'),
                                                             padding: 0,
                                                         }]}
                                                     >
@@ -529,8 +482,9 @@ export default function DevicesScreen() {
                                                             }}>
                                                             <Text style={[{
                                                                 //width:50,
-                                                                fontSize: Platform.OS == 'web' ? 30 : 10,
-                                                                color: (item.room_id == currentRoom) ? 'rgb(255, 255, 255)' : (theme=='dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)')
+                                                                fontSize: Platform.OS == 'web' ? 30 : 14,
+                                                                fontWeight: 'bold',
+                                                                color: (item.room_id == currentRoom) ? 'rgb(255, 255, 255)' : (theme == 'dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)')
                                                             }]}>
                                                                 {item.name}
                                                             </Text>
@@ -544,16 +498,20 @@ export default function DevicesScreen() {
                                                             style={[{
                                                                 backgroundColor: 'rgb(216, 75, 255)',
                                                                 borderColor: 'rgb(216, 75, 255)',
-                                                                borderWidth: 2, width: '70%', top: 3
+                                                                borderWidth: Platform.OS == 'web' ? 2 : 1, width: '70%', top: 3
                                                             }]}></View>
                                                     }
                                                 </View>
                                             ))}
 
-                                            <TouchableOpacity
+
+
+                                            {Platform.OS == 'web' && <TouchableOpacity
                                                 style={[styles.room,
-                                                { backgroundColor: (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'), aspectRatio: 1,
-                                                    padding: 10, marginLeft: 20, flexDirection:'row' }]}
+                                                {
+                                                    backgroundColor: (theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'), aspectRatio: 1,
+                                                    padding: 10, marginLeft: 20, flexDirection: 'row'
+                                                }]}
                                                 onPress={() => {
                                                     navigation.navigate("Room-Add", {
                                                         houseId: house_id,
@@ -567,8 +525,8 @@ export default function DevicesScreen() {
                                                         //setRooms, setRooms
                                                     })
                                                 }}>
-                                                <MaterialCommunityIcons name="plus" size={40} color={(theme=='dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)')} />
-                                            </TouchableOpacity>
+                                                <MaterialCommunityIcons name="plus" size={40} color={(theme == 'dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)')} />
+                                            </TouchableOpacity>}
 
 
 
@@ -585,7 +543,7 @@ export default function DevicesScreen() {
 
                                 <View style={[styles.roomPanel, { flexDirection: 'row' }]}>
 
-                                    {Platform.OS == 'web' &&
+                                    {Platform.OS == 'web' && false &&
 
                                         <View style={[{ width: '50%', alignItems: 'center' }]}>
                                             <TempDial device_id={999} deviceName={"Air Conditioner"} changeable={true} tempArg={DUMMY_DATA[0].temperature} />
@@ -595,7 +553,7 @@ export default function DevicesScreen() {
 
 
 
-                                    <View style={[{ width: Platform.OS == 'web' ? '50%' : '100%', justifyContent:'center' }]}>
+                                    <View style={[{ width: Platform.OS == 'web' ? '100%' : '100%', justifyContent: 'center' }]}>
 
                                         {Platform.OS == 'web' && false &&
                                             <View style={[{
@@ -642,7 +600,7 @@ export default function DevicesScreen() {
                                         }
 
 
-                                        {Platform.OS == 'web' && <View style={[{}]}>
+                                        {Platform.OS == 'web' && rooms.length != 0 && <View style={[{ alignItems: 'center', justifyContent: 'center', marginTop: 40, marginBottom: 20, }]}>
 
                                             <View style={[{ width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: '5%' }]}>
 
@@ -712,8 +670,10 @@ export default function DevicesScreen() {
 
                             <View style={[{ height: 30 }]}></View>
 
+
+
                             <View style={[]}>
-                                <DevicesGrid currentRoom={currentRoom} house_id={house_id} />
+                                <DevicesGrid currentRoom={currentRoom} house_id={house_id} allRooms={rooms} />
                             </View>
 
 

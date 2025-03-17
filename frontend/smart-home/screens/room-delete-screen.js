@@ -75,6 +75,7 @@ const deleteRoom = async () => {
 
         if (response.ok) {
             setRoomCount(-1)
+            navigation.goBack();
             //Alert.alert("Success", "Room deleted!");
             //fetchRooms(); // Refresh list
         } else {
@@ -131,7 +132,7 @@ const deleteRoom = async () => {
                                     to delete the following room? 
                                 </Text>
                                 <Text style={{textAlign:'center', width:'80%', fontSize: Platform.OS=='web' ? 40 : 30, top:-20, fontWeight:'bold', color:'rgb(255, 3, 3)'}}>
-                                    {roomName}
+                                    {roomName} with ID: {currentRoom}
                                 </Text>
 
 
@@ -145,7 +146,7 @@ const deleteRoom = async () => {
                                         <TouchableOpacity onPress={() => {
                                             //addDeviceOld(newDeviceName, newDeviceLogo, newDeviceTemp)
                                             deleteRoom()
-                                            navigation.goBack();
+                                            
                                         }}
                                             style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
                                             <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'white' }}>Delete Room</Text>

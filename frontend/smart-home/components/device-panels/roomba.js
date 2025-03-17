@@ -23,8 +23,28 @@ import Animated, {
 import VerticalSlider from "../vertical-slider";
 import HorizontalSlider from "../horizontal-slider";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function RoombaPanel({ device }) {
+
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
+
 
     const [deviceInfo, setDeviceInfo] = useState({});
     const [loading, setLoading] = useState(true); // Track loading state
@@ -267,7 +287,7 @@ export default function RoombaPanel({ device }) {
     }, [deviceInfo, device.device_id, deviceInfo.data])
 
 
-    
+
 
     const getNextItem = (options, currentItem) => {
         const currentIndex = options.indexOf(currentItem);
@@ -288,33 +308,33 @@ export default function RoombaPanel({ device }) {
 
 
 
-    if (Platform.OS!='web') {
+    if (Platform.OS != 'web') {
         return (
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 50, paddingBottom:30 }}>
-    
-    
-    
-                <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
-    
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 50, paddingBottom: 30 }}>
+
+
+
+                <View style={[styles.shadow, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+
                     <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Activity Status</Text>
-    
+
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', padding: 18, borderRadius: 30, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }]}
                     >
-    
+
                         {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
                         <View style={{ marginLeft: 30, marginRight: 30, }}>
                             <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>{status}</Text>
-    
+
                         </View>
-    
+
                     </LinearGradient>
-    
-    
-    
+
+
+
                     <Text style={{ fontSize: 15, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Cleaning Progress</Text>
-    
+
                     <View
                         style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
@@ -325,16 +345,16 @@ export default function RoombaPanel({ device }) {
                             {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
                             <Text style={{ marginLeft: 10, marginRight: 30, fontSize: 20, fontWeight: 'bold', color: 'white' }}>{"37%"}</Text>
                         </LinearGradient>
-    
-    
-    
+
+
+
                     </View>
-    
-    
+
+
                     <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Mode</Text>
-    
+
                     <TouchableOpacity onPress={() => { newMode(); addAction("Switched Mode To " + mode) }}
-                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                         >
@@ -342,23 +362,23 @@ export default function RoombaPanel({ device }) {
                             />
                             {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
                         </LinearGradient>
-    
+
                         <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 25, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{mode}</Text>
-    
+
                     </TouchableOpacity>
-    
-    
-    
-    
-    
+
+
+
+
+
                 </View>
-    
-    
+
+
             </View>
-    
-    
-    
-    
+
+
+
+
         );
     }
 
@@ -373,7 +393,7 @@ export default function RoombaPanel({ device }) {
 
 
 
-            <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+            <View style={[styles.shadow, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
 
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Activity Status</Text>
 
@@ -394,7 +414,7 @@ export default function RoombaPanel({ device }) {
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Cleaning Progress</Text>
 
                 <View
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}
                     >
@@ -412,7 +432,7 @@ export default function RoombaPanel({ device }) {
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Mode</Text>
 
                 <TouchableOpacity onPress={() => { newMode(); addAction("Switched Mode To " + mode) }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >

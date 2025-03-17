@@ -23,8 +23,27 @@ import Animated, {
 import VerticalSlider from "../vertical-slider";
 import HorizontalSlider from "../horizontal-slider";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function WMPanel() {
+
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
 
 
     const [washStates, setWashStates] = useState({
@@ -73,12 +92,12 @@ export default function WMPanel() {
 
 
 
-                <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center', paddingTop:0 }]}>
+                <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center', paddingTop:0 }]}>
 
                     <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Status</Text>
 
                     <TouchableOpacity onPress={() => { setPause(!pause) }}
-                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                         >
@@ -97,7 +116,7 @@ export default function WMPanel() {
                     <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Washing Progress</Text>
 
                     <View
-                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}
                         >
@@ -115,7 +134,7 @@ export default function WMPanel() {
                     <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Wash Cycle</Text>
 
                     <TouchableOpacity onPress={() => { newWash() }}
-                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                         >
@@ -157,12 +176,12 @@ export default function WMPanel() {
 
 
 
-            <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+            <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
 
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Status</Text>
 
                 <TouchableOpacity onPress={() => { setPause(!pause) }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >
@@ -181,7 +200,7 @@ export default function WMPanel() {
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Washing Progress</Text>
 
                 <View
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}
                     >
@@ -199,7 +218,7 @@ export default function WMPanel() {
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Wash Cycle</Text>
 
                 <TouchableOpacity onPress={() => { newWash() }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >

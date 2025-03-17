@@ -23,8 +23,27 @@ import Animated, {
 import VerticalSlider from "../vertical-slider";
 import Slider from "react-native-sliders";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function TVPanel({ device }) {     //width is percentage
+
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
 
 
     const [deviceInfo, setDeviceInfo] = useState({});
@@ -211,7 +230,7 @@ export default function TVPanel({ device }) {     //width is percentage
         }
     };
 
-  
+
 
     useEffect(() => {
         updateTelevision();
@@ -258,7 +277,7 @@ export default function TVPanel({ device }) {     //width is percentage
                 <View style={[{ width: '100%', justifyContent: 'center', alignItems: 'center', gap: '5%' }]}>
 
                     <TouchableOpacity onPress={() => { switchInput() }}
-                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30, width: '65%' }]}>
+                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30, width: '65%' }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                         >
@@ -354,7 +373,7 @@ export default function TVPanel({ device }) {     //width is percentage
                         <TouchableOpacity onPress={() => { setChannel(channel - 1) }}
                             style={{ justifyContent: 'center', alignItems: 'center', padding: 5 }}>
                             <MaterialCommunityIcons name="chevron-left" size={50}
-                                color={'black'} />
+                                color={'rgb(255, 3, 184)'} />
 
                         </TouchableOpacity>
 
@@ -376,7 +395,7 @@ export default function TVPanel({ device }) {     //width is percentage
                         <TouchableOpacity onPress={() => { setChannel(channel + 1) }}
                             style={{ justifyContent: 'center', alignItems: 'center', padding: 5 }}>
                             <MaterialCommunityIcons name="chevron-right" size={50}
-                                color={'black'} />
+                                color={'rgb(255, 3, 184)'} />
 
                         </TouchableOpacity>
 
@@ -458,7 +477,7 @@ export default function TVPanel({ device }) {     //width is percentage
             <View style={[{ width: '50%', justifyContent: 'center', alignItems: 'center', gap: '10%' }]}>
 
                 <TouchableOpacity onPress={() => { switchInput() }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30, width: '55%' }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30, width: '55%' }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >
@@ -554,7 +573,7 @@ export default function TVPanel({ device }) {     //width is percentage
                     <TouchableOpacity onPress={() => { setChannel(channel - 1) }}
                         style={{ justifyContent: 'center', alignItems: 'center', padding: 5 }}>
                         <MaterialCommunityIcons name="chevron-left" size={70}
-                            color={'black'} />
+                            color={'rgb(255, 3, 184)'} />
 
                     </TouchableOpacity>
 
@@ -576,7 +595,7 @@ export default function TVPanel({ device }) {     //width is percentage
                     <TouchableOpacity onPress={() => { setChannel(channel + 1) }}
                         style={{ justifyContent: 'center', alignItems: 'center', padding: 5 }}>
                         <MaterialCommunityIcons name="chevron-right" size={70}
-                            color={'black'} />
+                            color={'rgb(255, 3, 184)'} />
 
                     </TouchableOpacity>
 
@@ -587,11 +606,11 @@ export default function TVPanel({ device }) {     //width is percentage
 
             <View style={[styles.shadow, {
                 width: '50%', padding: 30,
-                backgroundColor: 'white', borderRadius: 40,
-                alignItems:'center', gap:30,
+                backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 40,
+                alignItems: 'center', gap: 30,
             }]}>
 
-                <View style={{ width: '70%', justifyContent: 'center', alignItems: 'center', gap:10 }}>
+                <View style={{ width: '70%', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
                     <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>Volume</Text>
 
                     <View style={{ width: '100%', }}>

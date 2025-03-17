@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from "expo-status-bar";
 import {
     Platform, StyleSheet, ScrollView, Text, View, TextInput, Button,
-    TouchableOpacity, FlatList, CheckBox, NavigationContainer
+    TouchableOpacity, FlatList, CheckBox, NavigationContainer, Image
 
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -55,23 +55,27 @@ export default function LoginScreen() {
 
 
 
+
+
                     {(Platform.OS == 'web' || true) && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.mainContainer]} >
 
                         {
                             <View style={[{
                                 width: Platform.OS == 'web' ? `${100 - loginCardWidth}%` : '100%',
-                                height: Platform.OS == 'web' ? '100%' : '30%',
+                                height: Platform.OS == 'web' ? '100%' : '20%',
                                 justifyContent: 'center', alignItems: 'center',
                                 flexDirection: 'row', gap: '20%'
                             }]}>
 
                                 <View
                                     style={{
-                                        justifyContent: 'center', alignItems: 'center', backgroundColor: 'white',
+                                        justifyContent: 'center', alignItems: 'center',
                                         borderRadius: 500, width: 100, height: 100, //position: 'absolute',
                                     }}
                                 >
-                                    <Text>LOGO?</Text>
+                                    <Image style={{
+                                        width: 300, height: 300
+                                    }} source={require('../assets/images/app/app_logo.png')} />
                                 </View>
                                 <View>
                                     <Text style={{ fontSize: 30, color: 'white', fontWeight: 'bold' }}>Hello,</Text>
@@ -93,6 +97,12 @@ export default function LoginScreen() {
 
 
                     </LinearGradient>}
+
+
+                    <TouchableOpacity style={{ position: 'absolute', top: Platform.OS == 'web' ? 20 : 70, left: Platform.OS == 'web' ? 10 : 0 }}
+                        onPress={() => { navigation.goBack() }}>
+                        <MaterialCommunityIcons name="chevron-left" color={'rgb(255, 255, 255)'} size={Platform.OS == 'web' ? 50 : 40} />
+                    </TouchableOpacity>
 
 
 

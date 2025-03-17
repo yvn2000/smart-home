@@ -23,8 +23,29 @@ import Animated, {
 import VerticalSlider from "../vertical-slider";
 import Slider from "react-native-sliders";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function LightsPanel({ device }) {     //width is percentage
+
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
+
+
 
     const [deviceInfo, setDeviceInfo] = useState({});
     const [loading, setLoading] = useState(true); // Track loading state
@@ -230,7 +251,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                     width:40,
                                     backgroundColor: 'rgb(225, 0, 255)',
                                     borderWidth: 3,
-                                    borderColor: (prevColor=='violet' ? 'black' : 'rgb(225, 0, 255)')
+                                    borderColor: (prevColor=='violet' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(225, 0, 255)')
                                 }]}
                                 onPress={() => { setColor("violet"); addAction("Set Color to Violet"); }}
                             >
@@ -240,7 +261,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(255, 0, 153)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='pink' ? 'black' : 'rgb(255, 0, 153)')
+                                borderColor: (prevColor=='pink' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 0, 153)')
                             }]}
                                 onPress={() => { setColor("pink"); addAction("Set Color to Pink"); }}>
     
@@ -249,7 +270,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(149, 0, 255)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='purple' ? 'black' : 'rgb(149, 0, 255)')
+                                borderColor: (prevColor=='purple' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(149, 0, 255)')
                             }]}
                                 onPress={() => { setColor("purple"); addAction("Set Color to Purple"); }}>
     
@@ -258,7 +279,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(4, 0, 255)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='blue' ? 'black' : 'rgb(4, 0, 255)')
+                                borderColor: (prevColor=='blue' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(4, 0, 255)')
                             }]}
                                 onPress={() => { setColor("blue"); addAction("Set Color to Blue"); }}>
     
@@ -267,7 +288,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(0, 255, 255)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='cyan' ? 'black' : 'rgb(0, 255, 255)')
+                                borderColor: (prevColor=='cyan' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(0, 255, 255)')
                             }]}
                                 onPress={() => { setColor("cyan"); addAction("Set Color to Cyan"); }}>
     
@@ -279,7 +300,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(0, 255, 34)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='green' ? 'black' : 'rgb(0, 255, 34)')
+                                borderColor: (prevColor=='green' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(0, 255, 34)')
                             }]}
                                 onPress={() => { setColor("green"); addAction("Set Color to Green"); }}>
     
@@ -288,7 +309,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(242, 255, 0)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='yellow' ? 'black' : 'rgb(242, 255, 0)')
+                                borderColor: (prevColor=='yellow' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(242, 255, 0)')
                             }]}
                                 onPress={() => { setColor("yellow"); addAction("Set Color to Yellow"); }}>
     
@@ -297,7 +318,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(255, 145, 0)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='orange' ? 'black' : 'rgb(255, 145, 0)')
+                                borderColor: (prevColor=='orange' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 145, 0)')
                             }]}
                                 onPress={() => { setColor("orange"); addAction("Set Color to Orange"); }}>
     
@@ -306,7 +327,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(255, 0, 0)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='red' ? 'black' : 'rgb(255, 0, 0)')
+                                borderColor: (prevColor=='red' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 0, 0)')
                             }]}
                                 onPress={() => { setColor("red"); addAction("Set Color to Red"); }}>
     
@@ -315,7 +336,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                                 width:40,
                                 backgroundColor: 'rgb(255, 255, 255)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='white' ? 'black' : 'rgb(255, 255, 255)')
+                                borderColor: (prevColor=='white' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 255, 255)')
                             }]}
                                 onPress={() => { setColor("white"); addAction("Set Color to White"); }}>
     
@@ -330,7 +351,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                 </View>
     
     
-                <View style={[styles.shadow, { backgroundColor: 'white', width: '50%', alignItems: 'center', justifyContent:'center', gap: 10, borderRadius: 50, paddingBottom: 20, paddingTop: 20 }]}>
+                <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', width: '50%', alignItems: 'center', justifyContent:'center', gap: 10, borderRadius: 50, paddingBottom: 20, paddingTop: 20 }]}>
     
                     <Text style={{ fontSize: 12, marginTop: 10, marginBottom: 10, fontWeight: 'bold' }}>Light Intensity</Text>
     
@@ -384,7 +405,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                             style={[styles.hueOption, {
                                 backgroundColor: 'rgb(225, 0, 255)',
                                 borderWidth: 3,
-                                borderColor: (prevColor=='violet' ? 'black' : 'rgb(225, 0, 255)')
+                                borderColor: (prevColor=='violet' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(225, 0, 255)')
                             }]}
                             onPress={() => { setColor("violet"); addAction("Set Color to Violet"); }}
                         >
@@ -393,7 +414,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(255, 0, 153)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='pink' ? 'black' : 'rgb(255, 0, 153)')
+                            borderColor: (prevColor=='pink' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 0, 153)')
                         }]}
                             onPress={() => { setColor("pink"); addAction("Set Color to Pink"); }}>
 
@@ -401,7 +422,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(149, 0, 255)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='purple' ? 'black' : 'rgb(149, 0, 255)')
+                            borderColor: (prevColor=='purple' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(149, 0, 255)')
                         }]}
                             onPress={() => { setColor("purple"); addAction("Set Color to Purple"); }}>
 
@@ -409,7 +430,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(4, 0, 255)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='blue' ? 'black' : 'rgb(4, 0, 255)')
+                            borderColor: (prevColor=='blue' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(4, 0, 255)')
                         }]}
                             onPress={() => { setColor("blue"); addAction("Set Color to Blue"); }}>
 
@@ -417,7 +438,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(0, 255, 255)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='cyan' ? 'black' : 'rgb(0, 255, 255)')
+                            borderColor: (prevColor=='cyan' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(0, 255, 255)')
                         }]}
                             onPress={() => { setColor("cyan"); addAction("Set Color to Cyan"); }}>
 
@@ -428,7 +449,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(0, 255, 34)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='green' ? 'black' : 'rgb(0, 255, 34)')
+                            borderColor: (prevColor=='green' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(0, 255, 34)')
                         }]}
                             onPress={() => { setColor("green"); addAction("Set Color to Green"); }}>
 
@@ -436,7 +457,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(242, 255, 0)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='yellow' == true ? 'black' : 'rgb(242, 255, 0)')
+                            borderColor: (prevColor=='yellow' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(242, 255, 0)')
                         }]}
                             onPress={() => { setColor("yellow"); addAction("Set Color to Yellow"); }}>
 
@@ -444,7 +465,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(255, 145, 0)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='orange' ? 'black' : 'rgb(255, 145, 0)')
+                            borderColor: (prevColor=='orange' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 145, 0)')
                         }]}
                             onPress={() => { setColor("orange"); addAction("Set Color to Orange"); }}>
 
@@ -452,7 +473,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(255, 0, 0)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='red' ? 'black' : 'rgb(255, 0, 0)')
+                            borderColor: (prevColor=='red' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 0, 0)')
                         }]}
                             onPress={() => { setColor("red"); addAction("Set Color to Red"); }}>
 
@@ -460,7 +481,7 @@ export default function LightsPanel({ device }) {     //width is percentage
                         <TouchableOpacity style={[styles.hueOption, {
                             backgroundColor: 'rgb(255, 255, 255)',
                             borderWidth: 3,
-                            borderColor: (prevColor=='white' ? 'black' : 'rgb(255, 255, 255)')
+                            borderColor: (prevColor=='white' ? (theme=='dark' ? 'rgb(199, 199, 199)' : 'rgb(0, 0, 0)') : 'rgb(255, 255, 255)')
                         }]}
                             onPress={() => { setColor("white"); addAction("Set Color to White"); }}>
 
@@ -475,9 +496,9 @@ export default function LightsPanel({ device }) {     //width is percentage
             </View>
 
 
-            <View style={[styles.shadow, { backgroundColor: 'white', width: '50%', alignItems: 'center', justifyContent:'center', gap: 10, borderRadius: 50, paddingBottom: 40, paddingTop: 10 }]}>
+            <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', width: '50%', alignItems: 'center', justifyContent:'center', gap: 10, borderRadius: 50, paddingBottom: 40, paddingTop: 10 }]}>
 
-                <Text style={{ fontSize: 20, marginTop: 10, marginBottom: 10, fontWeight: 'bold' }}>--- Light Intensity ---</Text>
+                <Text style={{ fontSize: 20, marginTop: 10, marginBottom: 10, fontWeight: 'bold', color:'rgb(169, 169, 169)' }}>--- Light Intensity ---</Text>
 
 
                 <Slider

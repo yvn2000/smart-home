@@ -22,9 +22,26 @@ import Animated, {
 
 import VerticalSlider from "../vertical-slider";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function PurifierPanel({ }) {     //width is percentage
 
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
 
 
     const [fanStates, setFan] = useState({
@@ -113,7 +130,7 @@ export default function PurifierPanel({ }) {     //width is percentage
                     <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, marginTop: 20, color: 'rgb(165, 165, 165)' }}>Fan</Text>
 
                     <TouchableOpacity onPress={() => { newFan() }}
-                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                         >
@@ -167,7 +184,7 @@ export default function PurifierPanel({ }) {     //width is percentage
 
 
 
-            <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+            <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
 
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Air Quality</Text>
 
@@ -187,7 +204,7 @@ export default function PurifierPanel({ }) {     //width is percentage
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Fan</Text>
 
                 <TouchableOpacity onPress={() => { newFan() }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >

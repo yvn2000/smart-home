@@ -18,6 +18,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import Modal from "react-native-modal";
+
 
 export default function PetCustomScreen() {
 
@@ -885,7 +887,7 @@ export default function PetCustomScreen() {
                                 {Platform.OS == 'android' &&
 
                                     <View style={{ flexDirection: 'row', gap: '5%', marginTop: -10 }}>
-                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%' }]}>
+                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%', backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                                             <Text style={{ fontWeight: 'bold', color: 'rgb(147, 51, 174)', fontSize: 20 }}>Hats</Text>
 
@@ -917,7 +919,7 @@ export default function PetCustomScreen() {
 
                                         </View>
 
-                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%' }]}>
+                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%', backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                                             <Text style={{ fontWeight: 'bold', color: 'rgb(147, 51, 174)', fontSize: 20 }}>Background</Text>
 
@@ -1029,6 +1031,8 @@ export default function PetCustomScreen() {
                             </View>
 
                             <View style={{ height: 150 }}>{/*To allow space for tab bar to not overlap elements*/}</View>
+
+                            
 
                         </SafeAreaView>
                     </SafeAreaProvider>

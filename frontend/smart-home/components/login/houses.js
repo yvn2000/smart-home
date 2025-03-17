@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import {
     Platform, StyleSheet, ScrollView, Text, View, TextInput, Button,
-    TouchableOpacity, FlatList, CheckBox
+    TouchableOpacity, FlatList, CheckBox,
 
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -29,6 +29,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Houses() {
 
     const navigation = useNavigation()
+
+    const route = useRoute()
+    const { isNew } = route.params
 
 
     const [houses, setHouses] = useState([]);
@@ -201,19 +204,26 @@ export default function Houses() {
     };
 
 
+    const [invalidSelection, setInvalid] = useState(false)
+
+
 
     // Function to handle house creation
     const handleAddHouse = async () => {
         if (!newHouseName || !chosenLandlord) {
-            Alert.alert('Error', 'Please provide both house name and landlord email');
+            //Alert.alert('Error', 'Please provide both house name and landlord email');
+            setInvalid(true)
             return;
         }
+        setInvalid(false)
 
         // Retrieve the access token from AsyncStorage
         const token = await AsyncStorage.getItem('access_token');
         if (!token) {
-            Alert.alert('Error', 'No access token found. Please log in again.');
-            return;
+            await refreshingToken()
+            handleAddHouse();
+            //Alert.alert('Error', 'No access token found. Please log in again.');
+            //return;
         }
 
         // Prepare data for the API request
@@ -244,6 +254,7 @@ export default function Houses() {
                 setChosenLand('')
                 setNewHouseName('')
                 getHouses()
+                setDropdownVisible(false);
                 //Alert.alert('Success', `House "${data.house_name}" added successfully!`);
                 //navigation.goBack(); // Go back to the previous screen (if needed)
             } else {
@@ -277,7 +288,8 @@ export default function Houses() {
     }, [hasStatisticsAccess])
 
     const selectHouse = async (houseid) => {
-        await AsyncStorage.setItem("house_id", houseid)
+        console.log(houseid)
+        await AsyncStorage.setItem("house_id", houseid.toString())
     }
 
 
@@ -321,22 +333,37 @@ export default function Houses() {
             <View style={[styles.shadow, styles.loginInnerCard]}>
 
                 <TouchableOpacity style={{ alignSelf: 'flex-start' }} onPress={() => { navigation.goBack() }}>
-                    <MaterialCommunityIcons name="chevron-left" color={'rgb(216, 75, 255)'} size={30} />
+                    <MaterialCommunityIcons name="chevron-left" color={'rgb(255, 3, 184)'} size={30} />
                 </TouchableOpacity>
 
-                <ScrollView style={{ width: '70%' }}>
+                <ScrollView style={{ width: '100%' }}>
 
-                    <View style={styles.container}>
+                    <View style={[styles.container]}>
                         {houses.map((house) => (
                             <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                 key={house.id} style={[styles.houseItem]}>
 
-                                <TouchableOpacity onPress={() => { selectHouse(house.id); navigation.navigate("Main", {
-                                    statsAccess:hasStatisticsAccess, 
-                                    deviceAccess:hasDeviceControlAccess,
-                                    petAccess:hasPetAccess,
-                                    house: "house",
-                                }); console.log(house);  }}
+                                <TouchableOpacity onPress={() => {
+                                    selectHouse(house.id);
+
+                                    if (isNew==true) {
+                                        navigation.navigate("Tutorial", {
+                                            statsAccess: hasStatisticsAccess,
+                                            deviceAccess: hasDeviceControlAccess,
+                                            petAccess: hasPetAccess,
+                                            isNew: isNew,
+                                            house: "house",
+                                        })
+                                    }
+                                    else {
+                                        navigation.navigate("Main", {
+                                            statsAccess: hasStatisticsAccess,
+                                            deviceAccess: hasDeviceControlAccess,
+                                            petAccess: hasPetAccess,
+                                            house: "house",
+                                        })
+                                    }; console.log(house);
+                                }}
                                     style={{ width: '100%', height: '100%', justifyContent: 'center', padding: 16 }}>
 
                                     <Text style={styles.houseName}>{house.name}</Text>
@@ -362,22 +389,23 @@ export default function Houses() {
 
                             <Modal
                                 isVisible={isDropdownVisible}
-                                onBackdropPress={() => setDropdownVisible(false)} // Close when tapping outside
+                                onBackdropPress={() => {setDropdownVisible(false); setInvalid(false);}} // Close when tapping outside
                                 animationIn="fadeInDown"
                                 animationOut="fadeOutUp"
-                                backdropOpacity={0.1}
+                                backdropOpacity={0.3}
                                 style={[{}]}
                             >
 
-                                <View style={{
-                                    backgroundColor: 'white', height: '80%', width: '35%', alignSelf: 'flex-end',
+                                <View style={[{
+                                    backgroundColor: 'white', height: '80%', width: Platform.OS == 'web' ? '35%' : '80%', alignSelf: 'flex-end',
                                     justifyContent: 'center', alignItems: 'center', right: '10.5%', borderRadius: 50,
-                                    gap: '10%'
-                                }}>
+                                    gap: '8%',
+
+                                }]}>
 
                                     <TouchableOpacity style={{
                                         alignSelf: 'flex-start', position: 'absolute', top: '10%', left: '5%'
-                                    }} onPress={() => { setDropdownVisible(false) }}>
+                                    }} onPress={() => {setDropdownVisible(false); setInvalid(false);}}>
                                         <MaterialCommunityIcons name="chevron-left" color={'rgb(255, 3, 184)'} size={30} />
                                     </TouchableOpacity>
 
@@ -396,7 +424,9 @@ export default function Houses() {
                                                 backgroundColor: 'white', borderWidth: 1,
                                                 padding: 20, flexDirection: 'row', borderRadius: 20, gap: '10%', justifyContent: 'center', alignItems: 'center'
                                             }}>
-                                            <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold' }} >Select Landlord</Text>
+                                            <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold' }} >
+                                                {chosenLandlord=='' ? "Select Landlord" : chosenLandlord}
+                                            </Text>
                                             <MaterialCommunityIcons name="chevron-down" color={'black'} size={30} />
                                         </TouchableOpacity>
 
@@ -405,13 +435,13 @@ export default function Houses() {
                                             onBackdropPress={() => setLandDropdownVisible(false)} // Close when tapping outside
                                             animationIn="fadeInDown"
                                             animationOut="fadeOutUp"
-                                            backdropOpacity={0.1}
+                                            backdropOpacity={0.3}
                                             style={[{}]}
                                         >
 
                                             <ScrollView style={[{
                                                 padding: 10, backgroundColor: 'white',
-                                                position: 'absolute', alignSelf: 'flex-end', right: '20.5%', top: '53%', width: '15%', borderRadius: 20,
+                                                position: 'absolute', alignSelf: 'flex-end', right: '20.5%', top: '53%', width: Platform.OS != 'web' ? '60%' : '15%', borderRadius: 20,
                                             }]}>
 
                                                 {landlords.map((landlord) => (
@@ -427,9 +457,11 @@ export default function Houses() {
                                         </Modal>
                                     </View>
 
+                                    {invalidSelection && <Text style={{fontWeight:'bold', color:'red'}}>Enter Valid House Name and Landlord!</Text>}
+
                                     <View style={[{ gap: '20%', alignItems: 'center', justifyContent: 'center', marginTop: (Platform.OS == 'web') ? 0 : 10 }]}>
 
-                                        <TouchableOpacity onPress={() => { setDropdownVisible(false); handleAddHouse(); }}
+                                        <TouchableOpacity onPress={() => { handleAddHouse(); }}
                                             style={{
                                                 backgroundColor: 'rgb(255, 3, 184)',
                                                 padding: 20, flexDirection: 'row', borderRadius: 20, gap: '10%', justifyContent: 'center', alignItems: 'center'
@@ -558,6 +590,8 @@ const styles = StyleSheet.create({
     houseItem: {
         //width: '70%',
         width: '100%',
+        maxWidth: 400,
+        maxHeight: 80,
         //padding: 16,
         marginBottom: 10,
         backgroundColor: 'rgb(216, 75, 255)',

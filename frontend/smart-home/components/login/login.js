@@ -66,10 +66,12 @@ export default function Login() {
 
 
     const handleLogin = async () => {
+
         if (!email || !password) {
             //Alert.alert("Error", "Please enter email and password.");
             return;
         }
+
 
         const loginUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/login/" : "http://10.0.2.2:8000/api/login/"
         //const loginUrl = Platform.OS == 'web' ? "http://10.6.141.213:8000/api/login/" : "http://10.6.141.213:8000/api/login/"
@@ -85,6 +87,7 @@ export default function Login() {
             const data = await response.json();
             
             if (response.ok) {
+                setVerifyFail(false)
                 console.log("Logged In")
                 //Alert.alert("Success", "Login successful!");
                 //console.log(data)
@@ -93,17 +96,24 @@ export default function Login() {
                 console.log("Sending Refresh token: " + data.refresh_token)
                 await AsyncStorage.setItem('access_token', data.access_token);
                 await AsyncStorage.setItem('refresh_token', data.refresh_token);
-                await AsyncStorage.setItem('deviceAccess', data.has_device_access);
-                await AsyncStorage.setItem('statsAccess', data.has_stats_access);
-                await AsyncStorage.setItem('petAccess', data.has_pet_access);
+                await AsyncStorage.setItem('deviceAccess', data.has_device_access.toString());
+                await AsyncStorage.setItem('statsAccess', data.has_stats_access.toString());
+                await AsyncStorage.setItem('petAccess', data.has_pet_access.toString());
                 await AsyncStorage.setItem('first_name', data.user_name);
-                await AsyncStorage.setItem('guestCode', null);
-                navigation.navigate("Houses")
+                await AsyncStorage.setItem('last_name', data.last_name);
+                await AsyncStorage.setItem('user_type', data.user_type);
+                await AsyncStorage.setItem('guestCode', "null");
+                //console.log(data.isNew);
+                navigation.navigate("Houses", {
+                    isNew: data.isNew,
+                })
             } else {
-                //Alert.alert("Error", data.error || "Login failed.");
+                console.log("Login else:");
+                setVerifyFail(true)
             }
         } catch (error) {
-            console.error("Login error:", error);
+            setVerifyFail(true)
+            console.log("Login error:", error);
             //Alert.alert("Error", "Something went wrong.");
         }
 
@@ -129,11 +139,12 @@ export default function Login() {
                     <TextInput
                         //style={[styles.shadow, styles.input]}
                         placeholder="Enter your Email"
-                        placeholderTextColor={(verifyFail && email === "") ? 'red' : 'rgb(156, 156, 156)'}
-                        style={[styles.textInput, (verifyFail && email === "") && { borderColor: 'red', borderWidth: 1 }]}
+                        placeholderTextColor={(verifyFail || email === "") ? 'red' : 'rgb(156, 156, 156)'}
+                        style={[styles.textInput, (verifyFail || email === "") && { borderColor: 'red', borderWidth: 1 }]}
                         value={email}
                         onChangeText={setEmail}
                     />
+                    {verifyFail && <Text style={{ left: '2%', color:'red' }}>Email Address and Password do not match any account!</Text>}
                 </View>
 
                 <View style={{ width: '100%', gap: '10%', marginTop: (Platform.OS == 'web') ? 0 : -20 }}>
@@ -142,8 +153,8 @@ export default function Login() {
                         <TextInput
                             //style={[styles.shadow, styles.input]}
                             placeholder="Enter your Password"
-                            placeholderTextColor={(verifyFail && password === "") ? 'red' : 'rgb(156, 156, 156)'}
-                            style={[styles.textInput, (verifyFail && password === "") && { borderColor: 'red', borderWidth: 1 }, { width: '90%' }]}
+                            placeholderTextColor={(verifyFail || password === "") ? 'red' : 'rgb(156, 156, 156)'}
+                            style={[styles.textInput, (verifyFail || password === "") && { borderColor: 'red', borderWidth: 1 }, { width: '90%' }]}
                             secureTextEntry={!showPassword}
                             value={password}
                             onChangeText={setPassword}
@@ -156,6 +167,7 @@ export default function Login() {
                             onPress={togglePassVisibility}
                         />
                     </View>
+                    {verifyFail && <Text style={{ left: '2%', color:'red' }}>Email Address and Password do not match any account!</Text>}
                 </View>
                 <View style={[{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', marginTop: (Platform.OS == 'web') ? 0 : -20 }]}>
                     <View style={{ flexDirection: 'row', marginLeft: '5%' }}>
@@ -180,17 +192,9 @@ export default function Login() {
                 <View style={{ flexDirection: 'row' }}>
                     <Text>Don't have an account?  </Text>
                     <TouchableOpacity onPress={() => { navigation.navigate("Register") }}>
-                        <Text style={{ color: 'rgba(48, 164, 218, 0.9)' }}>Register</Text>
+                        <Text style={{ color: 'rgba(48, 164, 218, 0.9)' }}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
-
-                <View style={{ width: '100%', padding: 20 }}>
-                    <View style={{ borderWidth: 1, borderRadius: 500, borderColor: 'rgb(195, 195, 195)', width: '100%' }} />
-                </View>
-
-                <TouchableOpacity style={[styles.loginButton, { width: '50%', marginTop: (Platform.OS == 'web') ? 0 : -20 }]} onPress={() => { navigation.navigate("Guest") }}>
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>Guest Login</Text>
-                </TouchableOpacity>
 
             </View>
         </View>

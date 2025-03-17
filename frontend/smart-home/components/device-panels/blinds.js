@@ -23,9 +23,25 @@ import Animated, {
 import VerticalSlider from "../vertical-slider";
 import Slider from "react-native-sliders";
 
+import { useTheme } from "../themes/theme";
 
 export default function BlindsPanel({ device }) {     //width is percentage
 
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
 
 
     const [deviceInfo, setDeviceInfo] = useState({});
@@ -202,18 +218,18 @@ export default function BlindsPanel({ device }) {     //width is percentage
     }
 
 
-    if (Platform.OS!='web') {
+    if (Platform.OS != 'web') {
         return (
 
             <View style={[{
                 width: '80%', maxWidth: 1000,
                 justifyContent: 'center', alignItems: 'center', padding: 40, borderRadius: 40,
-                gap: '10%', paddingBottom:50,
+                gap: '10%', paddingBottom: 50,
             }]}
             >
-    
+
                 <TouchableOpacity onPress={() => { setBlinds(!blindsOpen); addAction(blindsOpen == false ? "Opened Blinds" : "Closed Blinds") }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30, width: '100%' }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30, width: '100%' }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >
@@ -221,15 +237,15 @@ export default function BlindsPanel({ device }) {     //width is percentage
                         />
                         {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
                     </LinearGradient>
-    
+
                     <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 30, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{(blindsOpen) ? "Open" : "Closed"}</Text>
-    
+
                 </TouchableOpacity>
-                <View style={[styles.shadow, { width: '100%', borderRadius: 20, gap: 10, justifyContent: 'center', alignItems: 'center', backgroundColor:'white', padding:50 }]}>
-    
-    
-                    
-    
+                <View style={[styles.shadow, { width: '100%', borderRadius: 20, gap: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', padding: 50 }]}>
+
+
+
+
                     <Slider
                         style={{ width: '80%', height: 20, }}
                         minimumValue={0}
@@ -241,20 +257,20 @@ export default function BlindsPanel({ device }) {     //width is percentage
                         maximumTrackTintColor="#D3D3D3"
                         thumbTintColor='rgb(255, 3, 184)'
                     />
-    
-    
+
+
                     <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'rgb(216, 75, 255)' }}>{blindsOpen ? Math.floor((openness / maxOpen) * 100) : 0}% Open</Text>
-    
-    
+
+
                 </View>
-    
-    
-    
+
+
+
             </View>
-    
-    
-    
-    
+
+
+
+
         );
     }
 
@@ -263,14 +279,14 @@ export default function BlindsPanel({ device }) {     //width is percentage
     return (
 
         <View style={[styles.shadow, {
-            width: '80%', maxWidth: 1000, backgroundColor: 'white', flexDirection: 'row',
+            width: '80%', maxWidth: 1000, backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', flexDirection: 'row',
             justifyContent: 'center', alignItems: 'center', padding: 40, borderRadius: 40,
             gap: '10%'
         }]}
         >
 
             <TouchableOpacity onPress={() => { setBlinds(!blindsOpen); addAction(blindsOpen == false ? "Opened Blinds" : "Closed Blinds") }}
-                style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30, width: '30%' }]}>
+                style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30, width: '30%' }]}>
                 <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                     style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                 >
@@ -285,7 +301,7 @@ export default function BlindsPanel({ device }) {     //width is percentage
             <View style={[{ width: '40%', borderRadius: 40, gap: 10, justifyContent: 'center', alignItems: 'center' }]}>
 
 
-                
+
 
                 <Slider
                     style={{ width: '80%', height: 20, }}

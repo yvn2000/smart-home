@@ -9,6 +9,7 @@ import { CentralTab } from "./tabs";
 import LoginScreen from "../screens/login-screen";
 import Sample from "../screens/sample";
 import Home from "../screens/home-screen";
+import Tutorial from "../screens/tutorial";
 import SettingsScreen from "../screens/settings";
 import SettingsItemScreen from "../screens/settings-item";
 
@@ -27,6 +28,7 @@ import DeviceStatisticsScreen from "../screens/statistics-device";
 import ShareStatsScreen from "../screens/share";
 import DailySummaryScreen from "../screens/daily-summary-screen";
 
+import LoginMain from "../components/login/login-main"
 import Login from "../components/login/login";
 import Register from "../components/login/register";
 import Forgot from "../components/login/forgot";
@@ -37,7 +39,6 @@ import 'react-native-gesture-handler';    //important for some reason
 
 
 const Stack = createStackNavigator();
-const StackLogin = createStackNavigator();
 
 
 export const LoginStack = () => {
@@ -46,20 +47,35 @@ export const LoginStack = () => {
 
     return (
         
-        <StackLogin.Navigator
+        <Stack.Navigator
             //screenOptions={()=> navOptions(navigation)}
             screenOptions={{headerShown: false, cardStyle: { backgroundColor: 'transparent' }, animation:'slide_from_right' }}
         >   
             
-            <StackLogin.Screen name="Login" component={Login}/>
-            <StackLogin.Screen name="Register" component={Register}/>
+            <Stack.Screen name="Login" component={Login}/>
+            <Stack.Screen name="Register" component={Register}/>
             <Stack.Screen name="Forgot" component={Forgot}/>
-            <Stack.Screen name="Guest" component={Guest}/>
+            {/*<Stack.Screen name="Guest" component={Guest}/>*/}
             <Stack.Screen name="Houses" component={Houses}/>
             
-        </StackLogin.Navigator>
+        </Stack.Navigator>
         
         
+    )
+}
+
+export const LoginMainStack = () => {
+    const navigation = useNavigation()
+
+    return (
+        <Stack.Navigator
+            //screenOptions={()=> navOptions(navigation)}
+            screenOptions={{headerShown: false, animation:'fade' }}
+        >   
+            <Stack.Screen name="LoginMain" component={LoginMain}/>
+            <Stack.Screen name="Guest" component={Guest}/>
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        </Stack.Navigator>
     )
 }
 
@@ -73,7 +89,9 @@ export const MainStack = () => {
             //screenOptions={()=> navOptions(navigation)}
             screenOptions={{headerShown: false, animation:'fade' }}
         >   
+            <Stack.Screen name="LoginMainStack" component={LoginMainStack} />
             <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="Tutorial" component={Tutorial} />
             <Stack.Screen name="Main" component={CentralTab} />
         </Stack.Navigator>
     )

@@ -258,14 +258,14 @@ export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueI
 
             </View>
         </View>*/
-        <View style={{ alignItems: 'center', justifyContent: 'center', gap: 30, }}>
-            <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 20 }]}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', gap: Platform.OS=='web' ? 30 : 20, }}>
+            <View style={[{ flexDirection: 'row', alignItems: 'center', gap: Platform.OS=='web' ? 30 : 10, }]}>
 
-                {changeable == true && <TouchableOpacity style={{ marginLeft: 10, }}
+                {changeable == true && <TouchableOpacity style={{ marginLeft: Platform.OS!='web' ? 0 : 5, }}
                     onPress={() => {
                         changeValue(1, "plus")
                     }}>
-                    <Text style={{ fontSize: 0.4 * radius, color: 'rgb(255, 3, 184)' }}>+</Text>
+                    <MaterialCommunityIcons name={"plus"} size={Platform.OS=='web' ? 50 : 30} color={'rgb(255, 3, 184)'} />
                 </TouchableOpacity>}
                 <View>
                     <View style={[styles.container, styles.shadow]}>
@@ -312,11 +312,11 @@ export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueI
                     </View>
                 </View>
 
-                {changeable == true && <TouchableOpacity style={{ marginRight: 10 }}
+                {changeable == true && <TouchableOpacity style={{ marginRight: Platform.OS!='web' ? 0 : 5, }}
                     onPress={() => {
                         changeValue(1, "minus")
                     }}>
-                    <Text style={{ fontSize: 0.4 * radius, color: 'rgb(255, 3, 184)' }}>-</Text>
+                    <MaterialCommunityIcons name={"minus"} size={Platform.OS=='web' ? 50 : 30} color={'rgb(255, 3, 184)'} />
                 </TouchableOpacity>}
 
             </View>
@@ -338,10 +338,10 @@ export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueI
                     <LinearGradient colors={[thermoMode=='Cool' ? 'rgb(255, 3, 184)' : 'rgb(95, 95, 95)', 'transparent']}
                         style={{
                             backgroundColor: thermoMode=='Cool' ? 'rgb(216, 75, 255)' : 'rgb(95, 95, 95)',
-                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:20
+                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:Platform.OS=='web' ? 20 : 10
                         }}
                     >
-                        <MaterialCommunityIcons name={"snowflake"} size={50} color={'white'} />
+                        <MaterialCommunityIcons name={"snowflake"} size={Platform.OS=='web' ? 50 : 30} color={'white'} />
 
                     </LinearGradient>
 
@@ -360,10 +360,10 @@ export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueI
                     <LinearGradient colors={[thermoMode=='Heat' ? 'rgb(255, 3, 184)' : 'rgb(95, 95, 95)', 'transparent']}
                         style={{
                             backgroundColor: thermoMode=='Heat' ? 'rgb(216, 75, 255)' : 'rgb(95, 95, 95)',
-                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:20
+                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:Platform.OS=='web' ? 20 : 10
                         }}
                     >
-                        <MaterialCommunityIcons name={"weather-sunny"} size={50} color={'white'} />
+                        <MaterialCommunityIcons name={"weather-sunny"} size={Platform.OS=='web' ? 50 : 30} color={'white'} />
 
                     </LinearGradient>
 
@@ -382,10 +382,10 @@ export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueI
                     <LinearGradient colors={[thermoMode=='Fan' ? 'rgb(255, 3, 184)' : 'rgb(95, 95, 95)', 'transparent']}
                         style={{
                             backgroundColor: thermoMode=='Fan' ? 'rgb(216, 75, 255)' : 'rgb(95, 95, 95)',
-                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:20
+                            justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding:3, borderRadius:Platform.OS=='web' ? 20 : 10
                         }}
                     >
-                        <MaterialCommunityIcons name={"fan"} size={50} color={'white'} />
+                        <MaterialCommunityIcons name={"fan"} size={Platform.OS=='web' ? 50 : 30} color={'white'} />
 
                     </LinearGradient>
 

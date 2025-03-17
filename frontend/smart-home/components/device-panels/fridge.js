@@ -22,8 +22,29 @@ import Animated, {
 
 import VerticalSlider from "../vertical-slider";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function FridgePanel({ device }) {     //width is percentage
+
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
+
+
 
     const [activityLog, setActivityLog] = useState([]);
 
@@ -75,7 +96,7 @@ export default function FridgePanel({ device }) {     //width is percentage
     
     
     
-                <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+                <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
     
                     <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Temperature</Text>
     
@@ -144,7 +165,7 @@ export default function FridgePanel({ device }) {     //width is percentage
 
 
 
-            <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+            <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
 
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Temperature</Text>
 

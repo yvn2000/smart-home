@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import {
     Platform, StyleSheet, ScrollView, Text, View, TextInput, Button,
-    TouchableOpacity, FlatList, CheckBox
+    TouchableOpacity, FlatList, CheckBox, Image, Dimensions,
 
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -18,12 +18,31 @@ import 'react-native-gesture-handler';    //important for some reason
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 const loginCardWidth = 60
 
 export default function Guest() {
 
     const navigation = useNavigation()
+
+    const [windowDimensions, setWindowDimensions] = useState(Dimensions.get("window"));
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowDimensions(Dimensions.get("window"));
+        };
+
+        if (Platform.OS == 'web') {
+            Dimensions.addEventListener("change", handleResize);        //checks if size changed
+
+            return () => {
+                Dimensions.removeEventListener("change", handleResize);       //cleanup
+            };
+
+        }
+    }, []);
 
     const [house_id, setHouseId] = useState(0)
 
@@ -52,11 +71,16 @@ export default function Guest() {
     const handleVerify = () => {
         console.log('Code:', code.join(''));
     };
-    
+
 
     const apiUrl = Platform.OS === "web" ? "http://127.0.0.1:8000" : "http://10.0.2.2:8000";
 
-    // ✅ Verify Guest Code
+    const selectHouse = async (houseid) => {
+        console.log(houseid)
+        await AsyncStorage.setItem("house_id", houseid.toString())
+    }
+
+
     const handleGuestLogin = async () => {
         if (!house_id.trim() || (!code.join(''))) {
             console.log("Error", "Please enter both House ID and Guest Code.");
@@ -74,13 +98,15 @@ export default function Guest() {
                     console.log("Success", "Login successful!");
                     //navigation.navigate("GuestDashboard", { house_id, code }); // Navigate to Guest Home
                     await AsyncStorage.setItem('guestCode', code.join(''));
-                    await AsyncStorage.setItem('deviceAccess', true);
-                    await AsyncStorage.setItem('statsAccess', false);
-                    await AsyncStorage.setItem('petAccess', true);
+                    await AsyncStorage.setItem('deviceAccess', "true");
+                    await AsyncStorage.setItem('statsAccess', "false");
+                    await AsyncStorage.setItem('petAccess', "true");
+                    await AsyncStorage.setItem('first_name', "Guest");
+                    selectHouse(house_id);
                     navigation.navigate("Main", {
-                        statsAccess:false, 
-                        deviceAccess:true,
-                        petAccess:true,
+                        statsAccess: false,
+                        deviceAccess: true,
+                        petAccess: true,
                         house: "house",
                     })
                 } else {
@@ -107,11 +133,33 @@ export default function Guest() {
     return (
 
 
-        <View style={[styles.loginCard]} >
+        <View style={[{
+            height: Platform.OS == 'web' ? '100%' : '100%',
+            //width: `${loginCardWidth}%`,
+            width: '100%',
+            backgroundColor: 'rgb(245, 245, 245)',
+            //backgroundColor: 'rgb(1, 1, 1)',
+            borderTopLeftRadius: 50,
+            borderTopRightRadius: Platform.OS == 'web' ? 0 : 50,
+            borderBottomLeftRadius: 50,
+            alignItems: 'center',
+            justifyContent: 'center'
+        }]} >
+
+
+            <Image style={{
+                position: 'absolute', height: '100%', width: '100%'
+            }}
+                source={require('../../assets/images/app/home.jpg')} />
+
+
             <View style={[styles.shadow, styles.loginInnerCard]}>
 
-                <TouchableOpacity style={{ alignSelf: 'flex-start' }} onPress={() => { navigation.goBack() }}>
-                    <MaterialCommunityIcons name="chevron-left" color={'rgb(216, 75, 255)'} size={30} />
+                <TouchableOpacity style={{ 
+                    alignSelf: 'flex-start', position:'absolute', top:30, left:10,
+                 }} 
+                onPress={() => { navigation.goBack() }}>
+                    <MaterialCommunityIcons name="chevron-left" color={'rgb(216, 75, 255)'} size={40} />
                 </TouchableOpacity>
 
 
@@ -150,7 +198,7 @@ export default function Guest() {
                             />
                         ))}
                     </View>
-                    <TouchableOpacity style={[styles.loginButton, { marginTop: 24, }]} onPress={()=>{handleVerify(); handleGuestLogin();}}>
+                    <TouchableOpacity style={[styles.loginButton, { marginTop: 24, }]} onPress={() => { handleVerify(); handleGuestLogin(); }}>
                         <Text style={{ color: 'white', fontWeight: 'bold' }}>Enter</Text>
                     </TouchableOpacity>
                 </View>
@@ -213,10 +261,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     loginInnerCard: {
-        backgroundColor: 'white',
-        width: Platform.OS == 'web' ? '80%' : '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderWidth: 3,
+        borderColor: 'rgb(255, 3, 184)',
+        width: Platform.OS == 'web' ? '80%' : '90%',
         maxWidth: 600,
-        height: Platform.OS == 'web' ? '70%' : '100%',
+        height: Platform.OS == 'web' ? '60%' : '60%',
+        minHeight:400,
         //width:900,
         //height:900,
         justifyContent: 'center',
@@ -225,8 +276,8 @@ const styles = StyleSheet.create({
         //borderRadius: 50,
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
-        borderBottomLeftRadius: Platform.OS == 'web' ? 50 : 0,
-        borderBottomRightRadius: Platform.OS == 'web' ? 50 : 0,
+        borderBottomLeftRadius: Platform.OS == 'web' ? 50 : 50,
+        borderBottomRightRadius: Platform.OS == 'web' ? 50 : 50,
         gap: 20,
         position: 'absolute',
         alignSelf: 'center',
@@ -253,7 +304,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
+        //backgroundColor: 'white',
         padding: 20,
         borderRadius: 12,
         width: '100%',

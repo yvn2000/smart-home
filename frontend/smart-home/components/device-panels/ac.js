@@ -22,9 +22,26 @@ import Animated, {
 
 import TempDial from "../dial";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function ACPanel({ device }) {     //width is percentage
 
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
 
 
     const [deviceInfo, setDeviceInfo] = useState({});
@@ -248,13 +265,13 @@ export default function ACPanel({ device }) {     //width is percentage
 
                 <TempDial device_id={device.device_id} deviceName={device.name} changeable={device.logo == 'air-conditioner' ? true : false} tempArg={(deviceInfo.data) ? deviceInfo.data.temperature : device.temp} />
 
-                <View style={[{ borderRadius: 50, padding: 30, alignItems: 'center', flexDirection: 'row', gap:20 }]}>
+                <View style={[{ borderRadius: 50, padding: 30, alignItems: 'center', flexDirection: 'row', gap: 20 }]}>
 
-                    <View style={{alignItems:'center', justifyContent:'center'}}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Fan</Text>
 
                         <TouchableOpacity onPress={() => { newFan(); addAction(`Set Fan to ${prevFan}`) }}
-                            style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 20 }]}>
+                            style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 20 }]}>
                             <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                 style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 20, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                             >
@@ -269,12 +286,12 @@ export default function ACPanel({ device }) {     //width is percentage
 
                     </View>
 
-                    <View style={{alignItems:'center', justifyContent:'center'}}>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
 
                         <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Mode</Text>
 
                         <TouchableOpacity onPress={() => { newMode(); addAction(`Set Mode to ${prevMode}`) }}
-                            style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 20 }]}>
+                            style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 20 }]}>
                             <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                 style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 20, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                             >
@@ -315,12 +332,12 @@ export default function ACPanel({ device }) {     //width is percentage
 
             <TempDial device_id={device.device_id} deviceName={device.name} changeable={device.logo == 'air-conditioner' ? true : false} tempArg={(deviceInfo.data) ? deviceInfo.data.temperature : device.temp} />
 
-            <View style={[styles.shadow, { backgroundColor: 'white', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+            <View style={[styles.shadow, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
 
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Fan</Text>
 
                 <TouchableOpacity onPress={() => { newFan(); addAction(`Set Fan to ${prevFan}`) }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >
@@ -338,7 +355,7 @@ export default function ACPanel({ device }) {     //width is percentage
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 40, color: 'rgb(165, 165, 165)' }}>Mode</Text>
 
                 <TouchableOpacity onPress={() => { newMode(); addAction(`Set Mode to ${prevMode}`) }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30 }]}>
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >

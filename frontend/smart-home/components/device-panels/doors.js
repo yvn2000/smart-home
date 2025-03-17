@@ -22,8 +22,27 @@ import Animated, {
 
 import VerticalSlider from "../vertical-slider";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function DoorsPanel({ device }) {     //width is percentage
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
+
 
 
     const [deviceInfo, setDeviceInfo] = useState({});
@@ -115,7 +134,7 @@ export default function DoorsPanel({ device }) {     //width is percentage
     const [doorStatus, setDoor] = useState(true)
     const [code, setCode] = useState(['0', '0', '0', '0']);
 
-    useEffect(()=> {
+    useEffect(() => {
         console.log(code)
     }, [code])
 
@@ -222,7 +241,7 @@ export default function DoorsPanel({ device }) {     //width is percentage
     }, [doorStatus, code]);
 
     useEffect(() => {
-        addAction("Changed Code to "+ code.join(''))
+        addAction("Changed Code to " + code.join(''))
     }, [code]);
 
 
@@ -254,75 +273,77 @@ export default function DoorsPanel({ device }) {     //width is percentage
 
 
 
-if (Platform.OS!='web') {
-    return (
+    if (Platform.OS != 'web') {
+        return (
 
-        <View style={[{
-            width: '80%', maxWidth: 1000,
-            justifyContent: 'center', alignItems: 'center', padding: 40, borderRadius: 40,
-            gap: '10%', paddingBottom:50,
-        }]}
-        >
+            <View style={[{
+                width: '80%', maxWidth: 1000,
+                justifyContent: 'center', alignItems: 'center', padding: 40, borderRadius: 40,
+                gap: '10%', paddingBottom: 50,
+            }]}
+            >
 
-            <TouchableOpacity onPress={() => { setLock(!doorStatus) }}
-                style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30, width: '95%' }]}>
-                <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
-                    style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
-                >
-                    <MaterialCommunityIcons name={(doorStatus) ? "lock-open-variant-outline" : "lock-outline"} size={50} color="white"
-                    />
-                    {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
-                </LinearGradient>
+                <TouchableOpacity onPress={() => { setLock(!doorStatus) }}
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 30, width: '95%' }]}>
+                    <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                        style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
+                    >
+                        <MaterialCommunityIcons name={(doorStatus) ? "lock-open-variant-outline" : "lock-outline"} size={50} color="white"
+                        />
+                        {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
+                    </LinearGradient>
 
-                <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 20, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{(doorStatus) ? "Unlocked" : "Locked"}</Text>
+                    <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 20, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{(doorStatus) ? "Unlocked" : "Locked"}</Text>
 
-            </TouchableOpacity>
-            <View style={[styles.shadow, { width: '90%', borderRadius: 40, gap: 0, justifyContent: 'center', alignItems: 'center', backgroundColor:'white', padding:40 }]}>
-
-
-                <Text
-                    style={[{ padding: 0, fontSize: 24, color: 'rgb(255, 3, 184)', fontWeight: 'bold' }]}
-                >
-                    Access Code
-                </Text>
-
-                <View style={{width:'90%'}}>
+                </TouchableOpacity>
+                <View style={[styles.shadow, { width: '90%', borderRadius: 40, gap: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', padding: 40 }]}>
 
 
-                    <View style={styles.inputs}>
-                        {code.map((value, index) => (
-                            <TextInput
-                                key={index}
-                                style={[
-                                    styles.input,
-                                    { width:'20%', borderColor: focusedIndex === index ? 'rgb(216, 75, 255)' : 'rgb(175, 175, 175)', } // Conditional border color
-                                ]}
-                                selectionColor={'rgb(216, 75, 255)'}
-                                value={value}
-                                onChangeText={(text) => handleChange(index, text)}
-                                maxLength={1}
-                                keyboardType="numeric"
-                                ref={inputRefs[index]}
-                            />
-                        ))}
+                    <Text
+                        style={[{ padding: 0, fontSize: 24, color: 'rgb(255, 3, 184)', fontWeight: 'bold' }]}
+                    >
+                        Access Code
+                    </Text>
+
+                    <View style={{ width: '90%' }}>
+
+
+                        <View style={styles.inputs}>
+                            {code.map((value, index) => (
+                                <TextInput
+                                    key={index}
+                                    style={[
+                                        styles.input,
+                                        { width: '20%', borderColor: focusedIndex === index ? 'rgb(216, 75, 255)' : 'rgb(175, 175, 175)', 
+                                            color: theme=='dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)'
+                                        } // Conditional border color
+                                    ]}
+                                    selectionColor={'rgb(216, 75, 255)'}
+                                    value={value}
+                                    onChangeText={(text) => handleChange(index, text)}
+                                    maxLength={1}
+                                    keyboardType="numeric"
+                                    ref={inputRefs[index]}
+                                />
+                            ))}
+                        </View>
+
+
+
                     </View>
 
 
-
                 </View>
+
 
 
             </View>
 
 
 
-        </View>
 
-
-
-
-    );
-}
+        );
+    }
 
 
 
@@ -336,14 +357,14 @@ if (Platform.OS!='web') {
     return (
 
         <View style={[styles.shadow, {
-            width: '80%', maxWidth: 1000, backgroundColor: 'white', flexDirection: 'row',
+            width: '80%', maxWidth: 1000, backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', flexDirection: 'row',
             justifyContent: 'center', alignItems: 'center', padding: 40, borderRadius: 40,
             gap: '10%'
         }]}
         >
 
             <TouchableOpacity onPress={() => { setLock(!doorStatus) }}
-                style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 30, width: '35%' }]}>
+                style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30, width: '35%' }]}>
                 <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                     style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                 >
@@ -373,7 +394,9 @@ if (Platform.OS!='web') {
                                 key={index}
                                 style={[
                                     styles.input,
-                                    { borderColor: focusedIndex === index ? 'rgb(216, 75, 255)' : 'rgb(175, 175, 175)', } // Conditional border color
+                                    { borderColor: focusedIndex === index ? 'rgb(216, 75, 255)' : 'rgb(175, 175, 175)',
+                                        color: theme=='dark' ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)'
+                                     } // Conditional border color
                                 ]}
                                 selectionColor={'rgb(216, 75, 255)'}
                                 value={value}

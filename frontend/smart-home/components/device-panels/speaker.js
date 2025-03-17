@@ -24,8 +24,27 @@ import VerticalSlider from "../vertical-slider";
 import HorizontalSlider from "../horizontal-slider";
 import Slider from "react-native-sliders";
 
+import { useTheme } from "../themes/theme";
+
 
 export default function SpeakerPanel({ device }) {     //width is percentage
+
+
+    const { theme, toggleTheme } = useTheme()
+
+    const [themeMode, setTheme] = useState(styles.lightMode)
+
+    useEffect(() => {
+        if (theme == 'dark') {
+            setTheme(styles.darkMode)
+        }
+        else if (theme == 'light') {
+            setTheme(styles.lightMode)
+        }
+        else if (theme == 'crazy') {
+            setTheme(styles.crazyMode)
+        }
+    }, [theme])
 
 
 
@@ -256,7 +275,7 @@ export default function SpeakerPanel({ device }) {     //width is percentage
 
                 <View>
 
-                    <View style={[styles.musicPlayer, styles.shadow, { width: '90%' }]}>
+                    <View style={[styles.musicPlayer, styles.shadow, { width: '90%', backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                         <View style={{ flexDirection: 'row', marginBottom: 30, alignItems: 'center', justifyContent: 'center', gap: '60%' }}>
 
@@ -319,7 +338,7 @@ export default function SpeakerPanel({ device }) {     //width is percentage
 
                 <View style={[styles.shadow, {
                     flexDirection: 'row', padding: 20,
-                    backgroundColor: 'white', borderRadius: 40,
+                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 40,
                 }]}>
 
                     <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
@@ -380,7 +399,7 @@ export default function SpeakerPanel({ device }) {     //width is percentage
 
             <View>
 
-                <View style={[styles.musicPlayer, styles.shadow]}>
+                <View style={[styles.musicPlayer, styles.shadow, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                     <View style={{ flexDirection: 'row', marginBottom: 30, alignItems: 'center', justifyContent: 'center', gap: '60%' }}>
 
@@ -446,7 +465,7 @@ export default function SpeakerPanel({ device }) {     //width is percentage
 
             <View style={[styles.shadow, {
                 flexDirection: 'row', padding: 50,
-                backgroundColor: 'white', borderRadius: 40,
+                backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 40,
             }]}>
 
                 <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center', gap: 10 }}>

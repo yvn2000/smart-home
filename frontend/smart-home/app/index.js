@@ -54,7 +54,7 @@ export default function Index() {
           <NavigationContainer>
               {/* <CentralTab /> */}
               <MainStack />
-            <StatusBar style='light' />
+            <StatusBar style='dark' />
           </NavigationContainer>
           
         </ThemeProvider>

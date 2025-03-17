@@ -16,7 +16,7 @@ import LavaLampBackground from "../components/themes/lava-lamp-bg";
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 
-import { BarChart, barDataItem } from "react-native-gifted-charts";
+import { BarChart, barDataItem, LineChart } from "react-native-gifted-charts";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 
 import { LinearGradient } from 'expo-linear-gradient';
@@ -436,7 +436,7 @@ export default function StatisticsScreen() {
     }, [])
 
 
-    
+
 
 
     const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -444,6 +444,108 @@ export default function StatisticsScreen() {
     const toggleDropdown = () => {
         setDropdownVisible(!isDropdownVisible);
     };
+
+
+    const [graphMode, setGraphMode] = useState('total');
+
+    const [graphMax, setGraphMax] = useState(30)
+
+    const [totalEnergyData, setTotalEnergyData] = useState(null);
+
+
+    const fetchTotalEnergyData = async () => {
+        try {
+            const response = await fetch(
+                Platform.OS == 'android' ? `http://10.0.2.2:8000/api/houses/${house_id}/total-energy/` : `http://127.0.0.1:8000/api/houses/${house_id}/total-energy/`,
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            //console.log("Energy Data:", data);
+            setTotalEnergyData(data);
+            console.log(data)
+        } catch (error) {
+            console.error("Error fetching energy data:", error);
+        }
+    };
+
+
+    function makeLineChartData(energyData) {
+
+        //console.log(energyData)
+
+        if (!energyData) {
+            console.log("no line energy returned")
+            return [];
+        }
+
+        const energyDataList = [
+            {
+                value: energyData.total_energy6, label: '25 sec',
+                dataPointText: String(Math.floor(energyData.total_energy6))
+            },
+            {
+                value: energyData.total_energy5, label: '20 sec',
+                dataPointText: String(Math.floor(energyData.total_energy5))
+            },
+            {
+                value: energyData.total_energy4, label: '15 sec',
+                dataPointText: String(Math.floor(energyData.total_energy4))
+            },
+            {
+                value: energyData.total_energy3, label: '10 sec',
+                dataPointText: String(Math.floor(energyData.total_energy3))
+            },
+            {
+                value: energyData.total_energy2, label: '5 sec',
+                dataPointText: String(Math.floor(energyData.total_energy2))
+            },
+            {
+                value: energyData.total_energy1, label: 'Now',
+                dataPointText: String(Math.floor(energyData.total_energy1))
+            },
+
+        ];
+
+        console.log(energyDataList)
+        //setGraphMax(energyData.total_energy1 + 150)
+
+        return energyDataList;
+
+    }
+
+    const checkEnergyThreshold = (data) => {
+        // Loop through the object keys
+        for (const key in data) {
+            // Check if the key starts with "energy" and its value is greater than 20
+            if (key.startsWith("energy") && data[key] > 20) {
+                //console.log(true)
+                return true; // Return true immediately if any value exceeds 20
+            }
+        }
+        return false; // Return false if none of the values exceed 20
+    };
+
+    const getEnergyThreshold = () => {
+        return Math.max(totalEnergyData.total_energy1, totalEnergyData.total_energy2, totalEnergyData.total_energy3, totalEnergyData.total_energy4
+            , totalEnergyData.total_energy5, totalEnergyData.total_energy6, totalEnergyData.total_energy7
+        )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -454,34 +556,77 @@ export default function StatisticsScreen() {
     const [currentRoomName, setCurrentRoomName] = useState('')
 
     useFocusEffect(
-            useCallback(() => {
-                const reloadData = async () => {
-                    const id = await getHouse() // Get fresh ID on focus
-                    if (id) {
-                        //console.log("Reloading data for house:", id)
-                        await fetchRooms2()
-                        await fetchDevices2()
-                    }
+        useCallback(() => {
+
+            let isActive = true;
+
+            const reloadData = async () => {
+                const id = await getHouse() // Get fresh ID on focus
+                console.log("House ID inside useFocus: "+id)
+                if (isActive && id) {
+                    await fetchRooms2(id);
+                    await fetchDevices2(id);
+                    //await fetchTotalEnergyData();
                 }
-                reloadData()
-                setLoading(false)
-            }, []) // Still empty array - we're using latest state in callbacks
-        )
+                else {
+                    console.log("no id")
+                    //const id = await getHouse()
+                }
+            }
+            reloadData()
+            setLoading(false)
+
+
+            /*
+            const interval = setInterval(reloadData, 5000);  // Optional refresh interval
+
+            return () => {
+                isActive = false;
+                clearInterval(interval);
+            };
+            */
+        }, []) // Still empty array - we're using latest state in callbacks
+    )
 
 
     const getHouse = async () => {
-        setHouseId(await AsyncStorage.getItem("house_id"))
+        const storedId = await AsyncStorage.getItem("house_id");
+        setHouseId(storedId)
         //console.log("houseID " + house_id)
         //setLoading(false)
-        if (house_id != 0) {
+        /*
+        if (storedId != 0) {
             fetchRooms2()
+            fetchDevices2()
         }
+        */
+        return storedId
 
     }
 
     useEffect(() => {
         getHouse()
+        fetchRooms2(house_id)
+        fetchDevices2(house_id)
     }, [house_id])
+
+
+    const fetchAllData = async (id) => {
+        if (id && id !== "0") {
+            await fetchRooms2(id);
+            await fetchDevices2(id);
+            //await fetchTotalEnergyData();
+        }
+    };
+
+    useEffect(() => {
+        const loadData = async () => {
+            const id = await getHouse();
+            console.log("House ID inside useEffect: "+id)
+            await fetchAllData(id);
+        };
+        loadData();
+    }, [house_id]);  // Proper dependency
 
 
     const [allRooms, setRooms2] = useState([])
@@ -489,9 +634,12 @@ export default function StatisticsScreen() {
     const [devices, setDevices] = useState([])
 
 
-    const fetchRooms2 = async () => {
+    const fetchRooms2 = async (houseid) => {
 
-        const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/rooms/` : `http://10.0.2.2:8000/api/houses/${house_id}/rooms/`
+        //const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/rooms/` : `http://10.0.2.2:8000/api/houses/${house_id}/rooms/`
+
+        const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${houseid}/rooms/` : `http://10.0.2.2:8000/api/houses/${houseid}/rooms/`
+
 
         try {
             const response = await fetch(roomsUrl);
@@ -526,12 +674,12 @@ export default function StatisticsScreen() {
     };
 
 
-    const fetchDevices2 = async () => {
+    const fetchDevices2 = async (isThreeD) => {
         //console.log("Devices changes")
         const roomData = allRooms.find((item) => item.room_id === currentRoom);
         //console.log("Fetched Room:", roomData);
         if (roomData) {
-            //console.log("Fetched Devices:", roomData.devices);
+            console.log("Fetched Devices:", roomData.devices);
             setDevices(roomData.devices)
         } else {
             setDevices([])
@@ -560,11 +708,12 @@ export default function StatisticsScreen() {
 
 
     useEffect(() => {
-        fetchRooms2();
+        fetchRooms2(house_id);
     }, [currentRoom])
 
     useEffect(() => {
         fetchDevices2()
+        fetchTotalEnergyData()
     }, [currentRoom, allRooms]);
 
 
@@ -634,7 +783,19 @@ export default function StatisticsScreen() {
 
 
 
+    useEffect(() => {
 
+
+        fetchTotalEnergyData();
+        const interval = setInterval(fetchTotalEnergyData, 5000);    //every 5 sec
+        //const interval = setInterval(fetchEnergyData, 2000);    //every 2 sec
+
+
+        //console.log(energyData)
+
+        return () => clearInterval(interval);
+
+    }, [house_id]);
 
 
 
@@ -721,7 +882,7 @@ export default function StatisticsScreen() {
                                         onBackdropPress={() => setDropdownVisible(false)} // Close when tapping outside
                                         animationIn="fadeInDown"
                                         animationOut="fadeOutUp"
-                                        backdropOpacity={0.1}
+                                        backdropOpacity={0.3}
                                         style={[{}]}
                                     >
 
@@ -729,7 +890,7 @@ export default function StatisticsScreen() {
                                             {/* Custom View Items */}
                                             <TouchableOpacity style={styles.dropdownItem} onPress={() => { navigation.navigate("ShareStats") }}>
                                                 <View style={{ backgroundColor: 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                    <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={"black"} />
+                                                    <MaterialCommunityIcons name="share-variant" size={Platform.OS == 'web' ? 70 : 20} color={"black"} />
                                                     <Text style={{ color: 'black', fontWeight: 'bold' }}>Share</Text>
                                                 </View>
                                             </TouchableOpacity>
@@ -750,7 +911,7 @@ export default function StatisticsScreen() {
                                 </View>
 
                                 <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                    <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
+                                    <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>
                                         Statistics
                                     </Text>
                                 </View>
@@ -758,13 +919,13 @@ export default function StatisticsScreen() {
                                 <View style={[styles.mainContainer]}>
 
 
-                                    <View style={[styles.shadow, styles.homePanel, { paddingBottom: 0 }]}>
+                                    <View style={[styles.shadow, styles.homePanel, { paddingBottom: 0, backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
 
-                                        <View style={{ padding: 10, paddingBottom: -20 }}>
+                                        <View style={{ padding: 10 }}>
                                             <Text style={{ color: 'rgb(147, 147, 147)' }}>---- Home Statistics ----</Text>
                                         </View>
 
-                                        <View style={[styles.homeStats, { top: -0, flexDirection: 'column' }]}>
+                                        <View style={[styles.homeStats, { marginTop: -20, flexDirection: 'column' }]}>
 
                                             <View style={[styles.graphStats, { overflow: 'hidden' }]}>
 
@@ -772,28 +933,73 @@ export default function StatisticsScreen() {
 
                                                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
 
-                                                        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
+                                                        {graphMode == 'week' && <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
                                                             onPress={() => {
                                                                 handleLeftArrow()
                                                             }}>
-                                                            <MaterialCommunityIcons name="chevron-left" size={40} />
-                                                        </TouchableOpacity>
+                                                            <MaterialCommunityIcons name="chevron-left" size={30} color={theme == 'dark' ? 'white' : 'dark'} />
+                                                        </TouchableOpacity>}
 
-                                                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
-                                                            Week {currentWeek}
+                                                        <Text style={{ fontSize: Platform.OS == 'web' ? 20 : 15, fontWeight: 'bold', color: theme == 'dark' ? 'white' : 'dark' }}>
+                                                            {graphMode == 'week' ? "Week " + currentWeek : "Total Energy"}
                                                         </Text>
 
-                                                        <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
+                                                        {graphMode == 'week' && <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
                                                             onPress={() => {
                                                                 handleRightArrow()
                                                             }}>
-                                                            <MaterialCommunityIcons name="chevron-right" size={40} />
-                                                        </TouchableOpacity>
+                                                            <MaterialCommunityIcons name="chevron-right" size={30} color={theme == 'dark' ? 'white' : 'dark'} />
+                                                        </TouchableOpacity>}
 
                                                     </View>
 
+                                                    {graphMode == 'total' && <LineChart
 
-                                                    <BarChart
+                                                        data={makeLineChartData(totalEnergyData)}
+                                                        width={calculateChartWidth() - 0}
+                                                        spacing={0.145 * (calculateChartWidth())}
+                                                        noOfSections={4}
+                                                        height={200}
+
+                                                        color={'rgb(216, 75, 255)'}
+                                                        thickness={10}
+                                                        dataPointsColor={'rgb(255, 3, 184)'}
+                                                        dataPointsRadius={8}
+
+                                                        textFontSize={20}
+                                                        textColor={'rgb(255, 3, 184)'}
+                                                        textShiftY={-10}
+                                                        textShiftX={-5}
+
+                                                        yAxisLabelSuffix=' kWh '
+                                                        yAxisLabelWidth={35}
+                                                        yAxisTextStyle={{ color: "gray", fontSize: 8 }}
+                                                        xAxisLabelTextStyle={{ color: "gray", fontSize: 10, }}
+                                                        yAxisColor={'gray'}
+                                                        xAxisColor={'gray'}
+
+
+                                                        //maxValue={250}
+                                                        //maxValue={(checkEnergyThreshold(totalEnergyData)) ? graphMax : 30}
+                                                        //maxValue={1000}
+                                                        //maxValue={totalEnergyData ? totalEnergyData.total_energy + 180 : 150}
+                                                        maxValue={totalEnergyData ? getEnergyThreshold() + 180 : 150}
+                                                        yAxisOffset={0}
+                                                        //yAxisOffset={50}
+                                                        //yAxisOffset={Math.max(0, deviceInfo.base_energy-100)}
+                                                        mostNegativeValue={0}
+
+                                                        curved
+
+
+
+
+                                                    //isAnimated
+
+                                                    />}
+
+
+                                                    {graphMode == 'week' && <BarChart
 
                                                         //key={chartKey}
                                                         //data={[{ value: 100, frontColor: 'green' }, { value: 50, frontColor: 'yellow' }]}
@@ -820,10 +1026,10 @@ export default function StatisticsScreen() {
                                                         xAxisThickness={0}
                                                         xAxisLabelsVerticalShift={2}
                                                         xAxisLabelTextStyle={{ color: "gray" }}
-                                                        yAxisTextStyle={{ color: "gray", fontSize: 8 }}
+                                                        yAxisTextStyle={{ color: "gray", fontSize: 10 }}
                                                         //showYAxisIndices
                                                         yAxisLabelSuffix=' kWh '
-                                                        yAxisLabelWidth={35}
+                                                        yAxisLabelWidth={40}
 
                                                         //topLabelComponent={() => (<Text style={{ color: 'blue', fontSize: 18, marginBottom: 6 }}>50</Text>)}
                                                         cappedBars
@@ -840,7 +1046,7 @@ export default function StatisticsScreen() {
                                                         //side="right"
                                                         isAnimated
                                                         animationDuration={300}
-                                                    />
+                                                    />}
 
 
 
@@ -848,6 +1054,38 @@ export default function StatisticsScreen() {
 
 
                                                 </View>
+
+                                            </View>
+
+                                            <View style={{ flexDirection: 'row', gap: 10, alignSelf: 'center' }}>
+
+                                                <TouchableOpacity
+                                                    style={{
+                                                        backgroundColor: graphMode == 'total' ? 'rgb(255, 3, 184)' : 'white',
+                                                        alignItems: 'center', justifyContent: 'center', padding: 10, borderRadius: 10,
+                                                        borderWidth: graphMode == 'total' ? 0 : 1, borderColor: 'gray',
+
+                                                    }}
+                                                    onPress={() => setGraphMode('total')}
+                                                >
+                                                    <Text style={{ fontWeight: 'bold', color: graphMode == 'total' ? 'white' : 'black' }}>
+                                                        Total Average
+                                                    </Text>
+                                                </TouchableOpacity>
+
+                                                <TouchableOpacity
+                                                    style={{
+                                                        backgroundColor: graphMode == 'week' ? 'rgb(255, 3, 184)' : 'white',
+                                                        alignItems: 'center', justifyContent: 'center', padding: 10, borderRadius: 10,
+                                                        borderWidth: graphMode == 'week' ? 0 : 1, borderColor: 'gray',
+
+                                                    }}
+                                                    onPress={() => setGraphMode('week')}
+                                                >
+                                                    <Text style={{ fontWeight: 'bold', color: graphMode == 'week' ? 'white' : 'black' }}>
+                                                        Weekly
+                                                    </Text>
+                                                </TouchableOpacity>
 
                                             </View>
 
@@ -874,13 +1112,10 @@ export default function StatisticsScreen() {
 
                                                     <View style={[{ justifyContent: 'center' }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 10, color: 'rgb(161, 161, 161)' }}>Current</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(0, 0, 0)' }}>1.5 kW</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: theme == 'dark' ? 'white' : 'dark' }}>{totalEnergyData ? Math.floor(totalEnergyData.total_energy1) : 0} kWh</Text>
                                                     </View>
 
-                                                    <View style={[{ justifyContent: 'center', }]}>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 10, color: 'rgb(149, 149, 149)' }}>Today</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(0, 0, 0)' }}>20 kWh</Text>
-                                                    </View>
+
 
                                                     <Ionicons name="flash" color='rgb(225, 241, 1)'//color='rgb(255, 255, 255)' 
                                                         size={30}
@@ -913,12 +1148,12 @@ export default function StatisticsScreen() {
 
                                                     <View style={[{ justifyContent: 'center' }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 10, color: 'rgb(161, 161, 161)' }}>Per kWh</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(0, 0, 0)' }}>$0.29</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: theme == 'dark' ? 'white' : 'dark' }}>$0.29</Text>
                                                     </View>
 
                                                     <View style={[{ justifyContent: 'center', }]}>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 10, color: 'rgb(161, 161, 161)' }}>Weekly</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(0, 0, 0)' }}>$261</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 10, color: 'rgb(161, 161, 161)' }}>Current</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: theme == 'dark' ? 'white' : 'dark' }}>${totalEnergyData ? Math.floor(totalEnergyData.total_energy1 * 0.29) : 0}/kWh</Text>
                                                     </View>
 
                                                 </LinearGradient>
@@ -1086,15 +1321,15 @@ export default function StatisticsScreen() {
 
                                     <View style={[styles.deviceStats, { paddingBottom: 200, marginTop: -10 }]}>
 
-                                        <View style={{ padding: 20, backgroundColor: 'rgb(245, 238, 246)', borderRadius: 500, marginBottom: 0 }}>
+                                        <View style={{ padding: 20, backgroundColor: theme == 'dark' ? 'rgb(17, 18, 44)' : 'rgb(245, 238, 246)', borderRadius: 500, marginBottom: 10 }}>
                                             <Text style={{ color: 'rgb(147, 147, 147)' }}>---- Device Statistics ----</Text>
                                         </View>
 
-                                        <View style={[styles.roomScroller, { height: 75 }]}
+                                        <View style={[styles.roomScroller, { height: 75, marginTop: -20 }]}
 
                                         >
                                             <ScrollView
-                                                showsHorizontalScrollIndicator={Platform.OS=='web' ? true : false}
+                                                showsHorizontalScrollIndicator={Platform.OS == 'web' ? true : false}
                                                 horizontal={true}
                                                 style={[{
                                                     width: '100%',
@@ -1108,10 +1343,10 @@ export default function StatisticsScreen() {
                                                     <TouchableOpacity onPress={() => { setCurrentRoom(room.room_id) }}>
                                                         <LinearGradient
                                                             colors={[
-                                                                (currentRoom == room.room_id) ? 'rgb(255, 3, 184)' : 'white', 'transparent'
+                                                                (currentRoom == room.room_id) ? 'rgb(255, 3, 184)' : theme == "dark" ? 'rgb(26, 28, 77)' : 'white', 'transparent'
                                                             ]}
                                                             style={[styles.roomButton, styles.shadow, {
-                                                                backgroundColor: (currentRoom == room.room_id) ? 'rgb(216, 75, 255)' : 'white',
+                                                                backgroundColor: (currentRoom == room.room_id) ? 'rgb(216, 75, 255)' : theme == "dark" ? 'rgb(26, 28, 77)' : 'white',
                                                                 padding: 10, paddingLeft: 20, paddingRight: 20,
                                                             }]}
                                                         >
@@ -1119,7 +1354,7 @@ export default function StatisticsScreen() {
                                                             <Text style={{
                                                                 //fontWeight: 'bold',
                                                                 fontSize: 12,
-                                                                color: (currentRoom == room.room_id) ? 'white' : 'black'
+                                                                color: (currentRoom == room.room_id) ? 'white' : theme == "dark" ? 'white' : 'black'
                                                             }}>
                                                                 {room.name}
                                                             </Text>
@@ -1133,9 +1368,9 @@ export default function StatisticsScreen() {
                                             </ScrollView>
 
                                         </View>
-                                        <View style={{width:'100%', alignItems:'center', gap:-40}}>
+                                        <View style={{ width: '100%', alignItems: 'center', gap: -20 }}>
                                             {devices.map((device) => (
-                                                <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.deviceButton, styles.shadow, { maxHeight: 80, top: -60 }]}>
+                                                <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.deviceButton, styles.shadow, { maxHeight: 80, marginTop: 20, top: -40 }]}>
                                                     <Animated.View style={[animatedAlertStyle, { position: 'absolute', width: 50, height: '100%', left: -50, justifyContent: 'center', alignItems: 'center', }]}>
                                                         <MaterialCommunityIcons
                                                             name="exclamation-thick"
@@ -1163,12 +1398,12 @@ export default function StatisticsScreen() {
                                                         <View
                                                             style={[
                                                                 {
-                                                                    width: '10%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center', padding: 20,
+                                                                    width: '15%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center', padding: 0,
                                                                     backgroundColor: 'white', borderRadius: 500,
                                                                 }
                                                             ]}>
                                                             <MaterialCommunityIcons
-                                                                name={device.logo} size={60} //color='rgb(255, 255, 255)'
+                                                                name={device.logo} size={25} //color='rgb(255, 255, 255)'
                                                                 style={{ color: 'rgb(255, 3, 184)', backgroundColor: 'transparent' }}
                                                             />
                                                         </View>
@@ -1256,7 +1491,7 @@ export default function StatisticsScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>
                                     Statistics
                                 </Text>
                             </View>
@@ -1264,7 +1499,7 @@ export default function StatisticsScreen() {
                             <View style={[styles.mainContainer]}>
 
 
-                                <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
+                                <View style={[styles.shadow, styles.homePanel, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
 
                                     <View style={{ padding: 20 }}>
                                         <Text style={{ color: 'rgb(147, 147, 147)' }}>---- Home Statistics ----</Text>
@@ -1278,28 +1513,73 @@ export default function StatisticsScreen() {
 
                                                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
 
-                                                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
+                                                    {graphMode == 'week' && <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
                                                         onPress={() => {
                                                             handleLeftArrow()
                                                         }}>
-                                                        <MaterialCommunityIcons name="chevron-left" size={40} color={theme=='dark' ? 'white' : 'dark'} />
-                                                    </TouchableOpacity>
+                                                        <MaterialCommunityIcons name="chevron-left" size={30} color={theme == 'dark' ? 'white' : 'dark'} />
+                                                    </TouchableOpacity>}
 
-                                                    <Text style={{ fontSize: 20, fontWeight: 'bold', color:theme=='dark' ? 'white' : 'dark' }}>
-                                                        Week {currentWeek}
+                                                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: theme == 'dark' ? 'white' : 'dark' }}>
+                                                        {graphMode == 'week' ? "Week " + currentWeek : "Total Energy"}
                                                     </Text>
 
-                                                    <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
+                                                    {graphMode == 'week' && <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
                                                         onPress={() => {
                                                             handleRightArrow()
                                                         }}>
-                                                        <MaterialCommunityIcons name="chevron-right" size={40} color={theme=='dark' ? 'white' : 'dark'} />
-                                                    </TouchableOpacity>
+                                                        <MaterialCommunityIcons name="chevron-right" size={30} color={theme == 'dark' ? 'white' : 'dark'} />
+                                                    </TouchableOpacity>}
 
                                                 </View>
 
+                                                {graphMode == 'total' && <LineChart
 
-                                                <BarChart
+                                                    data={makeLineChartData(totalEnergyData)}
+                                                    width={calculateChartWidth() - 0}
+                                                    spacing={0.145 * (calculateChartWidth())}
+                                                    noOfSections={4}
+                                                    height={200}
+
+                                                    color={'rgb(216, 75, 255)'}
+                                                    thickness={10}
+                                                    dataPointsColor={'rgb(255, 3, 184)'}
+                                                    dataPointsRadius={8}
+
+                                                    textFontSize={20}
+                                                    textColor={'rgb(255, 3, 184)'}
+                                                    textShiftY={-10}
+                                                    textShiftX={-5}
+
+                                                    yAxisLabelSuffix=' kWh '
+                                                    yAxisLabelWidth={60}
+                                                    yAxisTextStyle={{ color: "gray", fontSize: 15 }}
+                                                    xAxisLabelTextStyle={{ color: "gray", fontSize: 10, }}
+                                                    yAxisColor={'gray'}
+                                                    xAxisColor={'gray'}
+
+
+                                                    //maxValue={250}
+                                                    //maxValue={(checkEnergyThreshold(totalEnergyData)) ? graphMax : 30}
+                                                    //maxValue={1000}
+                                                    //maxValue={totalEnergyData ? totalEnergyData.total_energy + 180 : 150}
+                                                    maxValue={totalEnergyData ? getEnergyThreshold() + 180 : 150}
+                                                    yAxisOffset={0}
+                                                    //yAxisOffset={50}
+                                                    //yAxisOffset={Math.max(0, deviceInfo.base_energy-100)}
+                                                    mostNegativeValue={0}
+
+                                                    curved
+
+
+
+
+                                                //isAnimated
+
+                                                />}
+
+
+                                                {graphMode == 'week' && <BarChart
 
                                                     //key={chartKey}
                                                     //data={[{ value: 100, frontColor: 'green' }, { value: 50, frontColor: 'yellow' }]}
@@ -1346,7 +1626,7 @@ export default function StatisticsScreen() {
                                                     //side="right"
                                                     isAnimated
                                                     animationDuration={300}
-                                                />
+                                                />}
 
 
 
@@ -1358,6 +1638,43 @@ export default function StatisticsScreen() {
                                         </View>
 
                                         <View style={[styles.homeStatsDetails]}>
+
+                                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+
+                                                <View style={{ flexDirection: 'row', gap: 10 }}>
+
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            backgroundColor: graphMode == 'total' ? 'rgb(255, 3, 184)' : 'white',
+                                                            alignItems: 'center', justifyContent: 'center', padding: 10, borderRadius: 10,
+                                                            borderWidth: graphMode == 'total' ? 0 : 1, borderColor: 'gray',
+
+                                                        }}
+                                                        onPress={() => setGraphMode('total')}
+                                                    >
+                                                        <Text style={{ fontWeight: 'bold', color: graphMode == 'total' ? 'white' : 'black' }}>
+                                                            Total Average
+                                                        </Text>
+                                                    </TouchableOpacity>
+
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            backgroundColor: graphMode == 'week' ? 'rgb(255, 3, 184)' : 'white',
+                                                            alignItems: 'center', justifyContent: 'center', padding: 10, borderRadius: 10,
+                                                            borderWidth: graphMode == 'week' ? 0 : 1, borderColor: 'gray',
+
+                                                        }}
+                                                        onPress={() => setGraphMode('week')}
+                                                    >
+                                                        <Text style={{ fontWeight: 'bold', color: graphMode == 'week' ? 'white' : 'black' }}>
+                                                            Weekly
+                                                        </Text>
+                                                    </TouchableOpacity>
+
+                                                </View>
+
+
+                                            </View>
 
                                             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
 
@@ -1384,13 +1701,15 @@ export default function StatisticsScreen() {
 
                                                     <View style={[{ justifyContent: 'center' }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Current</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>1.5 kW</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme == 'dark' ? 'white' : 'dark' }}>{totalEnergyData ? Math.floor(totalEnergyData.total_energy1) : 0} kWh</Text>
                                                     </View>
 
+                                                    {/*
                                                     <View style={[{ justifyContent: 'center', }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(149, 149, 149)' }}>Today</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>20 kWh</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme == 'dark' ? 'white' : 'dark' }}>20 kWh</Text>
                                                     </View>
+                                                    */}
 
                                                 </LinearGradient>
 
@@ -1419,12 +1738,12 @@ export default function StatisticsScreen() {
 
                                                     <View style={[{ justifyContent: 'center' }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Per kWh</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>$0.29</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme == 'dark' ? 'white' : 'dark' }}>$0.29</Text>
                                                     </View>
 
                                                     <View style={[{ justifyContent: 'center', }]}>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Weekly</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme=='dark' ? 'white' : 'dark' }}>$261</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Current</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme == 'dark' ? 'white' : 'dark' }}>${totalEnergyData ? Math.floor(totalEnergyData.total_energy1 * 0.29) : 0}/kWh</Text>
                                                     </View>
 
                                                 </LinearGradient>
@@ -1516,7 +1835,7 @@ export default function StatisticsScreen() {
 
                                 <View style={[styles.deviceStats, { paddingBottom: 200 }]}>
 
-                                    <View style={{ padding: 20, backgroundColor: theme=='dark' ? 'rgb(17, 18, 44)' : 'rgb(245, 238, 246)', borderRadius: 500, marginBottom: 10 }}>
+                                    <View style={{ padding: 20, backgroundColor: theme == 'dark' ? 'rgb(17, 18, 44)' : 'rgb(245, 238, 246)', borderRadius: 500, marginBottom: 10 }}>
                                         <Text style={{ color: 'rgb(147, 147, 147)' }}>---- Device Statistics ----</Text>
                                     </View>
 
@@ -1537,17 +1856,17 @@ export default function StatisticsScreen() {
                                                 <TouchableOpacity onPress={() => { setCurrentRoom(room.room_id) }}>
                                                     <LinearGradient
                                                         colors={[
-                                                            (currentRoom == room.room_id) ? 'rgb(255, 3, 184)' : theme=="dark" ? 'rgb(26, 28, 77)' : 'white', 'transparent'
+                                                            (currentRoom == room.room_id) ? 'rgb(255, 3, 184)' : theme == "dark" ? 'rgb(26, 28, 77)' : 'white', 'transparent'
                                                         ]}
                                                         style={[styles.roomButton, styles.shadow, {
-                                                            backgroundColor: (currentRoom == room.room_id) ? 'rgb(216, 75, 255)' : theme=="dark" ? 'rgb(26, 28, 77)' : 'white'
+                                                            backgroundColor: (currentRoom == room.room_id) ? 'rgb(216, 75, 255)' : theme == "dark" ? 'rgb(26, 28, 77)' : 'white'
                                                         }]}
                                                     >
 
                                                         <Text style={{
                                                             fontWeight: 'bold',
                                                             fontSize: 18,
-                                                            color: (currentRoom == room.room_id) ? 'white' : theme=="dark" ? 'white' : 'black'
+                                                            color: (currentRoom == room.room_id) ? 'white' : theme == "dark" ? 'white' : 'black'
                                                         }}>
                                                             {room.name}
                                                         </Text>
@@ -1646,6 +1965,9 @@ export default function StatisticsScreen() {
                             </View>
 
                             <View style={{ height: 30 }}></View>
+
+
+
 
 
 
@@ -1761,7 +2083,7 @@ const styles = StyleSheet.create({
     },
 
     deviceButton: {
-        width: '80%',
+        width: '90%',
         borderRadius: 50,
         marginTop: 40,
         backgroundColor: 'rgb(216, 75, 255)',

@@ -163,10 +163,6 @@ export default function DeviceStatisticsScreen() {
 
         const energyDataList = [
             {
-                value: energyData.energy7, label: '30 sec',
-                dataPointText: String(Math.floor(energyData.energy7))
-            },
-            {
                 value: energyData.energy6, label: '25 sec',
                 dataPointText: String(Math.floor(energyData.energy6))
             },
@@ -201,8 +197,8 @@ export default function DeviceStatisticsScreen() {
 
 
         fetchEnergyData();
-        //const interval = setInterval(fetchEnergyData, 5000);    //every 5 sec
-        const interval = setInterval(fetchEnergyData, 2000);    //every 2 sec
+        const interval = setInterval(fetchEnergyData, 5000);    //every 5 sec
+        //const interval = setInterval(fetchEnergyData, 2000);    //every 2 sec
 
 
         //console.log(energyData)
@@ -468,7 +464,7 @@ export default function DeviceStatisticsScreen() {
 
                                     <LinearGradient
                                         colors={['rgb(255, 3, 184)', 'transparent']}
-                                        style={[styles.shadow, styles.deviceCard, { width: '95%' }]}
+                                        style={[styles.shadow, styles.deviceCard, { width: '95%', marginTop:10, }]}
                                     >
                                         <View style={[styles.deviceCardPart, { width: '20%' }]}>
                                             <View style={{ backgroundColor: 'white', borderRadius: 500 }}>
@@ -511,7 +507,7 @@ export default function DeviceStatisticsScreen() {
                                         </View>
                                     </LinearGradient>
 
-                                    <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'black' : 'black' }]}>
+                                    <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', top:10, }]}>
 
                                         <View style={{ padding: 20 }}>
                                             <Text style={{ color: 'rgb(147, 147, 147)' }}>---- {name} Energy Consumption ----</Text>
@@ -546,6 +542,9 @@ export default function DeviceStatisticsScreen() {
                                                         yAxisLabelSuffix=' kWh '
                                                         yAxisLabelWidth={35}
                                                         yAxisTextStyle={{ color: "gray", fontSize: 8 }}
+                                                        xAxisLabelTextStyle={{ color: "gray", fontSize:10, }}
+                                                        yAxisColor={'gray'}
+                                                        xAxisColor={'gray'}
 
 
                                                         //maxValue={250}
@@ -580,7 +579,7 @@ export default function DeviceStatisticsScreen() {
                                     </View>
 
 
-                                    <Text style={{ color: 'rgb(147, 147, 147)', marginTop: 10, fontSize: 20 }}>--- Activity Log ---</Text>
+                                    <Text style={{ color: 'rgb(147, 147, 147)', marginTop: 30, fontSize: 20 }}>--- Activity Log ---</Text>
 
                                     <View
                                         style={[styles.activity, { alignItems: 'center' }]}
@@ -593,9 +592,9 @@ export default function DeviceStatisticsScreen() {
                                                 {activityLog.map((item, index) => (
                                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                                         key={index}
-                                                        style={[styles.activityLog]}
+                                                        style={[styles.activityLog, {padding:20,}]}
                                                     >
-                                                        <Text style={{ fontSize: 25, color: 'white', fontWeight: 'bold' }}>{item}</Text>
+                                                        <Text style={{ fontSize: 20, color: 'white', fontWeight: 'bold' }}>{item}</Text>
                                                     </LinearGradient>
                                                 ))}
                                             </View>

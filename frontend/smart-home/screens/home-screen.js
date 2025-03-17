@@ -45,12 +45,52 @@ export default function HomeScreen() {
         }
     }, [theme])
 
+    const themes = ['dark', 'light', 'crazy'];
+    const [themeIndex, setThemeIndex] = useState(0)
+
+    const changeTheme = (val) => {
+        let index = themeIndex;
+        if (themeIndex + val > 2) {
+            index = 0
+            setThemeIndex(0)
+        }
+        else {
+            index = themeIndex + val
+            setThemeIndex(themeIndex + val)
+        }
+        toggleTheme(themes[index])
+    }
+
+
+
+    //Time
+    const [currentTime, setCurrentTime] = useState(getFormattedTime());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(getFormattedTime());
+        }, 10000);
+
+        return () => clearInterval(interval); // Cleanup interval on unmount
+    }, []);
+
+    function getFormattedTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); // HH:MM format
+    }
+
+
+
     const [firstName, setFirstName] = useState("name")
+    const [lastName, setLastName] = useState("name")
+    const [userType, setUserType] = useState("name")
     const [house_id, setHouseId] = useState(0)
     const [loading, setLoading] = useState(true);
 
     const getFirstName = async () => {
         setFirstName(await AsyncStorage.getItem("first_name"))
+        setLastName(await AsyncStorage.getItem("last_name"))
+        setUserType(await AsyncStorage.getItem("user_type"))
     }
 
     const getHouse = async () => {
@@ -253,16 +293,16 @@ export default function HomeScreen() {
     }, [moodStates, imageDisplays])
 
     const [rewardsHats, setRewardsHats] = useState([
-            require("../assets/CatAssets/Hats/blocked.png"),
-            require("../assets/CatAssets/Hats/hat1.png"),
-            require("../assets/CatAssets/Hats/hat2.png"),
-        ])
-    
-        const [rewardsBG, setRewardsBG] = useState([
-            require("../assets/CatAssets/Backgrounds/bg1.png"),
-            require("../assets/CatAssets/Backgrounds/bg2.png"),
-            require("../assets/CatAssets/Backgrounds/bg3.png"),
-        ])
+        require("../assets/CatAssets/Hats/blocked.png"),
+        require("../assets/CatAssets/Hats/hat1.png"),
+        require("../assets/CatAssets/Hats/hat2.png"),
+    ])
+
+    const [rewardsBG, setRewardsBG] = useState([
+        require("../assets/CatAssets/Backgrounds/bg1.png"),
+        require("../assets/CatAssets/Backgrounds/bg2.png"),
+        require("../assets/CatAssets/Backgrounds/bg3.png"),
+    ])
 
 
 
@@ -490,10 +530,559 @@ export default function HomeScreen() {
     };
 
 
+    const [isVisible, setDropdownVisible] = useState(true);
+
+
+    const [isShortDropdownVisible, setSDP] = useState(false)
+
+
+    const [weatherData, setWeatherData] = useState(null);
+    const [error, setError] = useState(null);
+
+    const API_KEY = 'e74a752c81684094463e38f68e07d288';
+    const CITY = 'Dubai';
+
+    useEffect(() => {
+        const fetchWeather = async () => {
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&units=metric&appid=${API_KEY}`
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch weather data');
+                }
+
+                const data = await response.json();
+                console.log(data)
+
+                setWeatherData({
+                    temp: data.main.temp,
+                    humidity: data.main.humidity,
+                    wind: data.wind.speed,
+                    visibility: data.visibility,
+                    description: data.weather[0].description,
+                    icon: data.weather[0].icon
+                });
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchWeather();
+    }, []);
+
+    const iconMap = {
+        '01d': 'weather-sunny',
+        '01n': 'weather-night',
+        '02d': 'weather-partly-cloudy',
+        '02n': 'weather-night-partly-cloudy',
+        '03d': 'weather-cloudy',
+        '03n': 'weather-cloudy',
+        '04d': 'weather-cloudy',
+        '04n': 'weather-cloudy',
+        '09d': 'weather-pouring',
+        '09n': 'weather-pouring',
+        '10d': 'weather-rainy',
+        '10n': 'weather-rainy',
+        '11d': 'weather-lightning',
+        '11n': 'weather-lightning',
+        '13d': 'weather-snowy',
+        '13n': 'weather-snowy',
+        '50d': 'weather-fog',
+        '50n': 'weather-fog',
+    };
+
+
+    const returnWeatherIcon = (iconCode) => {
+        return iconMap[iconCode] || 'weather-sunny'
+    }
+
+
+    const capitalize = (str) => {
+        var splitStr = str.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        return splitStr.join(' ');
+    }
 
 
 
 
+    if (Platform.OS != 'web') {
+
+        return (
+            <View style={{ height: '100%' }}>
+                <StatusBar style={theme == 'light' ? 'dark' : 'light'} />
+                <View style={{ height: '100%', width: '100%', display: 'flex' }}>
+                    <LavaLampBackground />
+                </View>
+
+                {/*Main Screen*/}
+                <View style={[styles.screen, themeMode, { position: 'absolute', /*flexDirection: 'row'*/ }]}>
+                    <ScrollView style={[{ height: '100%' }]}>
+
+                        <SafeAreaProvider style={[{ height: '100%', width: '100%' }]}>
+                            <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
+
+                                <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                    style={[styles.helloBar, {
+                                        backgroundColor: 'rgb(216, 75, 255)', height: 72, borderBottomLeftRadius: 20, borderBottomRightRadius: 20,
+                                    }]}>
+                                    <View style={{ flexDirection: 'row', left: '3%', alignItems: 'center' }}>
+                                        <Text style={{ color: 'rgb(232, 232, 232)', fontSize: Platform.OS == 'web' ? 35 : 15, }}>Welcome, </Text>
+                                        <Text style={{ color: 'white', fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold' }}>
+                                            {(firstName) ? firstName : 'Guest'}!
+                                        </Text>
+                                        <Text style={{ color: 'rgb(232, 232, 232)', fontSize: Platform.OS == 'web' ? 45 : 25, }}>👋🏻</Text>
+                                    </View>
+
+                                    <View style={{ flexDirection: 'row', right: '3%', alignItems: 'center', gap: 30 }}>
+                                        <Text style={{ fontSize: 25, fontWeight: 'bold', color: 'white' }}>{currentTime}</Text>
+                                        <TouchableOpacity
+
+                                            onPress={() => {
+                                                setSDP(true)
+                                            }}
+
+                                            style={{
+                                                justifyContent: 'center', alignItems: 'center',
+                                                backgroundColor: 'rgba(255,255,255,1)', borderRadius: 500,
+                                                aspectRatio: 1,
+                                                //height: '100%',
+                                            }}>
+
+                                            <Ionicons name="person-circle-outline" size={Platform.OS == 'web' ? 70 : 40} />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <Modal
+                                        isVisible={isShortDropdownVisible}
+                                        onBackdropPress={() => setSDP(false)} // Close when tapping outside
+                                        animationIn="fadeInDown"
+                                        animationOut="fadeOutUp"
+                                        backdropOpacity={0.5}
+                                        style={[{}]}
+                                    >
+
+                                        <View style={[{
+                                            minWidth: 400, alignSelf: 'flex-end', position: 'absolute',
+                                            top: 0
+                                        }]}>
+
+                                            <View style={{
+                                                backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 20,
+                                                alignItems: 'center', gap: 5, justifyContent: 'center',
+                                                borderTopLeftRadius: Platform.OS == 'web' ? 30 : 20,
+                                                borderTopRightRadius: Platform.OS == 'web' ? 30 : 20
+                                            }}>
+                                                <Text style={{
+                                                    color: 'rgb(255, 3, 184)', fontWeight: 'bold',
+                                                    fontSize: 30,
+                                                }}>
+                                                    {firstName + " " + lastName}
+                                                </Text>
+                                                <Text style={{
+                                                    color: 'rgb(199, 199, 199)', fontWeight: 'bold',
+                                                    fontSize: 20,
+                                                }}>
+                                                    {userType == 'home_owner' ? "Home Owner" : "Landlord"}
+                                                </Text>
+
+                                            </View>
+
+                                            <TouchableOpacity style={{}}
+                                                onPress={() => {
+                                                    changeTheme(1)
+                                                }}
+                                            >
+                                                <View style={{
+                                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10,
+                                                    flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                }}>
+                                                    <MaterialCommunityIcons name="theme-light-dark" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 18 }}>
+                                                        Toggle Theme ({theme == 'dark' ? "Dark" : (theme == 'light' ? "Light" : "Freaky")})
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity style={{}}
+                                                onPress={() => {
+                                                    setSDP(false);
+                                                    navigation.navigate("SettingsStack")
+                                                }}
+                                            >
+                                                <View style={{
+                                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10,
+                                                    flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                }}>
+                                                    <MaterialCommunityIcons name="cog" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Settings</Text>
+                                                </View>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity style={{}}
+                                                onPress={() => {
+                                                    setSDP(false);
+                                                    AsyncStorage.clear();
+                                                    navigation.navigate("LoginMainStack");
+                                                }}
+                                            >
+                                                <View style={{
+                                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10,
+                                                    flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                    borderBottomLeftRadius: Platform.OS == 'web' ? 30 : 20,
+                                                    borderBottomRightRadius: Platform.OS == 'web' ? 30 : 20
+                                                }}>
+                                                    <MaterialCommunityIcons name="logout" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Logout</Text>
+                                                </View>
+                                            </TouchableOpacity>
+
+
+                                        </View>
+
+
+                                    </Modal>
+                                </LinearGradient>
+
+                                <View style={[styles.mainContainer]}>
+
+
+
+
+                                    <View style={[{ width: '100%', justifyContent: 'center', gap: '3%', alignItems: 'center', marginTop: -10 }]}>
+                                        <View style={[{ width: '60%', maxWidth: 400 }]}>
+
+                                            <Pet moodStates={moodStates} imageDisplays={imageDisplays} />
+
+                                        </View>
+
+                                        <View style={{ flexDirection: 'row', gap: 10, marginTop: -10 }}>
+
+                                            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', borderRadius: 20, }]}
+                                            >
+
+                                                <TouchableOpacity
+                                                    style={{
+                                                        padding: 5, paddingLeft: 10, paddingRight: 10,
+                                                        justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 5
+                                                    }}
+                                                    onPress={() => { navigation.navigate("StatisticsStack") }}
+                                                >
+                                                    <Ionicons
+                                                        name={"flash"}
+                                                        size={14}
+                                                        color={'white'}
+                                                    />
+                                                    <Text style={{ fontWeight: 'bold', fontSize: 12, color: 'white' }}>Statistics</Text>
+                                                </TouchableOpacity>
+                                            </LinearGradient>
+
+                                            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', borderRadius: 20, }]}
+                                            >
+                                                <TouchableOpacity
+                                                    style={{
+                                                        padding: 5, paddingLeft: 10, paddingRight: 10,
+                                                        justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 5
+                                                    }}
+                                                    onPress={() => { navigation.navigate("DevicesStack") }}
+                                                >
+                                                    <Ionicons
+                                                        name={"desktop"}
+                                                        size={14}
+                                                        color={'white'}
+                                                    />
+                                                    <Text style={{ fontWeight: 'bold', fontSize: 12, color: 'white' }}>Device Control</Text>
+                                                </TouchableOpacity>
+                                            </LinearGradient>
+
+                                            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', borderRadius: 20, }]}
+                                            >
+                                                <TouchableOpacity
+                                                    style={{
+                                                        padding: 5, paddingLeft: 10, paddingRight: 10,
+                                                        justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 5
+                                                    }}
+                                                    onPress={() => { navigation.navigate("CustomStack") }}
+                                                >
+                                                    <Ionicons
+                                                        name={"color-palette"}
+                                                        size={14}
+                                                        color={'white'}
+                                                    />
+                                                    <Text style={{ fontWeight: 'bold', fontSize: 12, color: 'white' }}>Pet Customization</Text>
+                                                </TouchableOpacity>
+                                            </LinearGradient>
+
+
+                                        </View>
+
+                                        <View style={[{
+                                            justifyContent: 'center', alignItems: 'center',
+                                            padding: 10,
+                                            minWidth: 200,
+                                            minHeight: 200,
+                                            //width:'90%',
+                                            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                            aspectRatio: 1, borderWidth: 1, borderColor: 'rgb(255, 3, 184)', borderRadius: 40,
+                                        }]}>
+
+                                            {!boolThermo &&
+
+                                                <TouchableOpacity
+                                                    style={{
+                                                        width: '80%', height: '20%',
+                                                        borderRadius: 30,
+                                                        justifyContent: 'center', alignItems: 'center',
+                                                    }}
+                                                    onPress={() => {
+                                                        toggleThermoAdd()
+                                                    }}
+                                                >
+                                                    <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                        style={{
+                                                            backgroundColor: 'rgb(216, 75, 255)',
+                                                            //height: '100%', width: '100%', 
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center', borderRadius: 30,
+                                                            padding: 10,
+                                                        }}
+                                                    >
+                                                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 15 }}>Add Thermostat</Text>
+                                                    </LinearGradient>
+
+                                                </TouchableOpacity>
+
+
+
+
+                                            }
+
+                                            {boolThermo &&
+                                                <View style={[{ justifyContent: 'center', alignItems: 'center', padding: 15, }]}>
+
+
+
+                                                    <ThermoDial
+
+                                                        changeable={true}
+                                                        tempValue={thermoTemp}
+                                                        minValueIn={0}
+                                                        maxValueIn={60}
+                                                        radiusIn={110}
+                                                        house_id={house_id}
+                                                        themMode={thermoMode}
+
+
+                                                    />
+
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            aspectRatio: 1, position: 'absolute', top: 10, right: 40,
+                                                        }}
+                                                        onPress={() => {
+                                                            deleteThermo()
+                                                        }}
+
+                                                    >
+
+                                                        <LinearGradient colors={['red', 'transparent']}
+                                                            style={{
+                                                                backgroundColor: 'red',
+                                                                justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', padding: 3, borderRadius: 10
+                                                            }}
+                                                        >
+                                                            <MaterialCommunityIcons name={"delete"} size={Platform.OS == 'web' ? 30 : 20} color={'white'} />
+
+                                                        </LinearGradient>
+
+                                                    </TouchableOpacity>
+
+
+
+
+
+                                                </View>
+                                            }
+
+                                            <Modal
+                                                isVisible={isThermoAdd}
+                                                onBackdropPress={() => setThermoAdd(false)} // Close when tapping outside
+                                                animationIn="zoomInRight"
+                                                animationOut="zoomOutRight"
+                                                backdropOpacity={0.4}
+                                                style={[{}]}
+                                            >
+
+                                                <View style={[styles.shadow, {
+                                                    borderRadius: 30,
+                                                    width: '90%',
+                                                    maxWidth: 800,
+                                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                                    alignSelf: 'center', alignItems: 'center', justifyContent: 'center',
+                                                    padding: 30, gap: 40,
+                                                }]}>
+
+                                                    <TouchableOpacity style={[{ position: 'absolute', right: 20, top: 20, }]} >
+                                                        <MaterialCommunityIcons name="close" color='rgb(255, 3, 184)' size={50} onPress={() => { toggleThermoAdd(); setThermoCode(''); }} />
+                                                    </TouchableOpacity>
+
+
+
+                                                    <TextInput
+                                                        //style={[styles.shadow, styles.input]}
+                                                        placeholder="Enter Thermostat Code"
+                                                        placeholderTextColor={'gray'}
+                                                        style={[{
+                                                            borderWidth: 1, borderColor: 'gray', padding: 20, width: '90%', maxWidth: 500, marginTop: 50, borderRadius: 20,
+                                                            color: theme == 'dark' ? 'white' : 'black', fontWeight: 'bold', fontSize: 20,
+                                                        }]}
+                                                        maxLength={10}
+                                                        value={thermoCode}
+                                                        onChangeText={setThermoCode}
+                                                    />
+
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            width: '80%', maxWidth: 500, borderRadius: 30, marginBottom: 50, alignItems: 'center'
+                                                        }}
+                                                        onPress={async () => {  // Make the handler async
+                                                            try {
+                                                                await addThermo();
+
+                                                                toggleThermoAdd();
+
+                                                                await getThermo();
+                                                                setThermoCode('');
+
+                                                            } catch (error) {
+                                                                // Handle errors without closing the modal
+                                                                console.log('Error adding thermostat:', error);
+                                                                //setError(error.message);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                            style={{
+                                                                backgroundColor: 'rgb(216, 75, 255)', width: '100%', alignItems: 'center',
+                                                                justifyContent: 'center', borderRadius: 30, padding: 20,
+                                                            }}
+                                                        >
+                                                            <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 20 }}>Add Thermostat</Text>
+                                                        </LinearGradient>
+
+                                                    </TouchableOpacity>
+
+
+                                                </View>
+
+
+                                            </Modal>
+
+
+
+                                        </View>
+
+
+
+
+
+                                    </View>
+
+
+
+
+
+
+                                    <View style={[styles.weather, styles.shadow, { height: 200, }]}>
+
+
+                                        <LinearGradient colors={['rgb(3, 188, 255)', 'transparent']}
+                                            style={{
+                                                height: '50%', width: '100%', borderTopLeftRadius: 50, borderTopRightRadius: 50,
+                                                backgroundColor: 'rgb(14, 90, 255)', flexDirection: 'row', alignItems: 'center'
+                                            }}
+                                        >
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: '8%' }}>
+
+                                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 55 }}>{weatherData ? Math.floor(weatherData.temp) + "°" : "22°"}</Text>
+
+                                                <View style={{ justifyContent: 'center', marginLeft: '5%' }}>
+                                                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 23 }}>{capitalize(weatherData ? weatherData.description : "clear skies")}</Text>
+                                                    <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 15 }}>Dubai, UAE</Text>
+
+                                                </View>
+
+                                            </View>
+
+                                            <View style={{ position: 'absolute', right: 35 }}>
+                                                <MaterialCommunityIcons name={weatherData ? returnWeatherIcon(weatherData.icon) : "weather-sunny"} color='white' size={80} />
+                                            </View>
+
+                                        </LinearGradient>
+
+                                        <View style={{
+                                            height: '50%', width: '100%', borderBottomLeftRadius: 50, borderBottomRightRadius: 50,
+                                            backgroundColor: 'rgb(17, 0, 103)', flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
+                                            gap: '10%'
+                                        }}>
+
+                                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>{weatherData ? Math.floor(weatherData.wind) : "10"} m/s</Text>
+                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14 }}>Wind</Text>
+                                            </View>
+
+                                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>{weatherData ? Math.floor(weatherData.humidity) : "33"}%</Text>
+                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14 }}>Humidity</Text>
+                                            </View>
+
+                                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>{weatherData ? Math.floor(weatherData.visibility) : "10000"} m</Text>
+                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14 }}>Visibility</Text>
+                                            </View>
+
+
+
+
+                                        </View>
+
+                                    </View>
+
+                                    <View style={{ height: 300 }}>
+
+
+                                    </View>
+
+
+
+
+
+                                </View>
+
+
+
+
+
+                            </SafeAreaView>
+                        </SafeAreaProvider>
+
+                    </ScrollView>
+
+
+
+                </View>
+            </View >
+
+        )
+    }
 
 
 
@@ -529,13 +1118,114 @@ export default function HomeScreen() {
                                 </View>
 
 
-                                <View style={{
-                                    justifyContent: 'center', alignItems: 'center',
-                                    backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 500,
-                                    right: '3%', aspectRatio: 1,
-                                    //height: '100%',
-                                }}>
-                                    <Ionicons name="person-circle-outline" size={Platform.OS == 'web' ? 70 : 40} />
+
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 30, right: '3%' }}>
+                                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>{currentTime}</Text>
+                                    <TouchableOpacity
+
+                                        onPress={() => {
+                                            setSDP(true)
+                                        }}
+
+                                        style={{
+                                            justifyContent: 'center', alignItems: 'center',
+                                            backgroundColor: 'rgba(255,255,255,1)', borderRadius: 500,
+                                            aspectRatio: 1,
+                                            //height: '100%',
+                                        }}>
+
+                                        <Ionicons name="person-circle-outline" size={Platform.OS == 'web' ? 70 : 40} />
+                                    </TouchableOpacity>
+
+                                    <Modal
+                                        isVisible={isShortDropdownVisible}
+                                        onBackdropPress={() => setSDP(false)} // Close when tapping outside
+                                        animationIn="fadeInDown"
+                                        animationOut="fadeOutUp"
+                                        backdropOpacity={0.5}
+                                        style={[{}]}
+                                    >
+
+                                        <View style={[{
+                                            minWidth: 400, alignSelf: 'flex-end', position: 'absolute',
+                                            top: 0
+                                        }]}>
+
+                                            <View style={{
+                                                backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 20,
+                                                alignItems: 'center', gap: 5, justifyContent: 'center',
+                                                borderTopLeftRadius: Platform.OS == 'web' ? 30 : 20,
+                                                borderTopRightRadius: Platform.OS == 'web' ? 30 : 20
+                                            }}>
+                                                <Text style={{
+                                                    color: 'rgb(255, 3, 184)', fontWeight: 'bold',
+                                                    fontSize: 30,
+                                                }}>
+                                                    {firstName + " " + lastName}
+                                                </Text>
+                                                <Text style={{
+                                                    color: 'rgb(199, 199, 199)', fontWeight: 'bold',
+                                                    fontSize: 20,
+                                                }}>
+                                                    {userType == 'home_owner' ? "Home Owner" : "Landlord"}
+                                                </Text>
+
+                                            </View>
+
+                                            <TouchableOpacity style={{}}
+                                                onPress={() => {
+                                                    changeTheme(1)
+                                                }}
+                                            >
+                                                <View style={{
+                                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10,
+                                                    flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                }}>
+                                                    <MaterialCommunityIcons name="theme-light-dark" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 18 }}>
+                                                        Toggle Theme ({theme == 'dark' ? "Dark" : (theme == 'light' ? "Light" : "Freaky")})
+                                                    </Text>
+                                                </View>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity style={{}}
+                                                onPress={() => {
+                                                    setSDP(false);
+                                                    navigation.navigate("SettingsStack")
+                                                }}
+                                            >
+                                                <View style={{
+                                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10,
+                                                    flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                }}>
+                                                    <MaterialCommunityIcons name="cog" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Settings</Text>
+                                                </View>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity style={{}}
+                                                onPress={() => {
+                                                    setSDP(false);
+                                                    AsyncStorage.clear();
+                                                    navigation.navigate("LoginMainStack");
+                                                }}
+                                            >
+                                                <View style={{
+                                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', padding: 10,
+                                                    flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                    borderBottomLeftRadius: Platform.OS == 'web' ? 30 : 20,
+                                                    borderBottomRightRadius: Platform.OS == 'web' ? 30 : 20
+                                                }}>
+                                                    <MaterialCommunityIcons name="logout" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Logout</Text>
+                                                </View>
+                                            </TouchableOpacity>
+
+
+                                        </View>
+
+
+                                    </Modal>
                                 </View>
                             </LinearGradient>
                             <View style={{ height: '3%' }}>
@@ -704,7 +1394,7 @@ export default function HomeScreen() {
                                                     placeholder="Enter Thermostat Code"
                                                     placeholderTextColor={'gray'}
                                                     style={[{
-                                                        borderWidth: 1, borderColor: 'gray', padding: 20, width: '60%', marginTop: 50, borderRadius: 20,
+                                                        borderWidth: 1, borderColor: 'gray', padding: 20, width: '90%', maxWidth: 600, marginTop: 50, borderRadius: 20,
                                                         color: theme == 'dark' ? 'white' : 'black', fontWeight: 'bold', fontSize: 20,
                                                     }]}
                                                     maxLength={10}
@@ -714,7 +1404,7 @@ export default function HomeScreen() {
 
                                                 <TouchableOpacity
                                                     style={{
-                                                        width: '50%', borderRadius: 30, marginBottom: 50,
+                                                        width: '50%', borderRadius: 30, marginBottom: 50, alignItems: 'center'
                                                     }}
                                                     onPress={async () => {  // Make the handler async
                                                         try {
@@ -723,6 +1413,8 @@ export default function HomeScreen() {
                                                             toggleThermoAdd();
 
                                                             await getThermo();
+
+                                                            setThermoCode('');
 
                                                         } catch (error) {
                                                             // Handle errors without closing the modal
@@ -733,7 +1425,7 @@ export default function HomeScreen() {
                                                 >
                                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                                         style={{
-                                                            backgroundColor: 'rgb(216, 75, 255)', height: '100%', width: '100%', alignItems: 'center',
+                                                            backgroundColor: 'rgb(216, 75, 255)', width: '80%', maxWidth: 500, alignItems: 'center',
                                                             justifyContent: 'center', borderRadius: 30, padding: 20,
                                                         }}
                                                     >
@@ -829,10 +1521,10 @@ export default function HomeScreen() {
                                     >
                                         <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: '5%' }}>
 
-                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 90 }}>22°</Text>
+                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 90 }}>{weatherData ? Math.floor(weatherData.temp) + "°" : "22°"}</Text>
 
                                             <View style={{ justifyContent: 'center', marginLeft: '15%' }}>
-                                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 35 }}>Clear Skies</Text>
+                                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 35 }}>{capitalize(weatherData ? weatherData.description : "clear skies")}</Text>
                                                 <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 25 }}>Dubai, UAE</Text>
 
                                             </View>
@@ -840,7 +1532,7 @@ export default function HomeScreen() {
                                         </View>
 
                                         <View style={{ position: 'absolute', right: 50 }}>
-                                            <MaterialCommunityIcons name="cloud" color='white' size={150} />
+                                            <MaterialCommunityIcons name={weatherData ? returnWeatherIcon(weatherData.icon) : "weather-sunny"} color='white' size={120} />
                                         </View>
 
                                     </LinearGradient>
@@ -852,18 +1544,18 @@ export default function HomeScreen() {
                                     }}>
 
                                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>10 km/h</Text>
+                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>{weatherData ? Math.floor(weatherData.wind) : "10"} m/s</Text>
                                             <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 20 }}>Wind</Text>
                                         </View>
 
                                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>33%</Text>
+                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>{weatherData ? Math.floor(weatherData.humidity) : "33"}%</Text>
                                             <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 20 }}>Humidity</Text>
                                         </View>
 
                                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>5%</Text>
-                                            <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 20 }}>Precipitation</Text>
+                                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 30 }}>{weatherData ? Math.floor(weatherData.visibility) : "10000"} m</Text>
+                                            <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 20 }}>Visibility</Text>
                                         </View>
 
 
@@ -873,7 +1565,15 @@ export default function HomeScreen() {
 
                                 </View>
 
-                                <Text>Mumbo Jumbo</Text>
+                                <View style={{ height: 300 }}>
+
+
+                                </View>
+
+                                <Text style={{ color: theme == 'dark' ? 'white' : 'black' }}>Mumbo Jumbo</Text>
+
+
+
 
 
 

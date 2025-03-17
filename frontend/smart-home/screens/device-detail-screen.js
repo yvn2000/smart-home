@@ -509,7 +509,7 @@ export default function DeviceDetail() {
                                 <Text style={{ fontSize: 14 }}>temperature {temp}</Text>
                                 */}
 
-                                <View style={[styles.shadow, styles.statsBar, {backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
+                                <View style={[styles.shadow, styles.statsBar, {backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'white', justifyContent:'center'}]}>
 
                                     <View style={[{ width: '33.33333%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', padding: 10 }]}>
                                         <MaterialCommunityIcons name="battery-medium" size={Platform.OS == 'web' ? 60 : 40} color={'rgba(216, 75, 255, 0.9)'} />
@@ -531,19 +531,7 @@ export default function DeviceDetail() {
                                             </Text>
                                         </View>
                                     </View>
-                                    <View style={[{ width: '33.3333%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', padding: 5, gap: 10 }]}>
-                                        <MaterialCommunityIcons name='heart-pulse' size={Platform.OS == 'web' ? 65 : 40} color={'rgba(216, 75, 255, 0.9)'} />
-                                        <View style={[]} >
-                                            <Text style={{
-                                                /* Idk why, but the bold weight for text is necessary else the last word doesnt show up on android, idk */
-                                                fontWeight: 'bold',
-                                                fontSize: Platform.OS == 'web' ? 30 : 15,
-                                                color: 'rgb(56, 253, 109)'
-                                            }} >
-                                                Healthy
-                                            </Text>
-                                        </View>
-                                    </View>
+                                    
                                     <View style={[{ width: '33.3333%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', padding: 5, gap: 10 }]}>
                                         <MaterialCommunityIcons name="clock-fast" size={Platform.OS == 'web' ? 65 : 40} color={'rgba(216, 75, 255, 0.9)'} />
                                         <View style={[]} >

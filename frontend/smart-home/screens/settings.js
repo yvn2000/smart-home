@@ -18,6 +18,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import Modal from "react-native-modal";
+
 
 
 export default function SettingsScreen() {
@@ -307,10 +309,17 @@ export default function SettingsScreen() {
             gap: '3%',
           }]}
             onPress={() => {//console.log(`Opening setting card for ${id}`); 
-
+              navigation.navigate("SettingsItem", {
+                house_id: house_id,
+                setting_name: "Delete House",
+                logo: "delete",
+              });
             }}>
             <MaterialCommunityIcons name="delete" color={theme == 'dark' ? 'white' : 'black'} size={50} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Delete House</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
+            </View>
           </TouchableOpacity>
 
 
@@ -320,10 +329,10 @@ export default function SettingsScreen() {
             backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
             gap: '3%',
           }]}
-            onPress={() => {//console.log(`Opening setting card for ${id}`); 
-              navigation.navigate("LoginScreen");
-              AsyncStorage.clear();
-              toggleTheme("light");
+            onPress={() => {//console.log(`Opening setting card for ${id}`);
+              AsyncStorage.clear(); 
+              navigation.navigate("LoginMainStack");
+              
             }}>
             <MaterialCommunityIcons name="logout" color={theme == 'dark' ? 'white' : 'black'} size={50} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Logout</Text>
@@ -336,6 +345,7 @@ export default function SettingsScreen() {
           <View style={{ height: 300 }}>
 
           </View>
+
 
 
 

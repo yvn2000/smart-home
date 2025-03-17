@@ -45,7 +45,7 @@ export default function RoomAdd() {
 
     const navigation = useNavigation()
 
-
+    /*
     useLayoutEffect(() => {
         navigation.setOptions({
             gestureEnabled: true,
@@ -70,6 +70,7 @@ export default function RoomAdd() {
             )
         })
     }, [])
+    */
 
     const { theme, toggleTheme } = useTheme()
 
@@ -112,6 +113,7 @@ export default function RoomAdd() {
                 //Alert.alert("Success", "Room added!");
                 setNewRoomName("");
                 setRoomCount(1)
+                navigation.goBack()
             } else {
                 //Alert.alert("Error", "Failed to add room");
             }
@@ -149,7 +151,7 @@ export default function RoomAdd() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
 
-                            <TouchableOpacity style={[styles.backButton]} >
+                            <TouchableOpacity style={[styles.backButton, {position:'absolute', top:Platform.OS=='web' ? 0 : 30,}]} >
                                 <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50}
                                     onPress={() => {
                                         navigation.goBack()
@@ -159,7 +161,7 @@ export default function RoomAdd() {
                             </TouchableOpacity>
 
 
-                            <View style={[styles.mainContainer]}>
+                            <View style={[styles.mainContainer, {marginTop:50,}]}>
 
                                 <Text
                                     style={{ fontWeight: 'bold', fontSize: 30, color:'rgb(255, 3, 184)' }}
@@ -190,9 +192,9 @@ export default function RoomAdd() {
                                         <TouchableOpacity onPress={() => {
                                             //addDeviceOld(newDeviceName, newDeviceLogo, newDeviceTemp)
                                             addRoom(newRoomName)
-                                            navigation.goBack();
+                                            //navigation.goBack();
                                         }}
-                                            style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                                            style={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}>
                                             <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'white' }}>Add Room</Text>
                                         </TouchableOpacity>
 
@@ -204,7 +206,7 @@ export default function RoomAdd() {
                                         <TouchableOpacity onPress={() => {
                                             navigation.goBack();
                                         }}
-                                            style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                                            style={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}>
                                             <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'white' }}>Cancel</Text>
                                         </TouchableOpacity>
                                     </LinearGradient>

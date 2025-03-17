@@ -67,6 +67,7 @@ export default function DeviceAdd() {
     const [newDeviceName, setNewDeviceName] = useState('')
     const [newDeviceLogo, setNewDeviceLogo] = useState('')
     const [newDeviceTemp, setNewDeviceTemp] = useState(22)
+    const [newDeviceCode, setNewDeviceCode] = useState('')
 
     const [sampleDevices, setSampleDevices] = useState([
         { "Air Conditioner": 'air-conditioner' },
@@ -120,16 +121,16 @@ export default function DeviceAdd() {
                             <View style={[styles.mainContainer]}>
 
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: 30, color:'rgb(255, 3, 184)' }}
+                                    style={{ fontWeight: 'bold', fontSize: 30, color: 'rgb(255, 3, 184)' }}
                                 >
                                     Add Device
                                 </Text>
 
                                 <TextInput
                                     style={[styles.shadow, styles.input, {
-                                        backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white',
-                                        borderColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white',
-                                        color:theme=='dark' ? 'rgb(255, 255, 255)' : 'black',
+                                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                        borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                        color: theme == 'dark' ? 'rgb(255, 255, 255)' : 'black',
                                     }]}
                                     placeholder="Device Name"
                                     placeholderTextColor={'rgb(156, 156, 156)'}
@@ -137,14 +138,26 @@ export default function DeviceAdd() {
                                     onChangeText={setNewDeviceName}
                                 />
 
+                                <TextInput
+                                    style={[styles.shadow, styles.input, {
+                                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                        borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                        color: theme == 'dark' ? 'rgb(255, 255, 255)' : 'black',
+                                    }]}
+                                    placeholder="Device Code"
+                                    placeholderTextColor={'rgb(156, 156, 156)'}
+                                    value={newDeviceCode}
+                                    onChangeText={setNewDeviceCode}
+                                />
+
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: 20, color:theme=='dark' ? 'white' : 'black' }}
+                                    style={{ fontWeight: 'bold', fontSize: 20, color: theme == 'dark' ? 'white' : 'black' }}
                                 >
                                     {'<-'} Choose Device {'->'}
                                 </Text>
 
 
-                                <View style={[styles.deviceTypes, {top:-50}]}>
+                                <View style={[styles.deviceTypes, { top: -50 }]}>
 
 
 
@@ -166,7 +179,7 @@ export default function DeviceAdd() {
                                                         styles.deviceType,
                                                         styles.shadow,
                                                         {
-                                                            backgroundColor: newDeviceLogo === deviceLogo ? 'rgb(255, 3, 184)' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(235, 235, 235)'),
+                                                            backgroundColor: newDeviceLogo === deviceLogo ? 'rgb(255, 3, 184)' : (theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(235, 235, 235)'),
                                                         },
                                                     ]}
                                                     onPress={() => {
@@ -176,11 +189,11 @@ export default function DeviceAdd() {
                                                     <MaterialCommunityIcons
                                                         name={deviceLogo}
                                                         size={60}
-                                                        color={newDeviceLogo === deviceLogo ? 'white' : (theme=='dark' ? 'white' : 'black')}
+                                                        color={newDeviceLogo === deviceLogo ? 'white' : (theme == 'dark' ? 'white' : 'black')}
                                                     />
                                                     <Text
                                                         style={{
-                                                            fontWeight: 'bold', color: newDeviceLogo === deviceLogo ? 'white' : (theme=='dark' ? 'white' : 'black'),
+                                                            fontWeight: 'bold', color: newDeviceLogo === deviceLogo ? 'white' : (theme == 'dark' ? 'white' : 'black'),
                                                             flexWrap: 'wrap'
                                                         }}>
                                                         {deviceName}
@@ -194,12 +207,12 @@ export default function DeviceAdd() {
                                 </View>
 
 
-                                <View style={{ flexDirection: 'row', gap: 20, maxHeight:100, top:-50 }}>
+                                <View style={{ flexDirection: 'row', gap: 20, maxHeight: 100, top: -50 }}>
                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                         style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', padding: 20, borderRadius: 25, alignItems: 'center', justifyContent: 'center' }]}
                                     >
                                         <TouchableOpacity onPress={() => {
-                                            addDeviceOld(newDeviceName, newDeviceLogo, newDeviceTemp)
+                                            addDeviceOld(newDeviceName, newDeviceLogo, newDeviceTemp, newDeviceCode)
                                             navigation.goBack();
                                         }}
                                             style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>

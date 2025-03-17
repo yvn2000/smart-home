@@ -20,7 +20,7 @@ import CustomSwitch from '../components/switch'
 import { Switch } from 'react-native-switch';
 
 
-export default function DevicesGrid({ currentRoom, house_id }) {
+export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
 
     const [loading, setLoading] = useState(true);
 
@@ -34,7 +34,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
     }, [windowDimensions])
 
     //const [allRooms, setRooms] = useState([]);
-    const [allRooms, setRooms] = useState([]);
+    //const [allRooms, setRooms] = useState([]);
     const [devices, setDevices] = useState([]);
     const [localDeviceStates, setLocalDeviceStates] = useState({});
     //console.log(devices)
@@ -45,6 +45,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
     }, [house_id]); // Logs when devices update
 
 
+    /*
     const fetchRooms2 = async () => {
 
         const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/rooms/` : `http://10.0.2.2:8000/api/houses/${house_id}/rooms/`
@@ -94,6 +95,8 @@ export default function DevicesGrid({ currentRoom, house_id }) {
     useEffect(() => {
         fetchRooms2();
     }, [currentRoom])
+
+    */
 
 
     const fetchDevices = async () => {
@@ -167,7 +170,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
 
 
 
-    const addDeviceOld = async (name, logo, temp) => {
+    const addDeviceOld = async (name, logo, temp, code) => {
 
 
         const roomData = allRooms.find((item) => item.room_id === currentRoom);
@@ -178,6 +181,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                 status: 'off',
                 temperature: temp, //22,
                 room: currentRoom,
+                code: code,
             };
 
 
@@ -262,11 +266,14 @@ export default function DevicesGrid({ currentRoom, house_id }) {
             if (response.ok) {
                 //setStatus(newStatus);
                 //Alert.alert("Success", `Device status updated to ${newStatus}`);
+                console.log("Device status changed")
                 addAction(device_id, "Turned Device " + newStatus)
+                
             } else {
                 //Alert.alert("Error", data.error || "Failed to update status");
             }
 
+            /*
             setRooms(prev => prev.map(room => ({
                 ...room,
                 devices: room.devices?.map(d =>
@@ -275,6 +282,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                         : d
                 )
             })));
+            */
 
             setDevices(prev => prev.map(d =>
                 d.device_id === device_id
@@ -286,6 +294,9 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                 ...prev,
                 [device_id]: newStatus === 'on'
             }));
+
+
+            //await fetchDevices()
 
 
         } catch (error) {
@@ -348,8 +359,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
             let isActive = true;
 
             const refresh = async () => {
-                //await getHouse();
-                await fetchRooms2();
+                //await fetchRooms2();
                 if (isActive) {
                     // Force devices update
                     const roomData = allRooms.find(item => item.room_id === currentRoom);
@@ -362,7 +372,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
             return () => {
                 isActive = false;
             };
-        }, [house_id, currentRoom]) // Add proper dependencies
+        }, [])//[house_id, currentRoom]) // Add proper dependencies
     );
 
 
@@ -370,7 +380,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             if (route.params?.refresh) {
-                fetchRooms2();
+                //fetchRooms2();
                 navigation.setParams({ refresh: false });
             }
         });
@@ -420,7 +430,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
             {/* Dynamic grid container */}
             <View style={[styles.gridContainer]}>
 
-                <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.gridItem, styles.shadow]}>
+                {allRooms.length!=[] && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.gridItem, styles.shadow]}>
                     <TouchableOpacity title="Add Device"
                         //onPress={openPopup/*addDevice*/
                         onPress={() => {
@@ -434,7 +444,7 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                         style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center' }} >
                         <Text style={styles.gridText}>Add Device</Text>
                     </TouchableOpacity>
-                </LinearGradient>
+                </LinearGradient>}
                 {devices.map((device) => {
 
                     const currentState = localDeviceStates[device.device_id] ??
@@ -463,9 +473,9 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                                 }}
                             >
                                 <View style={[styles.deviceUpper]}>
-                                    <MaterialCommunityIcons name={device.logo} size={Platform.OS == 'web' ? 60 : 50} color='rgb(255, 255, 255)' />
+                                    <MaterialCommunityIcons name={device.logo} size={Platform.OS == 'web' ? 60 : 40} color='rgb(255, 255, 255)' />
 
-                                    <View style={{ width: '35%', aspectRatio: 2 / 1 }}>
+                                    <View style={{ width: '35%' }}>
 
                                         {/*
                                     <CustomSwitch
@@ -530,8 +540,8 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                                             disabled={false}
                                             activeText={'On'}
                                             inActiveText={'Off'}
-                                            circleSize={35}
-                                            barHeight={30}
+                                            circleSize={Platform.OS == 'web' ? 35 : 28}
+                                            barHeight={Platform.OS == 'web' ? 30 : 24}
                                             circleBorderActiveColor={'rgb(152, 152, 152)'}
                                             circleBorderInactiveColor={'rgb(152, 152, 152)'}
                                             circleBorderWidth={2}
@@ -559,9 +569,15 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                                 <View style={[styles.deviceLower, { marginLeft: 4 }]}>
 
                                     <View style={{ bottom: '5%', left: '10%' }}>
-                                        <Text style={[{ fontSize: Platform.OS == 'web' ? 27 : 20, fontWeight: 'bold', color: 'white' }]}>
-                                            {device.name}
-                                        </Text>
+                                        <View style={{ flexDirection: 'row', alignItems:'center' }}>
+                                            <Text style={[{ fontSize: Platform.OS == 'web' ? 27 : 20, fontWeight: 'bold', color: 'white' }]}>
+                                                {device.name} 
+                                            </Text>
+                                            {device.power_save && <MaterialCommunityIcons
+
+                                                name="lightning-bolt" color='white' size={Platform.OS == 'web' ? 30 : 20}
+                                            />}
+                                        </View>
                                         <Text style={[{ fontSize: Platform.OS == 'web' ? 20 : 15, fontWeight: 'bold', color: 'rgb(218, 218, 218)' }]}>
                                             {allRooms.find(item => item.room_id === currentRoom)?.name} • {device.status.charAt(0).toUpperCase() + device.status.slice(1)}
                                         </Text>
@@ -569,8 +585,8 @@ export default function DevicesGrid({ currentRoom, house_id }) {
                                     </View>
 
                                     {true && <MaterialCommunityIcons
-                                        
-                                        name="chevron-right" color='white' size={50}
+
+                                        name="chevron-right" color='white' size={Platform.OS == 'web' ? 50 : 40}
                                         style={{ position: 'absolute', right: '6%', }}
                                     />}
 
