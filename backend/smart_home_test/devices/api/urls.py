@@ -14,8 +14,10 @@ from .views import (
 
     LandlordListView, UserAccessView, UserProfileView, UpdateUserNameView, UpdateUserNoobView,
 
+    DeleteUserView,
+
     RegisterUserView, LoginView, GuestLoginView,
-    AddHouseView, AssignExistingHouseView,
+    AddHouseView, AssignExistingHouseView, GetOwnerLandlordHouseView,
 
     AddThermostatView, DeleteThermostatView, UpdateThermostatView, GetThermostatView,
 
@@ -42,6 +44,7 @@ urlpatterns = [
     path('get-profile/', UserProfileView.as_view(), name='get-profile'),
     path('update-user-name/', UpdateUserNameView.as_view(), name='user-name'),
     path('update-user-noob/', UpdateUserNoobView.as_view(), name='user-noob'),
+    path('delete-user/', DeleteUserView.as_view(), name='delete-user'),
 
     path('register/', RegisterUserView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
@@ -51,6 +54,8 @@ urlpatterns = [
     path('houses/', ListHousesView.as_view(), name='list_houses'),
     path('houses/add/', AddHouseView.as_view(), name='add_house'),
     path('houses/delete/<int:house_id>/', DeleteHouseView.as_view(), name='delete_house'),
+    path('houses/<int:house_id>/get-owner-landlord/', GetOwnerLandlordHouseView.as_view(), name='get_owner_landlord'),
+    
 
     path('houses/<int:house_id>/add-guest/', AddGuestCodeView.as_view(), name='add-guest'),
     path('houses/<int:house_id>/list-guests/', ListGuestCodesView.as_view(), name='list-guest'),

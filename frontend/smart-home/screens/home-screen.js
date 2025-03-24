@@ -24,6 +24,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Modal from "react-native-modal";
 import { Knob } from 'primereact/knob';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function HomeScreen() {
 
@@ -148,8 +150,8 @@ export default function HomeScreen() {
     const getThermo = async () => {
 
         try {
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/get-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/get-thermostat/`
-
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/get-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/get-thermostat/`
+            const url = `${API_BASE_URL}/api/houses/${house_id}/get-thermostat/`
             const response = await fetch(url);
             const data = await response.json();
 
@@ -182,8 +184,8 @@ export default function HomeScreen() {
 
     const addThermo = async () => {
         try {
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/add-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/add-thermostat/`
-
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/add-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/add-thermostat/`
+            const url = `${API_BASE_URL}/api/houses/${house_id}/add-thermostat/`
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -213,8 +215,8 @@ export default function HomeScreen() {
 
     const deleteThermo = async () => {
         try {
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/delete-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/delete-thermostat/`
-
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/delete-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/delete-thermostat/`
+            const url = `${API_BASE_URL}/api/houses/${house_id}/delete-thermostat/`
             const response = await fetch(url, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
@@ -254,8 +256,10 @@ export default function HomeScreen() {
         useCallback(() => {
             const reloadData = async () => {
                 const id = await getHouse() // Get fresh ID on focus
+                await getFirstName();
                 if (id) {
                     console.log("Reloading data for house:", id)
+                    const userType = await getUserType();
                     const fetchedPet = await fetchPet(id)
                     if (fetchedPet) {
                         await fetchSickDevices(id, fetchedPet)
@@ -264,6 +268,7 @@ export default function HomeScreen() {
                     //console.log("Callback: ")
                     //console.log(moodStates)
                     //setLoading(false);
+                    await fetchWeather();
                 }
             }
             reloadData()
@@ -311,8 +316,8 @@ export default function HomeScreen() {
     const fetchPet = async (house_id) => {
         try {
 
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/house/${house_id}/pet/` : `http://10.0.2.2:8000/api/house/${house_id}/pet/`
-
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/house/${house_id}/pet/` : `http://10.0.2.2:8000/api/house/${house_id}/pet/`
+            const url = `${API_BASE_URL}/api/house/${house_id}/pet/`
             const response = await fetch(url);
             const data = await response.json();
 
@@ -417,9 +422,9 @@ export default function HomeScreen() {
         */
         try {
             //await getHouse()
-            const url = Platform.OS === 'web'
-                ? `http://127.0.0.1:8000/api/house/${house_id}/sick-devices/`
-                : `http://10.0.2.2:8000/api/house/${house_id}/sick-devices/`;
+
+
+            const url = `${API_BASE_URL}/api/house/${house_id}/sick-devices/`
 
             const response = await fetch(url);
             const data = await response.json();
@@ -491,9 +496,8 @@ export default function HomeScreen() {
         setIsUpdatingMood(true);
         try {
 
-            const url = Platform.OS === 'web'
-                ? `http://127.0.0.1:8000/api/pets/${pet.pet_id}/update-mood/`
-                : `http://10.0.2.2:8000/api/pets/${pet.pet_id}/update-mood/`;
+
+            const url = `${API_BASE_URL}/api/pets/${pet.pet_id}/update-mood/`
 
             /*
              const url = Platform.OS === 'web'
@@ -542,35 +546,36 @@ export default function HomeScreen() {
     const API_KEY = 'e74a752c81684094463e38f68e07d288';
     const CITY = 'Dubai';
 
-    useEffect(() => {
-        const fetchWeather = async () => {
-            try {
-                const response = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&units=metric&appid=${API_KEY}`
-                );
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch weather data');
-                }
+    const fetchWeather = async () => {
+        try {
+            const response = await fetch(
+                `https://api.openweathermap.org/data/2.5/weather?q=${CITY}&units=metric&appid=${API_KEY}`
+            );
 
-                const data = await response.json();
-                console.log(data)
-
-                setWeatherData({
-                    temp: data.main.temp,
-                    humidity: data.main.humidity,
-                    wind: data.wind.speed,
-                    visibility: data.visibility,
-                    description: data.weather[0].description,
-                    icon: data.weather[0].icon
-                });
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error('Failed to fetch weather data');
             }
-        };
 
+            const data = await response.json();
+            console.log(data)
+
+            setWeatherData({
+                temp: data.main.temp,
+                humidity: data.main.humidity,
+                wind: data.wind.speed,
+                visibility: data.visibility,
+                description: data.weather[0].description,
+                icon: data.weather[0].icon
+            });
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchWeather();
     }, []);
 
@@ -608,6 +613,36 @@ export default function HomeScreen() {
         }
         return splitStr.join(' ');
     }
+
+
+
+
+
+    const getUserType = async () => {
+        try {
+
+            const userType = await AsyncStorage.getItem('user_type')
+            if (userType && userType != null && userType != '') {
+                console.log(userType)
+
+            }
+
+            return 0;
+
+        } catch (error) {
+            console.error('Error :', error);
+        } finally {
+
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -682,13 +717,13 @@ export default function HomeScreen() {
                                                     color: 'rgb(255, 3, 184)', fontWeight: 'bold',
                                                     fontSize: 24,
                                                 }}>
-                                                    {firstName + " " + lastName}
+                                                    {(userType != 'home_owner' && userType != 'landlord') ? ("Guest") : (firstName + " " + lastName)}
                                                 </Text>
                                                 <Text style={{
                                                     color: 'rgb(199, 199, 199)', fontWeight: 'bold',
                                                     fontSize: 15,
                                                 }}>
-                                                    {userType == 'home_owner' ? "Home Owner" : "Landlord"}
+                                                    {userType == 'home_owner' ? "Home Owner" : (userType == 'landlord' ? "Landlord" : '')}
                                                 </Text>
 
                                             </View>
@@ -834,11 +869,19 @@ export default function HomeScreen() {
                                             aspectRatio: 1, borderWidth: 1, borderColor: 'rgb(255, 3, 184)', borderRadius: 40,
                                         }]}>
 
+                                            {userType == 'landlord' &&
+                                                <View>
+                                                    <Text style={{ textAlign: 'center', color: 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 18 }}>
+                                                        No Thermostat Access For Landlords
+                                                    </Text>
+                                                </View>
+                                            }
+
                                             {!boolThermo &&
 
                                                 <TouchableOpacity
                                                     style={{
-                                                        width: '80%', height: '20%',
+                                                        width: '80%',
                                                         borderRadius: 30,
                                                         justifyContent: 'center', alignItems: 'center',
                                                     }}
@@ -852,10 +895,10 @@ export default function HomeScreen() {
                                                             //height: '100%', width: '100%', 
                                                             alignItems: 'center',
                                                             justifyContent: 'center', borderRadius: 30,
-                                                            padding: 10,
+                                                            padding: 20,
                                                         }}
                                                     >
-                                                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 15 }}>Add Thermostat</Text>
+                                                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 15, textAlign:'center' }}>Add Thermostat</Text>
                                                     </LinearGradient>
 
                                                 </TouchableOpacity>
@@ -883,7 +926,7 @@ export default function HomeScreen() {
 
                                                     />
 
-                                                    <TouchableOpacity
+                                                    { userType == 'home_owner' && <TouchableOpacity
                                                         style={{
                                                             aspectRatio: 1, position: 'absolute', top: 10, right: 40,
                                                         }}
@@ -903,7 +946,7 @@ export default function HomeScreen() {
 
                                                         </LinearGradient>
 
-                                                    </TouchableOpacity>
+                                                    </TouchableOpacity>}
 
 
 
@@ -1036,17 +1079,17 @@ export default function HomeScreen() {
 
                                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                                 <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>{weatherData ? Math.floor(weatherData.wind) : "10"} m/s</Text>
-                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14 }}>Wind</Text>
+                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14, fontWeight:'bold' }}>Wind</Text>
                                             </View>
 
                                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                                 <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>{weatherData ? Math.floor(weatherData.humidity) : "33"}%</Text>
-                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14 }}>Humidity</Text>
+                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14, fontWeight:'bold' }}>Humidity</Text>
                                             </View>
 
                                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                                 <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>{weatherData ? Math.floor(weatherData.visibility) : "10000"} m</Text>
-                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14 }}>Visibility</Text>
+                                                <Text style={{ color: 'rgb(189, 203, 223)', fontSize: 14, fontWeight:'bold' }}>Visibility</Text>
                                             </View>
 
 
@@ -1161,13 +1204,13 @@ export default function HomeScreen() {
                                                     color: 'rgb(255, 3, 184)', fontWeight: 'bold',
                                                     fontSize: 30,
                                                 }}>
-                                                    {firstName + " " + lastName}
+                                                    {(userType != 'home_owner' && userType != 'landlord') ? ("Guest") : (firstName + " " + lastName)}
                                                 </Text>
                                                 <Text style={{
                                                     color: 'rgb(199, 199, 199)', fontWeight: 'bold',
                                                     fontSize: 20,
                                                 }}>
-                                                    {userType == 'home_owner' ? "Home Owner" : "Landlord"}
+                                                    {userType == 'home_owner' ? "Home Owner" : (userType == 'landlord' ? "Landlord" : '')}
                                                 </Text>
 
                                             </View>
@@ -1293,7 +1336,15 @@ export default function HomeScreen() {
                                         aspectRatio: 1, borderWidth: 1, borderColor: 'rgb(255, 3, 184)', borderRadius: 40,
                                     }]}>
 
-                                        {!boolThermo &&
+                                        {userType == 'landlord' &&
+                                            <View>
+                                                <Text style={{ textAlign: 'center', color: 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 20 }}>
+                                                    No Thermostat Access For Landlords
+                                                </Text>
+                                            </View>
+                                        }
+
+                                        {!boolThermo && userType != 'landlord' &&
 
                                             <TouchableOpacity
                                                 style={{
@@ -1319,7 +1370,7 @@ export default function HomeScreen() {
 
                                         }
 
-                                        {boolThermo &&
+                                        {boolThermo && userType != 'landlord' &&
                                             <View style={[{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }]}>
 
 
@@ -1337,7 +1388,7 @@ export default function HomeScreen() {
 
                                                 />
 
-                                                <TouchableOpacity
+                                                {userType == 'home_owner' && <TouchableOpacity
                                                     style={{
                                                         aspectRatio: 1, position: 'absolute', top: 0, right: 15,
                                                     }}
@@ -1357,7 +1408,7 @@ export default function HomeScreen() {
 
                                                     </LinearGradient>
 
-                                                </TouchableOpacity>
+                                                </TouchableOpacity>}
 
 
 
@@ -1448,7 +1499,7 @@ export default function HomeScreen() {
 
                                 <View style={{ flexDirection: 'row', gap: 20 }}>
 
-                                    <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                    {(userType == 'landlord' || userType == 'home_owner') && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                         style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', borderRadius: 20, }]}
                                     >
                                         <TouchableOpacity
@@ -1465,9 +1516,9 @@ export default function HomeScreen() {
                                             />
                                             <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'white' }}>Statistics</Text>
                                         </TouchableOpacity>
-                                    </LinearGradient>
+                                    </LinearGradient>}
 
-                                    <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                    {(userType == 'home_owner' || userType == 'guest') && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                         style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', borderRadius: 20, }]}
                                     >
                                         <TouchableOpacity
@@ -1484,9 +1535,9 @@ export default function HomeScreen() {
                                             />
                                             <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'white' }}>Device Control</Text>
                                         </TouchableOpacity>
-                                    </LinearGradient>
+                                    </LinearGradient>}
 
-                                    <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                    {(userType == 'home_owner' || userType == 'guest') && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                         style={[styles.shadow, { backgroundColor: 'rgb(216, 75, 255)', borderRadius: 20, }]}
                                     >
                                         <TouchableOpacity
@@ -1503,7 +1554,7 @@ export default function HomeScreen() {
                                             />
                                             <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'white' }}>Pet Customization</Text>
                                         </TouchableOpacity>
-                                    </LinearGradient>
+                                    </LinearGradient>}
 
                                 </View>
 
@@ -1565,12 +1616,12 @@ export default function HomeScreen() {
 
                                 </View>
 
-                                <View style={{ height: 300 }}>
+                                <View style={{ height: 150 }}>
 
 
                                 </View>
 
-                                <Text style={{ color: theme == 'dark' ? 'white' : 'black' }}>Mumbo Jumbo</Text>
+
 
 
 

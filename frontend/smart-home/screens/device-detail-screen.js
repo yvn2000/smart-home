@@ -47,13 +47,15 @@ import Modal from "react-native-modal";
 
 import { Switch } from 'react-native-switch';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function DeviceDetail() {
 
     const route = useRoute()
     const navigation = useNavigation()
 
-    const { device, device_id, name, logo, status, temp, room, deleteDevice, power } = route.params
+    const { device, device_id, name, logo, status, temp, room, deleteDevice, power, guestCode } = route.params
     //console.log("Status: "+status)
 
     const [loading, setLoading] = useState(true);
@@ -62,7 +64,7 @@ export default function DeviceDetail() {
     const [deviceStatus, setDeviceStatus] = useState(status.toLowerCase() === 'on');
     const [powerSave, setPowerSave] = useState(power)
 
-    useEffect(()=> {
+    useEffect(() => {
         setPowerSave(power)
     }, [power])
 
@@ -256,8 +258,7 @@ export default function DeviceDetail() {
 
     const addAction = async (action) => {
         try {
-            const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device_id}/activity/add-action/`;
-
+            const actionUrl = `${API_BASE_URL}/api/device/${device_id}/activity/add-action/`
             const response = await fetch(actionUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -292,8 +293,7 @@ export default function DeviceDetail() {
         //formData.append("status", newStatus);
         formData.append("status", newStatus.toLowerCase()); // Ensure lowercase
 
-        const url = Platform.OS == "android" ? `http://10.0.2.2:8000/api/update-device-status/${device_id}/` : `http://127.0.0.1:8000/api/update-device-status/${device_id}/`
-
+        const url = `${API_BASE_URL}/api/update-device-status/${device_id}/`
         try {
             const response = await fetch(
                 url + `?t=${Date.now()}`
@@ -308,7 +308,7 @@ export default function DeviceDetail() {
             if (response.ok) {
                 //setStatus(newStatus);
                 setDeviceStatus(!deviceStatus);
-                addAction("Turned Device "+newStatus)
+                addAction("Turned Device " + newStatus)
                 //Alert.alert("Success", `Device status updated to ${newStatus}`);
             } else {
                 //Alert.alert("Error", data.error || "Failed to update status");
@@ -345,10 +345,9 @@ export default function DeviceDetail() {
 
     const togglePowerSave = async () => {
         try {
-            const url = Platform.OS === "android" 
-                ? `http://10.0.2.2:8000/api/power-save/${device_id}/` 
-                : `http://127.0.0.1:8000/api/power-save/${device_id}/`;
-    
+
+            const url = `${API_BASE_URL}/api/power-save/${device_id}/`
+
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -358,10 +357,10 @@ export default function DeviceDetail() {
                     power: !powerSave  // Send actual boolean value
                 }),
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
-                
+
                 throw new Error(errorData.error || 'Failed to update power save');
             }
             setPowerSave(!powerSave)
@@ -371,11 +370,51 @@ export default function DeviceDetail() {
             throw error;
         }
     };
-    
 
 
 
 
+    const [isDelDropdownVisible, setDelDropdownVisible] = useState(false);
+    const toggleDelDropdown = () => {
+        setDelDropdownVisible(!isDelDropdownVisible);
+    };
+    const toggleAsyncDelDropdown = async () => {
+        setDelDropdownVisible(!isDelDropdownVisible);
+        setTimeout(1000)
+        return true;
+    };
+
+    const deleteDeviceFunc = async (deviceId) => {
+        //console.log(deviceId)
+        try {
+            const response = await fetch(
+                //`http://127.0.0.1:8000/api/delete-device/${deviceId}/`,
+                `${API_BASE_URL}/api/delete-device/${deviceId}/`,
+                {
+                    method: 'DELETE',
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            /*
+            const ret = await toggleAsyncDelDropdown();
+            if (ret) {
+                navigation.goBack();
+            }
+            */
+            console.log("going back")
+            navigation.goBack();
+
+
+            //setDevices((prevDevices) => prevDevices.filter((device) => device.device_id !== deviceId));
+            console.log(`Device ${deviceId} deleted successfully`);
+        } catch (err) {
+            console.error("Error deleting device:", err.message);
+        }
+    };
 
 
 
@@ -415,13 +454,13 @@ export default function DeviceDetail() {
 
 
                             <TouchableOpacity style={[styles.backButton, { maxHeight: 80 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
                             <View style={[{ position: 'absolute', paddingRight: 10, top: Platform.OS == 'web' ? 20 : 80, right: Platform.OS == 'web' ? 15 : 10 }]}>
                                 <TouchableOpacity style={[{}]} onPress={toggleDropdown}>
-                                    <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} />
+                                    <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} />
                                 </TouchableOpacity>
 
                                 <Modal
@@ -433,7 +472,7 @@ export default function DeviceDetail() {
                                     style={[{}]}
                                 >
 
-                                    <View style={[styles.shadow, styles.dropdownContainer, {borderRadius:30}]}>
+                                    <View style={[styles.shadow, styles.dropdownContainer, { borderRadius: 30 }]}>
                                         {/* Custom View Items */}
                                         <TouchableOpacity style={styles.dropdownItem}
                                             onPress={() => {
@@ -443,11 +482,12 @@ export default function DeviceDetail() {
                                                     device_id: device_id,
                                                 })
                                             }}>
-                                            <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10,
-                                                borderTopLeftRadius:30, borderTopRightRadius:30, backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'
-                                             }}>
-                                                <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
-                                                <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Automation</Text>
+                                            <View style={{
+                                                padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                borderTopLeftRadius: 30, borderTopRightRadius: 30, backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white'
+                                            }}>
+                                                <MaterialCommunityIcons name="refresh-auto" size={Platform.OS == 'web' ? 70 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Automation</Text>
                                             </View>
                                         </TouchableOpacity>
 
@@ -455,11 +495,11 @@ export default function DeviceDetail() {
                                             onPress={() => {
                                                 //toggleDropdown();
                                                 togglePowerSave();
-                                                
+
                                             }}>
-                                            <View style={{ backgroundColor: powerSave ? 'yellow' : (theme=='dark' ? 'rgb(26, 28, 77)' : 'white'), padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                                                <Ionicons name="flash-outline" color={powerSave ? 'rgb(255, 187, 0)' : (theme=='dark' ? 'white' : 'rgb(255, 3, 184)')} size={Platform.OS == 'web' ? 70 : 20} />
-                                                <Text style={{ color: powerSave ? 'rgb(255, 187, 0)' : (theme=='dark' ? 'white' : 'rgb(255, 3, 184)'), fontWeight: 'bold' }}>Energy Mode</Text>
+                                            <View style={{ backgroundColor: powerSave ? 'yellow' : (theme == 'dark' ? 'rgb(26, 28, 77)' : 'white'), padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                                <Ionicons name="flash-outline" color={powerSave ? 'rgb(255, 187, 0)' : (theme == 'dark' ? 'white' : 'rgb(255, 3, 184)')} size={Platform.OS == 'web' ? 70 : 20} />
+                                                <Text style={{ color: powerSave ? 'rgb(255, 187, 0)' : (theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'), fontWeight: 'bold' }}>Energy Mode</Text>
                                             </View>
                                         </TouchableOpacity>
 
@@ -468,23 +508,26 @@ export default function DeviceDetail() {
                                             navigation.goBack();
                                             navigation.navigate("StatisticsStack");
                                         }}>
-                                            <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white' }}>
-                                                <MaterialCommunityIcons name="chart-line" size={Platform.OS == 'web' ? 70 : 20} color={theme=='dark' ? 'white' : 'rgb(255, 3, 184)'} />
-                                                <Text style={{ color: theme=='dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Statistics</Text>
+                                            <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }}>
+                                                <MaterialCommunityIcons name="chart-line" size={Platform.OS == 'web' ? 70 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
+                                                <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Statistics</Text>
                                             </View>
                                         </TouchableOpacity>
 
                                         <TouchableOpacity style={{}} onPress={() => {
-                                            toggleDropdown()
-                                            deleteDevice(device_id);
-                                            navigation.goBack();
+
+                                            if (guestCode == '') {
+                                                toggleDropdown()
+                                                deleteDeviceFunc(device_id);
+                                            }
                                         }}>
-                                            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
-                                                style={{ backgroundColor: 'red', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10,
-                                                    borderBottomLeftRadius:30, borderBottomRightRadius:30
-                                                 }}>
-                                                <MaterialCommunityIcons name="delete" size={Platform.OS == 'web' ? 70 : 20} color={"white"} />
-                                                <Text style={{ color: 'white', fontWeight: 'bold' }}>Delete Device</Text>
+                                            <LinearGradient colors={[guestCode == '' ? 'rgb(255, 3, 184)' : 'rgb(133, 133, 133)', 'transparent']}
+                                                style={{
+                                                    backgroundColor: guestCode == '' ? 'red' : 'rgb(133, 133, 133)', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10,
+                                                    borderBottomLeftRadius: 30, borderBottomRightRadius: 30
+                                                }}>
+                                                <MaterialCommunityIcons name="delete" size={Platform.OS == 'web' ? 70 : 20} color={guestCode == '' ? 'white' : 'rgb(111, 111, 111)'} />
+                                                <Text style={{ color: guestCode == '' ? 'white' : 'rgb(196, 196, 196)', fontWeight: 'bold' }}>Delete Device</Text>
                                             </LinearGradient>
                                         </TouchableOpacity>
 
@@ -509,7 +552,7 @@ export default function DeviceDetail() {
                                 <Text style={{ fontSize: 14 }}>temperature {temp}</Text>
                                 */}
 
-                                <View style={[styles.shadow, styles.statsBar, {backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'white', justifyContent:'center'}]}>
+                                <View style={[styles.shadow, styles.statsBar, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white', justifyContent: 'center' }]}>
 
                                     <View style={[{ width: '33.33333%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', padding: 10 }]}>
                                         <MaterialCommunityIcons name="battery-medium" size={Platform.OS == 'web' ? 60 : 40} color={'rgba(216, 75, 255, 0.9)'} />
@@ -525,13 +568,13 @@ export default function DeviceDetail() {
                                                 /* Idk why, but the bold weight for text is necessary else the last word doesnt show up on android, idk */
                                                 fontWeight: 'bold',
                                                 fontSize: Platform.OS == 'web' ? 30 : 15,
-                                                color: theme=='dark' ? 'rgb(255, 255, 255)' : 'black'
+                                                color: theme == 'dark' ? 'rgb(255, 255, 255)' : 'black'
                                             }} >
                                                 69%
                                             </Text>
                                         </View>
                                     </View>
-                                    
+
                                     <View style={[{ width: '33.3333%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', padding: 5, gap: 10 }]}>
                                         <MaterialCommunityIcons name="clock-fast" size={Platform.OS == 'web' ? 65 : 40} color={'rgba(216, 75, 255, 0.9)'} />
                                         <View style={[]} >
@@ -547,7 +590,7 @@ export default function DeviceDetail() {
                                                 /* Idk why, but the bold weight for text is necessary else the last word doesnt show up on android, idk */
                                                 fontWeight: 'bold',
                                                 fontSize: Platform.OS == 'web' ? 30 : 15,
-                                                color:theme=='dark' ? 'rgb(255, 255, 255)' : 'black'
+                                                color: theme == 'dark' ? 'rgb(255, 255, 255)' : 'black'
                                             }} >
                                                 12 Hrs
                                             </Text>
@@ -643,7 +686,7 @@ export default function DeviceDetail() {
 
                                         <View style={[{ width: '25%', aspectRatio: 1, padding: 20 }]}>
                                             <TouchableOpacity style={[styles.shadow, styles.optionButton,
-                                                {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}
+                                            { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }
                                             ]}
                                                 onPress={() => {
                                                     navigation.navigate("DeviceAuto", {
@@ -656,8 +699,8 @@ export default function DeviceDetail() {
                                         </View>
 
                                         <View style={[{ width: '25%', aspectRatio: 1, padding: 20, }]}>
-                                            <TouchableOpacity style={[styles.shadow, styles.optionButton, powerSave && {backgroundColor:'yellow'},
-                                                !powerSave && {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}
+                                            <TouchableOpacity style={[styles.shadow, styles.optionButton, powerSave && { backgroundColor: 'yellow' },
+                                            !powerSave && { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }
                                             ]}
                                                 onPress={() => {
                                                     //Make a popup box to confirm energy saving mode
@@ -670,7 +713,7 @@ export default function DeviceDetail() {
 
                                         <View style={[{ width: '25%', aspectRatio: 1, padding: 20 }]}>
                                             <TouchableOpacity style={[styles.shadow, styles.optionButton,
-                                                {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}
+                                            { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }
                                             ]}
                                                 onPress={() => {
                                                     navigation.goBack();
@@ -682,15 +725,98 @@ export default function DeviceDetail() {
                                         </View>
 
                                         <View style={[{ width: '25%', aspectRatio: 1, padding: 20 }]}>
-                                            <TouchableOpacity style={[styles.shadow, styles.optionButton, { backgroundColor: 'red' }]}
+                                            <TouchableOpacity style={[styles.shadow, styles.optionButton, {
+                                                backgroundColor: guestCode == '' ? 'red' : 'rgb(133, 133, 133)'
+                                            }]}
                                                 onPress={() => {
-                                                    deleteDevice(device_id);
-                                                    navigation.goBack();
+                                                    if (guestCode == '') {
+                                                        deleteDeviceFunc(device_id);
+                                                    }
+
+                                                    //setTimeout(5000);
+                                                    //navigation.goBack();
+                                                    //toggleDelDropdown()
                                                 }}
                                             >
-                                                <MaterialCommunityIcons name="delete" color='white' size={70} />
+                                                <MaterialCommunityIcons name="delete" color={guestCode == '' ? 'white' : 'rgb(111, 111, 111)'} size={70} />
                                             </TouchableOpacity>
                                         </View>
+
+                                        <Modal
+                                            isVisible={isDelDropdownVisible}
+                                            onBackdropPress={() => setDelDropdownVisible(false)} // Close when tapping outside
+                                            animationIn="zoomInRight"
+                                            animationOut="zoomOutRight"
+                                            backdropOpacity={0.3}
+                                            style={[{}]}
+                                        >
+
+                                            <View style={[styles.shadow, styles.dropdownDelContainer, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
+
+
+                                                <TouchableOpacity style={[{ maxHeight: 80, position: 'absolute', top: 15, right: 30 }]} >
+                                                    <MaterialCommunityIcons name="close" color='rgb(255, 3, 184)' size={50}
+                                                        onPress={() => { setDelDropdownVisible(false) }}
+                                                    />
+                                                </TouchableOpacity>
+
+
+                                                <View>
+                                                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'red', textAlign: 'center' }}>
+                                                        Are you sure you want to delete {name}?
+                                                    </Text>
+                                                </View>
+
+                                                <View style={{ flexDirection: 'row', gap: 30, justifyContent: 'center' }}>
+
+                                                    <TouchableOpacity style={{ aspectRatio: 2 / 1 }}
+                                                        onPress={async () => {
+                                                            const ret = await toggleAsyncDelDropdown()
+                                                            if (ret) {
+                                                                deleteDeviceFunc(device_id);
+                                                            }
+                                                            //deleteDeviceFunc(device_id);
+                                                            //navigation.goBack();
+
+                                                        }}
+                                                    >
+
+                                                        <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                            style={{ width: '100%', backgroundColor: 'red', padding: 20, borderRadius: 50 }}
+                                                        >
+                                                            <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white', textAlign: 'center' }}>
+                                                                Delete {name}
+                                                            </Text>
+                                                        </LinearGradient>
+
+                                                    </TouchableOpacity>
+
+                                                    <TouchableOpacity style={{ aspectRatio: 1.5 / 1 }}
+                                                        onPress={() => {
+                                                            toggleDelDropdown()
+                                                        }}
+                                                    >
+
+                                                        <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                            style={{ width: '100%', backgroundColor: 'rgb(216, 75, 255)', padding: 20, borderRadius: 50 }}
+                                                        >
+                                                            <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white', textAlign: 'center' }}>
+                                                                Cancel
+                                                            </Text>
+                                                        </LinearGradient>
+
+                                                    </TouchableOpacity>
+
+                                                </View>
+
+
+
+                                            </View>
+
+
+                                        </Modal>
+
+
                                     </View>
                                 }
 
@@ -820,6 +946,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 40,
         right: 0,
+    },
+
+    dropdownDelContainer: {
+        width: '100%',
+        maxWidth: 1000,
+        position: 'absolute',
+        alignSelf: 'center',
+        backgroundColor: 'white',
+        height: '80%',
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '3%',
+
     },
 
 

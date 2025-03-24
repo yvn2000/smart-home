@@ -15,7 +15,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Register from "./register";
 
 import 'react-native-gesture-handler';    //important for some reason
-
+import { API_BASE_URL } from "../../src/config";
 
 const loginCardWidth = 60
 

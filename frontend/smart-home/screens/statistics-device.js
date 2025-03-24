@@ -24,6 +24,7 @@ import { HeaderBackButton } from "@react-navigation/elements";
 import { LinearGradient } from 'expo-linear-gradient';
 
 import Modal from "react-native-modal";
+import { API_BASE_URL } from "../src/config";
 
 
 export default function DeviceStatisticsScreen() {
@@ -107,7 +108,8 @@ export default function DeviceStatisticsScreen() {
     const fetchEnergyData = async () => {
         try {
             const response = await fetch(
-                Platform.OS == 'android' ? `http://10.0.2.2:8000/api/energy/${device_id}/` : `http://127.0.0.1:8000/api/energy/${device_id}/`,
+                `${API_BASE_URL}/api/energy/${device_id}/`
+                //Platform.OS == 'android' ? `http://10.0.2.2:8000/api/energy/${device_id}/` : `http://127.0.0.1:8000/api/energy/${device_id}/`,
             );
 
             if (!response.ok) {
@@ -261,7 +263,8 @@ export default function DeviceStatisticsScreen() {
     const fetchActivityLog = async () => {
         try {
             const response = await fetch(
-                Platform.OS == 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device_id}/get-activity/`
+                `${API_BASE_URL}/api/device/${device_id}/get-activity/`
+                //Platform.OS == 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device_id}/get-activity/`
             );
 
             const data = await response.json();
@@ -290,9 +293,7 @@ export default function DeviceStatisticsScreen() {
         try {
             const response = await fetch(
                 //getDeviceInfoURLS()
-                Platform.OS == 'android'
-                    ? `http://10.0.2.2:8000/api/device/${device_id}/get_device_info/`
-                    : `http://127.0.0.1:8000/api/device/${device_id}/get_device_info/`
+                `${API_BASE_URL}/api/device/${device_id}/get_device_info/`
             );
 
             const data = await response.json();
@@ -326,10 +327,11 @@ export default function DeviceStatisticsScreen() {
 
     const fetchHealthStatus = async () => {
         try {
-            const apiUrl = Platform.OS === 'android'
+            /*const apiUrl = Platform.OS === 'android'
                 ? `http://10.0.2.2:8000/api/device/${device_id}/get_device_health/`//`http://10.0.2.2:8000/api/device/${device_id}/television_health/` 
                 : `http://127.0.0.1:8000/api/device/${device_id}/get_device_health/`//`http://127.0.0.1:8000/api/device/${device_id}/television_health/`;
-
+*/
+            const apiUrl = `${API_BASE_URL}/api/device/${device_id}/get_device_health/`
             const response = await fetch(apiUrl);
             const data = await response.json();
 
@@ -401,7 +403,7 @@ export default function DeviceStatisticsScreen() {
 
                                 <View style={[{ position: 'absolute', alignSelf: 'flex-end', paddingRight: 15, top: 85 }]}>
                                     <TouchableOpacity style={[{}]} onPress={toggleDropdown}>
-                                        <MaterialCommunityIcons name="lightbulb-outline" size={Platform.OS == 'web' ? 40 : 30} color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} />
+                                        <MaterialCommunityIcons name="lightbulb-outline" size={Platform.OS == 'web' ? 40 : 30} color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} />
                                     </TouchableOpacity>
 
                                     <Modal
@@ -414,10 +416,10 @@ export default function DeviceStatisticsScreen() {
                                     >
 
                                         <View style={[styles.shadow, styles.dropdownContainer, {}]}>
-                                            <View style={[styles.shadow, styles.recommend, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
+                                            <View style={[styles.shadow, styles.recommend, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
                                                 <Text style={[styles.recText, { alignSelf: 'center' }]}>--- Recommendations ---</Text>
                                                 {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 14:00 - 18:00</Text>}
-                                                {healthStatus != 'Faulty' && status=='on' && <Text style={[styles.recText, {}]}>• {device.name} has been running for quite a while, turn it off?</Text>}
+                                                {healthStatus != 'Faulty' && status == 'on' && <Text style={[styles.recText, {}]}>• {device.name} has been running for quite a while, turn it off?</Text>}
 
                                                 {healthStatus == 'Sick' && <Text style={[styles.recText, {}]}>• Enable Low Power Mode</Text>}
 
@@ -454,7 +456,7 @@ export default function DeviceStatisticsScreen() {
 
 
                                 <TouchableOpacity style={[styles.backButton, { maxHeight: 100 }]} >
-                                    <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
+                                    <MaterialCommunityIcons name="chevron-left" color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                                 </TouchableOpacity>
 
 
@@ -464,7 +466,7 @@ export default function DeviceStatisticsScreen() {
 
                                     <LinearGradient
                                         colors={['rgb(255, 3, 184)', 'transparent']}
-                                        style={[styles.shadow, styles.deviceCard, { width: '95%', marginTop:10, }]}
+                                        style={[styles.shadow, styles.deviceCard, { width: '95%', marginTop: 10, }]}
                                     >
                                         <View style={[styles.deviceCardPart, { width: '20%' }]}>
                                             <View style={{ backgroundColor: 'white', borderRadius: 500 }}>
@@ -507,7 +509,7 @@ export default function DeviceStatisticsScreen() {
                                         </View>
                                     </LinearGradient>
 
-                                    <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', top:10, }]}>
+                                    <View style={[styles.shadow, styles.homePanel, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', top: 10, }]}>
 
                                         <View style={{ padding: 20 }}>
                                             <Text style={{ color: 'rgb(147, 147, 147)' }}>---- {name} Energy Consumption ----</Text>
@@ -517,7 +519,7 @@ export default function DeviceStatisticsScreen() {
 
                                             <View style={[styles.graphStats, { width: '100%', overflow: 'hidden' }]}>
 
-                                                <View style={[{ paddingTop: 20, paddingBottom: 20, paddingLeft: 10, width: '100%', backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
+                                                <View style={[{ paddingTop: 20, paddingBottom: 20, paddingLeft: 10, width: '100%', backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
 
 
@@ -542,7 +544,7 @@ export default function DeviceStatisticsScreen() {
                                                         yAxisLabelSuffix=' kWh '
                                                         yAxisLabelWidth={35}
                                                         yAxisTextStyle={{ color: "gray", fontSize: 8 }}
-                                                        xAxisLabelTextStyle={{ color: "gray", fontSize:10, }}
+                                                        xAxisLabelTextStyle={{ color: "gray", fontSize: 10, }}
                                                         yAxisColor={'gray'}
                                                         xAxisColor={'gray'}
 
@@ -592,7 +594,7 @@ export default function DeviceStatisticsScreen() {
                                                 {activityLog.map((item, index) => (
                                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                                         key={index}
-                                                        style={[styles.activityLog, {padding:20,}]}
+                                                        style={[styles.activityLog, { padding: 20, }]}
                                                     >
                                                         <Text style={{ fontSize: 20, color: 'white', fontWeight: 'bold' }}>{item}</Text>
                                                     </LinearGradient>
@@ -652,7 +654,7 @@ export default function DeviceStatisticsScreen() {
 
 
                             <TouchableOpacity style={[styles.backButton]} >
-                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
@@ -685,7 +687,7 @@ export default function DeviceStatisticsScreen() {
                                     </View>
                                 </LinearGradient>
 
-                                <View style={[styles.shadow, styles.homePanel, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
+                                <View style={[styles.shadow, styles.homePanel, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
 
                                     <View style={{ padding: 20 }}>
                                         <Text style={{ color: 'rgb(147, 147, 147)' }}>---- {name} Energy Consumption ----</Text>
@@ -799,13 +801,13 @@ export default function DeviceStatisticsScreen() {
                                             <View style={{ height: 20 }}></View>
 
 
-                                            <View style={[styles.shadow, styles.recommend, {backgroundColor:theme=='dark' ? 'rgb(39, 41, 112)' : 'rgb(243, 243, 243)'}]}>
+                                            <View style={[styles.shadow, styles.recommend, { backgroundColor: theme == 'dark' ? 'rgb(39, 41, 112)' : 'rgb(243, 243, 243)' }]}>
                                                 <Text style={[styles.recText, { alignSelf: 'center' }]}>--- Recommendations ---</Text>
 
 
                                                 {/*healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be {Math.floor(Math.random()*6)+6}:00 - {Math.floor(Math.random()*12)+6}:00</Text>*/}
                                                 {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 14:00 - 18:00</Text>}
-                                                {healthStatus != 'Faulty' && status=='on' && <Text style={[styles.recText, {}]}>• {device.name} has been running for quite a while, turn it off?</Text>}
+                                                {healthStatus != 'Faulty' && status == 'on' && <Text style={[styles.recText, {}]}>• {device.name} has been running for quite a while, turn it off?</Text>}
 
                                                 {healthStatus == 'Sick' && <Text style={[styles.recText, {}]}>• Enable Low Power Mode</Text>}
 

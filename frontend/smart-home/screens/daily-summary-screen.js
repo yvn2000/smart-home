@@ -25,6 +25,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../src/config";
 
 
 export default function DailySummaryScreen() {
@@ -90,10 +91,9 @@ export default function DailySummaryScreen() {
 
     const fetchActivityLogs = async () => {
         try {
-            const apiUrl = Platform.OS === 'android'
-                ? 'http://10.0.2.2:8000/api/get-daily-activity/'
-                : 'http://127.0.0.1:8000/api/get-daily-activity/';
 
+
+            const apiUrl = `${API_BASE_URL}/api/get-daily-activity/`
 
             const response = await fetch(apiUrl);
             const data = await response.json();
@@ -119,9 +119,9 @@ export default function DailySummaryScreen() {
 
     const fetchHouseLogs = async () => {
 
-        const apiUrl = Platform.OS === 'android'
-                ? `http://10.0.2.2:8000/api/get-daily-activity/${house_id}/`
-                : `http://127.0.0.1:8000/api/get-daily-activity/${house_id}/`;
+
+
+        const apiUrl = `${API_BASE_URL}/api/get-daily-activity/${house_id}/`
         try {
             //setLoading(true);
             const response = await fetch(apiUrl);
@@ -193,18 +193,18 @@ export default function DailySummaryScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
 
-                            <TouchableOpacity style={[styles.backButton, {maxHeight:100}]} >
-                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
+                            <TouchableOpacity style={[styles.backButton, { maxHeight: 100 }]} >
+                                <MaterialCommunityIcons name="chevron-left" color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
-                            <View style={[{ width: '100%', alignItems: 'center', padding: 20, top: Platform.OS=='web' ? 0 : -30 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
+                            <View style={[{ width: '100%', alignItems: 'center', padding: 20, top: Platform.OS == 'web' ? 0 : -30 }]}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Today's Activity Summary
                                 </Text>
                             </View>
 
 
-                            <View style={[styles.mainContainer, {top: Platform.OS=='web' ? 0 : -30}]}>
+                            <View style={[styles.mainContainer, { top: Platform.OS == 'web' ? 0 : -30 }]}>
 
 
                                 {loading ? (
@@ -215,9 +215,9 @@ export default function DailySummaryScreen() {
                                             <LinearGradient key={index} colors={['rgb(255, 3, 184)', 'transparent']}
                                                 style={[styles.action, { backgroundColor: 'rgba(216, 75, 255, 1)' }]}
                                             >
-                                                <Text style={{fontWeight:'bold', color:'white', fontSize:20}}>{log.device_name}</Text>
-                                                <Text style={{fontWeight:'bold', color:'white', fontSize:20}}>{log.action}</Text>
-                                                <Text style={{fontWeight:'bold', color:'rgb(178, 253, 187)', fontSize:30}}>{formatTimestamp(log.timestamp)}</Text>
+                                                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 20 }}>{log.device_name}</Text>
+                                                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 20 }}>{log.action}</Text>
+                                                <Text style={{ fontWeight: 'bold', color: 'rgb(178, 253, 187)', fontSize: 30 }}>{formatTimestamp(log.timestamp)}</Text>
                                             </LinearGradient>
                                         ))
                                     ) : (
@@ -413,14 +413,14 @@ const styles = StyleSheet.create({
     },
 
     action: {
-        flexDirection:'row',
-        width:'95%',
-        maxWidth:800,
-        padding:30,
-        justifyContent:'center',
-        alignItems:'center',
-        gap: Platform.OS=='web' ? 80 : 20,
-        borderRadius:30,
+        flexDirection: 'row',
+        width: '95%',
+        maxWidth: 800,
+        padding: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: Platform.OS == 'web' ? 80 : 20,
+        borderRadius: 30,
     },
 
 

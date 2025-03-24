@@ -25,6 +25,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { LinearGradient } from 'expo-linear-gradient';
+import { API_BASE_URL } from "../src/config";
 
 
 export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueIn, tempValue, house_id, thermMode }) {
@@ -88,7 +89,8 @@ export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueI
     const getThermo = async () => {
 
         try {
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/get-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/get-thermostat/`
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/get-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/get-thermostat/`
+            const url = `${API_BASE_URL}/api/houses/${house_id}/get-thermostat/`
 
             const response = await fetch(url);
             const data = await response.json();
@@ -117,7 +119,8 @@ export default function ThermoDial({ changeable, radiusIn, minValueIn, maxValueI
 
     const updateThermo = async (mode) => {
         try {
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/update-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/update-thermostat/`
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/update-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/update-thermostat/`
+            const url = `${API_BASE_URL}/api/houses/${house_id}/update-thermostat/`
 
             //console.log(mode)
             const response = await fetch(url, {

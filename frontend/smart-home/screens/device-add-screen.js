@@ -36,6 +36,8 @@ import Animated, {
     interpolate, Extrapolation
 } from 'react-native-reanimated';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function DeviceAdd() {
 

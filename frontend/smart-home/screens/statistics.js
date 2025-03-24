@@ -26,6 +26,7 @@ import Modal from "react-native-modal";
 
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../src/config";
 
 
 
@@ -456,7 +457,8 @@ export default function StatisticsScreen() {
     const fetchTotalEnergyData = async () => {
         try {
             const response = await fetch(
-                Platform.OS == 'android' ? `http://10.0.2.2:8000/api/houses/${house_id}/total-energy/` : `http://127.0.0.1:8000/api/houses/${house_id}/total-energy/`,
+                `${API_BASE_URL}/api/houses/${house_id}/total-energy/`
+                //Platform.OS == 'android' ? `http://10.0.2.2:8000/api/houses/${house_id}/total-energy/` : `http://127.0.0.1:8000/api/houses/${house_id}/total-energy/`,
             );
 
             if (!response.ok) {
@@ -562,10 +564,11 @@ export default function StatisticsScreen() {
 
             const reloadData = async () => {
                 const id = await getHouse() // Get fresh ID on focus
-                console.log("House ID inside useFocus: "+id)
+                console.log("House ID inside useFocus: " + id)
                 if (isActive && id) {
                     await fetchRooms2(id);
                     await fetchDevices2(id);
+                    await fetchTotalEnergyData();
                     //await fetchTotalEnergyData();
                 }
                 else {
@@ -622,7 +625,7 @@ export default function StatisticsScreen() {
     useEffect(() => {
         const loadData = async () => {
             const id = await getHouse();
-            console.log("House ID inside useEffect: "+id)
+            console.log("House ID inside useEffect: " + id)
             await fetchAllData(id);
         };
         loadData();
@@ -638,8 +641,7 @@ export default function StatisticsScreen() {
 
         //const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/rooms/` : `http://10.0.2.2:8000/api/houses/${house_id}/rooms/`
 
-        const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${houseid}/rooms/` : `http://10.0.2.2:8000/api/houses/${houseid}/rooms/`
-
+        const roomsUrl = `${API_BASE_URL}/api/houses/${houseid}/rooms/`
 
         try {
             const response = await fetch(roomsUrl);
@@ -729,9 +731,12 @@ export default function StatisticsScreen() {
     const fetchHealthStatus = async (device_id) => {
         let health = null
         try {
+            /*
             const apiUrl = Platform.OS === 'android'
                 ? `http://10.0.2.2:8000/api/device/${device_id}/get_device_health/`//`http://10.0.2.2:8000/api/device/${device_id}/television_health/` 
                 : `http://127.0.0.1:8000/api/device/${device_id}/get_device_health/`//`http://127.0.0.1:8000/api/device/${device_id}/television_health/`;
+*/
+            const apiUrl = `${API_BASE_URL}/api/device/${device_id}/get_device_health/`
 
             const response = await fetch(apiUrl);
             const data = await response.json();
@@ -888,7 +893,21 @@ export default function StatisticsScreen() {
 
                                         <View style={[styles.shadow, styles.dropdownContainer]}>
                                             {/* Custom View Items */}
-                                            <TouchableOpacity style={styles.dropdownItem} onPress={() => { navigation.navigate("ShareStats") }}>
+                                            <TouchableOpacity style={styles.dropdownItem} onPress={() => {
+                                                navigation.navigate("ShareStats", {
+                                                    energyData: totalEnergyData,
+                                                    energyThreshold: getEnergyThreshold(),
+                                                    lineChartData: makeLineChartData(totalEnergyData),
+                                                    lineChartWidth: calculateChartWidth(),
+                                                    barChartData: makeChartData(energyData),
+                                                    house_id: house_id,
+
+                                                    total_energy1: totalEnergyData.total_energy1,
+                                                    allRooms: allRooms,
+
+
+                                                })
+                                            }}>
                                                 <View style={{ backgroundColor: 'white', padding: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                                                     <MaterialCommunityIcons name="share-variant" size={Platform.OS == 'web' ? 70 : 20} color={"black"} />
                                                     <Text style={{ color: 'black', fontWeight: 'bold' }}>Share</Text>
@@ -911,7 +930,7 @@ export default function StatisticsScreen() {
                                 </View>
 
                                 <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                    <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
+                                    <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                         Statistics
                                     </Text>
                                 </View>
@@ -1353,7 +1372,7 @@ export default function StatisticsScreen() {
 
                                                             <Text style={{
                                                                 //fontWeight: 'bold',
-                                                                fontSize: 12,
+                                                                fontSize: 12, fontWeight:'bold',
                                                                 color: (currentRoom == room.room_id) ? 'white' : theme == "dark" ? 'white' : 'black'
                                                             }}>
                                                                 {room.name}
@@ -1491,7 +1510,7 @@ export default function StatisticsScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Statistics
                                 </Text>
                             </View>
@@ -1743,7 +1762,7 @@ export default function StatisticsScreen() {
 
                                                     <View style={[{ justifyContent: 'center', }]}>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'rgb(161, 161, 161)' }}>Current</Text>
-                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme == 'dark' ? 'white' : 'dark' }}>${totalEnergyData ? Math.floor(totalEnergyData.total_energy1 * 0.29) : 0}/kWh</Text>
+                                                        <Text style={{ fontWeight: 'bold', fontSize: 25, color: theme == 'dark' ? 'white' : 'dark' }}>${totalEnergyData ? Math.floor(totalEnergyData.total_energy1 * 0.29) : 0}</Text>
                                                     </View>
 
                                                 </LinearGradient>
@@ -1774,7 +1793,21 @@ export default function StatisticsScreen() {
                                                     ]}>
 
                                                     <TouchableOpacity
-                                                        onPress={() => { navigation.navigate("ShareStats") }}
+                                                        onPress={() => {
+                                                            navigation.navigate("ShareStats", {
+                                                                energyData: totalEnergyData,
+                                                                energyThreshold: getEnergyThreshold(),
+                                                                lineChartData: makeLineChartData(totalEnergyData),
+                                                                lineChartWidth: calculateChartWidth(),
+                                                                barChartData: makeChartData(energyData),
+                                                                house_id: house_id,
+
+                                                                total_energy1: totalEnergyData.total_energy1,
+                                                                allRooms: allRooms,
+
+
+                                                            })
+                                                        }}
                                                         style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'row', gap: 10 }}
                                                     >
                                                         <MaterialCommunityIcons name="share-variant" color='rgb(255, 255, 255)' size={60} />

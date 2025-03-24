@@ -320,6 +320,24 @@ class UpdateUserNoobView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class DeleteUserView(APIView):
+    def delete(self, request):
+        token = request.data.get("token")
+        if not token:
+            return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
+        access_token = AccessToken(token)
+        user_id = access_token['user_id']  # Extract the user ID from the token
+
+        try:
+            user = User.objects.get(id=user_id)
+        except House.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        
+        user.delete()
+        return Response({"message": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+
 #House
 
 class ListHousesView(APIView):
@@ -454,6 +472,38 @@ class AssignExistingHouseView(APIView):
 
         house.save()
         return Response({"message": "User assigned to house successfully"}, status=status.HTTP_200_OK)
+
+class GetOwnerLandlordHouseView(APIView):
+    def get(self, request, house_id):
+
+        try:
+            house = get_object_or_404(House, id=house_id)
+            owner = house.owner
+            landlord = house.landlord
+
+            house_name = house.name
+
+            owner_fn = owner.first_name
+            owner_ln = owner.last_name
+
+            landlord_fn = landlord.first_name
+            landlord_ln = landlord.last_name
+
+            
+        except owner.DoesNotExist:
+            return Response({"error": "owner not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        except landlord.DoesNotExist:
+            return Response({"error": "landlord not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+        return Response({
+            "house_name": house.name,
+            "owner_fn": owner.first_name,
+            "owner_ln": owner.last_name,
+            "landlord_fn": landlord.first_name,
+            "landlord_ln": landlord.last_name,
+        }, status=status.HTTP_201_CREATED)
 
 
 #Thermostat

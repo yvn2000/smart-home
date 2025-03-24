@@ -19,6 +19,7 @@ import Animated, {
     withDelay, withSpring, withSequence, Easing, useAnimatedProps,
     interpolate, Extrapolation, interpolateColor,
 } from 'react-native-reanimated';
+import { API_BASE_URL } from "../src/config";
 
 
 export default function CustomSwitch({ device, value, changeValue, energyToBeAdded }) {
@@ -31,11 +32,7 @@ export default function CustomSwitch({ device, value, changeValue, energyToBeAdd
 
     const fetchDeviceInfo = async () => {
         try {
-            const response = await fetch(
-                //getGETURL()
-                Platform.OS == 'android'
-                    ? `http://10.0.2.2:8000/api/device/${device.device_id}/get_device_info/`
-                    : `http://127.0.0.1:8000/api/device/${device.device_id}/get_device_info/`
+            const response = await fetch( `${API_BASE_URL}/api/device/${device.device_id}/get_device_info/`
             );
 
             const data = await response.json();
@@ -84,7 +81,7 @@ export default function CustomSwitch({ device, value, changeValue, energyToBeAdd
 
         try {
             const response = await fetch(
-                Platform.OS == "android" ? `http://10.0.2.2:8000/api/update-device-status/${device_id}/` : `http://127.0.0.1:8000/api/update-device-status/${device_id}/`
+                `${API_BASE_URL}/api/update-device-status/${device_id}/`
                 , {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -186,9 +183,7 @@ export default function CustomSwitch({ device, value, changeValue, energyToBeAdd
     */
 
     const setEnergyConsumption = async (deviceId, incrementValue) => {
-        const apiUrl = Platform.OS === 'android'
-            ? `http://10.0.2.2:8000/api/device/${deviceId}/set_energy/`
-            : `http://127.0.0.1:8000/api/device/${deviceId}/set_energy/`;
+        const apiUrl = `${API_BASE_URL}/api/device/${deviceId}/set_energy/`;
 
         try {
             //console.log("IncrementValue: " + incrementValue)

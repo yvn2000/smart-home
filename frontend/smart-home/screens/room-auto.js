@@ -25,6 +25,8 @@ import { TimePickerModal } from 'react-native-paper';
 
 import { Switch } from 'react-native-switch';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function RoomAuto() {
 
@@ -64,9 +66,7 @@ export default function RoomAuto() {
 
     const deleteAutomation = async (automationId) => {
         try {
-            const url = Platform.OS === "android"
-                ? `http://10.0.2.2:8000/api/automations/delete/`
-                : `http://127.0.0.1:8000/api/automations/delete/`;
+            const url = `${API_BASE_URL}/api/automations/delete/`
 
             const response = await fetch(url, {
                 method: 'DELETE',
@@ -128,9 +128,9 @@ export default function RoomAuto() {
 
     const fetchAutomations = async (device_id) => {
         try {
-            const url = Platform.OS === "android"
-                ? `http://10.0.2.2:8000/api/automations-list/device/${device_id}/`
-                : `http://127.0.0.1:8000/api/automations-list/device/${device_id}/`;
+
+
+            const url = `${API_BASE_URL}/api/automations-list/device/${device_id}/`
 
 
             const response = await fetch(url);
@@ -162,8 +162,7 @@ export default function RoomAuto() {
 
     const addAction = async (device_id, action) => {
         try {
-            const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device_id}/activity/add-action/`;
-
+            const actionUrl = `${API_BASE_URL}/api/device/${device_id}/activity/add-action/`
             const response = await fetch(actionUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -214,7 +213,7 @@ export default function RoomAuto() {
 
 
                             <TouchableOpacity style={[styles.backButton, { maxHeight: 80 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
@@ -225,7 +224,7 @@ export default function RoomAuto() {
 
 
                                 <ScrollView
-                                    style={[{ width: '60%' }]}
+                                    style={[{ width: '100%', maxWidth:1100 }]}
                                     contentContainerStyle={{ alignItems: 'center', justifyContent: 'center', gap: 30, }}
                                 >
 
@@ -234,7 +233,7 @@ export default function RoomAuto() {
                                     ) : (
                                         roomAutos.map((item) => //{ if (!item) return null; return
                                         (<LinearGradient key={item.auto_id}
-                                            colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.autoItem, styles.shadow, { flexDirection: 'row', justifyContent: 'flex-start' }]}>
+                                            colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.autoItem, styles.shadow, { flexDirection: 'row', justifyContent: 'flex-start', width:'95%' }]}>
                                             <MaterialCommunityIcons
                                                 name={item.automation_type === 'time' ? 'clock-outline' : 'account-voice'}
                                                 size={50}
@@ -242,13 +241,13 @@ export default function RoomAuto() {
                                                 style={{ marginLeft: 10 }}
                                             />
                                             <View style={{ left: '10%' }}>
-                                                <Text style={styles.detailText}>
+                                                <Text style={[styles.detailText, {fontSize:Platform.OS=='web' ? 20 : 15}]}>
                                                     {item.automation_type === 'time'
                                                         //? `Active: ${new Date(item.start_time).toLocaleString()} - ${new Date(item.end_time).toLocaleString()}`
                                                         ? `Time: ${new Date(item.start_time).getHours().toString().padStart(2, '0')}:${new Date(item.start_time).getMinutes().toString().padStart(2, '0')} - ${new Date(item.end_time).getHours().toString().padStart(2, '0')}:${new Date(item.end_time).getMinutes().toString().padStart(2, '0')}`
                                                         : `Phrase: "${item.phrase}"`}
                                                 </Text>
-                                                <Text style={[styles.detailText, {color:'rgb(194, 194, 194)'}]}>
+                                                <Text style={[styles.detailText, { color: 'rgb(194, 194, 194)', fontSize:Platform.OS=='web' ? 20 : 15 }]}>
                                                     {item.device_name}  •  {item.active ? 'Active' : 'Inactive'}
                                                 </Text>
                                             </View>

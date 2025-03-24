@@ -20,6 +20,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Modal from "react-native-modal";
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function PetCustomScreen() {
 
@@ -113,9 +115,9 @@ export default function PetCustomScreen() {
         if (isResetting) return;
         setIsResetting(true);
         try {
-            const url = Platform.OS === 'web'
-                ? `http://127.0.0.1:8000/api/pets/${pet.pet_id}/reset/`
-                : `http://10.0.2.2:8000/api/pets/${pet.pet_id}/reset/`;
+
+
+            const url = `${API_BASE_URL}/api/pets/${pet.pet_id}/reset/`
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -149,8 +151,7 @@ export default function PetCustomScreen() {
     const fetchPet = async (house_id) => {
         try {
 
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/house/${house_id}/pet/` : `http://10.0.2.2:8000/api/house/${house_id}/pet/`
-
+            const url = `${API_BASE_URL}/api/house/${house_id}/pet/`
             const response = await fetch(url);
             const data = await response.json();
 
@@ -249,8 +250,8 @@ export default function PetCustomScreen() {
     const updatePet = async (pet_id, newMood, newHat, newBG) => {
         try {
 
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/${pet_id}/update-pet/` : `http://10.0.2.2:8000/api/${pet_id}/update-pet/`
-
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/${pet_id}/update-pet/` : `http://10.0.2.2:8000/api/${pet_id}/update-pet/`
+            const url = `${API_BASE_URL}/api/${pet_id}/update-pet/`
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -284,9 +285,7 @@ export default function PetCustomScreen() {
         */
         try {
             //await getHouse()
-            const url = Platform.OS === 'web'
-                ? `http://127.0.0.1:8000/api/house/${house_id}/sick-devices/`
-                : `http://10.0.2.2:8000/api/house/${house_id}/sick-devices/`;
+            const url = `${API_BASE_URL}/api/house/${house_id}/sick-devices/`
 
             const response = await fetch(url);
             const data = await response.json();
@@ -359,16 +358,14 @@ export default function PetCustomScreen() {
         if (isUpdatingMood) return;
         setIsUpdatingMood(true);
         try {
-            
-            const url = Platform.OS === 'web'
-                ? `http://127.0.0.1:8000/api/pets/${pet.pet_id}/update-mood/`
-                : `http://10.0.2.2:8000/api/pets/${pet.pet_id}/update-mood/`;
-            
-           /*
-            const url = Platform.OS === 'web'
-                ? `http://127.0.0.1:8000/api/pets/${pet_id}/update-mood/`
-                : `http://10.0.2.2:8000/api/pets/${pet_id}/update-mood/`;
-                */
+
+            const url = `${API_BASE_URL}/api/pets/${pet.pet_id}/update-mood/`
+
+            /*
+             const url = Platform.OS === 'web'
+                 ? `http://127.0.0.1:8000/api/pets/${pet_id}/update-mood/`
+                 : `http://10.0.2.2:8000/api/pets/${pet_id}/update-mood/`;
+                 */
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -537,8 +534,8 @@ export default function PetCustomScreen() {
 
             //console.log(unlockedBgs, unlockedHats)
 
-            const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/${pet.pet_id}/update-pet-rewards/` : `http://10.0.2.2:8000/api/${pet.pet_id}/update-pet-rewards/`
-
+            //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/${pet.pet_id}/update-pet-rewards/` : `http://10.0.2.2:8000/api/${pet.pet_id}/update-pet-rewards/`
+            const url = `${API_BASE_URL}/api/${pet.pet_id}/update-pet-rewards/`
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -797,7 +794,7 @@ export default function PetCustomScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold',  color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Pet Customisation
                                 </Text>
                             </View>
@@ -808,7 +805,7 @@ export default function PetCustomScreen() {
 
                                     {Platform.OS == 'web' &&
 
-                                        <View style={[styles.shadow, styles.rewardBoxOuter, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)'}]}>
+                                        <View style={[styles.shadow, styles.rewardBoxOuter, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                                             <Text style={{ fontWeight: 'bold', color: 'rgb(147, 51, 174)', fontSize: 30 }}>Hats</Text>
 
@@ -818,7 +815,7 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleLeftHatArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-left" size={50} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-left" size={50} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
 
                                                 <View style={{ alignItems: 'center' }}>
@@ -833,7 +830,7 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleRightHatArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-right" size={50} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-right" size={50} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
                                             </View>
 
@@ -849,7 +846,7 @@ export default function PetCustomScreen() {
                                     </View>
                                     {Platform.OS == 'web' &&
 
-                                        <View style={[styles.shadow, styles.rewardBoxOuter, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)'}]}>
+                                        <View style={[styles.shadow, styles.rewardBoxOuter, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                                             <Text style={{ fontWeight: 'bold', color: 'rgb(147, 51, 174)', fontSize: 30 }}>Background</Text>
 
@@ -859,7 +856,7 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleLeftBGArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-left" size={50} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-left" size={50} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
 
                                                 <View>
@@ -874,7 +871,7 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleRightBGArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-right" size={50} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-right" size={50} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
 
                                             </View>
@@ -887,7 +884,7 @@ export default function PetCustomScreen() {
                                 {Platform.OS == 'android' &&
 
                                     <View style={{ flexDirection: 'row', gap: '5%', marginTop: -10 }}>
-                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%', backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
+                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%', backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                                             <Text style={{ fontWeight: 'bold', color: 'rgb(147, 51, 174)', fontSize: 20 }}>Hats</Text>
 
@@ -897,7 +894,7 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleLeftHatArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-left" size={40} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-left" size={40} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
 
                                                 <View style={{ alignItems: 'center' }}>
@@ -912,14 +909,14 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleRightHatArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-right" size={40} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-right" size={40} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
                                             </View>
 
 
                                         </View>
 
-                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%', backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
+                                        <View style={[styles.shadow, styles.rewardBoxOuter, { width: '45%', backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)' }]}>
 
                                             <Text style={{ fontWeight: 'bold', color: 'rgb(147, 51, 174)', fontSize: 20 }}>Background</Text>
 
@@ -929,7 +926,7 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleLeftBGArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-left" size={40} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-left" size={40} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
 
                                                 <View>
@@ -944,7 +941,7 @@ export default function PetCustomScreen() {
                                                     onPress={() => {
                                                         handleRightBGArrow()
                                                     }}>
-                                                    <MaterialCommunityIcons name="chevron-right" size={40} color={theme=='dark' ? 'white' : 'dark'} />
+                                                    <MaterialCommunityIcons name="chevron-right" size={40} color={theme == 'dark' ? 'white' : 'dark'} />
                                                 </TouchableOpacity>
 
                                             </View>
@@ -1009,7 +1006,7 @@ export default function PetCustomScreen() {
 
                                 */}
 
-                                
+
                                 {/*
                                 <View style={styles.buttonsContainer}>
                                     <TouchableOpacity style={[styles.buttons2, { justifyContent: 'center', alignItems: 'center', }]} onPress={() => { changeMood('happy') }}>
@@ -1032,7 +1029,7 @@ export default function PetCustomScreen() {
 
                             <View style={{ height: 150 }}>{/*To allow space for tab bar to not overlap elements*/}</View>
 
-                            
+
 
                         </SafeAreaView>
                     </SafeAreaProvider>

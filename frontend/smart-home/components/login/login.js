@@ -23,7 +23,9 @@ import { Checkbox } from 'expo-checkbox';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-console.log(Checkbox)
+import { API_BASE_URL } from "../../src/config";
+
+
 
 
 const loginCardWidth = 60
@@ -73,7 +75,8 @@ export default function Login() {
         }
 
 
-        const loginUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/login/" : "http://10.0.2.2:8000/api/login/"
+        //const loginUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/login/" : "http://10.0.2.2:8000/api/login/"
+        const loginUrl = `${API_BASE_URL}/api/login/`
         //const loginUrl = Platform.OS == 'web' ? "http://10.6.141.213:8000/api/login/" : "http://10.6.141.213:8000/api/login/"
 
         try {
@@ -139,8 +142,8 @@ export default function Login() {
                     <TextInput
                         //style={[styles.shadow, styles.input]}
                         placeholder="Enter your Email"
-                        placeholderTextColor={(verifyFail || email === "") ? 'red' : 'rgb(156, 156, 156)'}
-                        style={[styles.textInput, (verifyFail || email === "") && { borderColor: 'red', borderWidth: 1 }]}
+                        placeholderTextColor={(verifyFail) ? 'red' : 'rgb(156, 156, 156)'}
+                        style={[styles.textInput, (verifyFail) && { borderColor: 'red', borderWidth: 1 }]}
                         value={email}
                         onChangeText={setEmail}
                     />
@@ -153,8 +156,8 @@ export default function Login() {
                         <TextInput
                             //style={[styles.shadow, styles.input]}
                             placeholder="Enter your Password"
-                            placeholderTextColor={(verifyFail || password === "") ? 'red' : 'rgb(156, 156, 156)'}
-                            style={[styles.textInput, (verifyFail || password === "") && { borderColor: 'red', borderWidth: 1 }, { width: '90%' }]}
+                            placeholderTextColor={(verifyFail) ? 'red' : 'rgb(156, 156, 156)'}
+                            style={[styles.textInput, (verifyFail) && { borderColor: 'red', borderWidth: 1 }, { width: '90%' }]}
                             secureTextEntry={!showPassword}
                             value={password}
                             onChangeText={setPassword}
@@ -182,7 +185,7 @@ export default function Login() {
                         <Text> Remember Me</Text>
                     </View>
                     <TouchableOpacity style={{ marginRight: '5%' }} onPress={() => { navigation.navigate("Forgot") }}>
-                        <Text style={[{ color: 'rgba(48, 164, 218, 0.9)' }]}>Forgot password?</Text>
+                        <Text style={[{ color: 'rgba(48, 164, 218, 0.9)', fontWeight:'bold' }]}>Forgot Password?</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -192,7 +195,7 @@ export default function Login() {
                 <View style={{ flexDirection: 'row' }}>
                     <Text>Don't have an account?  </Text>
                     <TouchableOpacity onPress={() => { navigation.navigate("Register") }}>
-                        <Text style={{ color: 'rgba(48, 164, 218, 0.9)' }}>Sign Up</Text>
+                        <Text style={{ color: 'rgba(48, 164, 218, 0.9)', fontWeight:'bold' }}>Sign Up</Text>
                     </TouchableOpacity>
                 </View>
 

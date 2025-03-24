@@ -25,6 +25,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { LinearGradient } from 'expo-linear-gradient';
+import { API_BASE_URL } from "../src/config";
 
 
 
@@ -62,11 +63,8 @@ export default function TempDial( {device_id, deviceName, changeable, tempArg} )
 
     const fetchDeviceInfo = async () => {
         try {
-            const response = await fetch(
-                //getDeviceInfoURLS()
-                Platform.OS == 'android'
-                    ? `http://10.0.2.2:8000/api/device/${device_id}/get_device_info/`
-                    : `http://127.0.0.1:8000/api/device/${device_id}/get_device_info/`
+            const response = await fetch( `${API_BASE_URL}/api/device/${device_id}/get_device_info/`
+                
             );
 
             const data = await response.json();
@@ -75,10 +73,10 @@ export default function TempDial( {device_id, deviceName, changeable, tempArg} )
                 setDeviceInfo(data); // Update state with fetched device information
                 //console.log(deviceInfo)
             } else {
-                Alert.alert("Error", "Failed to fetch device information");
+                //Alert.alert("Error", "Failed to fetch device information");
             }
         } catch (error) {
-            Alert.alert("Error", "Network request failed");
+            //Alert.alert("Error", "Network request failed");
         } finally {
             setLoading(false); // Stop the loading indicator once the fetch is complete
         }
@@ -191,8 +189,8 @@ export default function TempDial( {device_id, deviceName, changeable, tempArg} )
 
 
 
-    const updateUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/update_device_info/` : `http://127.0.0.1:8000/api/device/${device_id}/update_device_info/`
-
+    //const updateUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/update_device_info/` : `http://127.0.0.1:8000/api/device/${device_id}/update_device_info/`
+    const updateUrl = `${API_BASE_URL}/api/device/${device_id}/update_device_info/`
 
     const updateDeviceInfo = async () => {
         //console.log("update TV")
@@ -218,13 +216,13 @@ export default function TempDial( {device_id, deviceName, changeable, tempArg} )
             const data = await response.json();
 
             if (response.ok) {
-                Alert.alert('Success', 'Television updated successfully');
+                //Alert.alert('Success', 'Television updated successfully');
                 // You can reset the form or handle additional UI logic here
             } else {
-                Alert.alert('Error', 'Failed to update television');
+                //Alert.alert('Error', 'Failed to update television');
             }
         } catch (error) {
-            Alert.alert('Error', 'Failed to update television');
+            //Alert.alert('Error', 'Failed to update television');
         }
     };
 

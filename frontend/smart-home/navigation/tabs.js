@@ -17,6 +17,7 @@ import { SampleStack, HomeStack, DevicesStack, StatisticsStack, SettingsStack, P
 
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from "../src/config";
 
 
 const Tab = createBottomTabNavigator();
@@ -79,100 +80,7 @@ export const CentralTab = ( {/*statsAccess, deviceAccess, petAccess*/} ) => {
 
         </Tab.Navigator>
 
-        /*
-        <Tab.Navigator
-            screenOptions={({ route }) => ({
-                headerShown: false,
-                tabBarShowLabel: true,         //show 'home' next to home icon
-                //tabBarAccessibilityLabel: "yeah",
-                tabBarLabelPosition: 'below-icon',
-                tabBarStyle: {
-                    backgroundColor: 'rgba(233, 233, 233, 0.9)',
-                    //borderWidth: 5,
-                    //borderColor:'red',
-                    borderRadius: 75,
-                    height:80,
-                    //width: '90%',
-                    width: Platform.OS=='web' ? tabBarWidth : '90%',
-                    maxWidth: maxBarWidth,
-
-                    //Positioning
-                    justifyContent: 'center', // Center content vertically
-                    //alignItems: 'center', // Center content horizontally
-                    position:'absolute',
-                    //left: '30%',
-                    //left: lefty,
-                    left: Platform.OS=='web' ? tabBarLeft : '10%',
-                    alignSelf:'center',
-                    bottom: '5%',
-                    elevation: 0,
-
-                    //shadow
-                    shadowColor: '#7F5Df0',
-                    shadowOffset: {
-                        width: 0,
-                        height: 10,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.5,
-                    elevation: 5,
-
-                },
-                tabBarActiveTintColor: 'rgba(75, 219, 255, 0.9)',
-                //tabBarActiveBackgroundColor: 'rgba(150, 220, 231, 0.36)',
-                
-                //tabBarInactiveTintColor: "red",
-
-
-                tabBarIcon: ({focused, color, size}) => {
-                    let iconName;
-                    if (route.name === 'SampleStack') {
-                        iconName = focused ? 'male-female' : 'male-female-outline'
-                    }
-                    else if (route.name === 'SigmaScreen') {
-                        iconName = focused ? 'accessibility' : 'accessibility-outline'
-                    }
-                    else if (route.name === 'HomeStack') {
-                        iconName = focused ? 'home' : 'home-outline'
-                    }
-                    else if (route.name === 'EnergyStack') {
-                        iconName = focused ? 'flash' : 'flash-outline'
-                    }
-                    else if (route.name === 'DevicesStack') {
-                        iconName = focused ? 'desktop' : 'desktop-outline'
-                    }
-                    else if (route.name === 'CustomStack') {
-                        iconName = focused ? 'color-palette' : 'color-palette-outline'
-                    }
-                    else if (route.name === 'SettingsStack') {
-                        iconName = focused ? 'settings' : 'settings-outline'
-                    }
-
-                    return <Ionicons name={iconName} size={focused ? (3.2/100)*windowDimensions.height : (2.8/100)*windowDimensions.height} color={color} />
-                },
-                tabBarIconStyle: {
-                    top:'25%'
-                },
-                tabBarLabelStyle: {
-                    top:'25%'
-                },
-            })}
-            
-        >
-            
-            <Tab.Screen name="SampleStack" component={SampleStack} options={{title: 'Sample'}}/>
-
-
-
-            <Tab.Screen name="SigmaScreen" options={{title: 'SigmaBoy'}} component={Sigma}/>
-            <Tab.Screen name="HomeStack" options={{title: 'Home'}} component={SettingsStack}/>
-            <Tab.Screen name="EnergyStack" options={{title: 'Statistics'}} component={SettingsStack}/>
-            <Tab.Screen name="DevicesStack" options={{title: 'Devices'}} component={SettingsStack}/>
-            <Tab.Screen name="CustomStack" options={{title: 'Customize'}} component={SettingsStack}/>
-            <Tab.Screen name="SettingsStack" options={{title: 'Settings'}} component={SettingsStack}/>
-        </Tab.Navigator>
-
-        */
+        
     )
 
 

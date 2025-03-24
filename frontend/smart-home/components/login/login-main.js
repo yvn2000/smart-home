@@ -24,6 +24,8 @@ import { Checkbox } from 'expo-checkbox';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { API_BASE_URL } from "../../src/config";
+
 
 
 

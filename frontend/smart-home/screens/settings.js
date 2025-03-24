@@ -3,7 +3,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform, StyleSheet, ScrollView, Text, View, TextInput, Button,
-  TouchableOpacity, FlatList
+  TouchableOpacity, FlatList, Linking
 
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -19,6 +19,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Modal from "react-native-modal";
+
+import { API_BASE_URL } from "../src/config";
 
 
 
@@ -62,7 +64,9 @@ export default function SettingsScreen() {
 
 
   const [guestCodes, setGuestCodes] = useState([]);
-  const apiUrl = Platform.OS === "web" ? "http://127.0.0.1:8000" : "http://10.0.2.2:8000";
+  //const apiUrl = Platform.OS === "web" ? "http://127.0.0.1:8000" : "http://10.0.2.2:8000";
+  //const apiUrl = `${API_BASE_URL}`
+  const apiUrl = API_BASE_URL
 
 
   const fetchGuestCodes = async () => {
@@ -296,7 +300,22 @@ export default function SettingsScreen() {
               });
             }}>
             <MaterialCommunityIcons name="file-document-edit-outline" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
-            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Terms & Conditions?</Text>
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Terms & Conditions</Text>
+            <View style={{ position: 'absolute', right: 20 }}>
+              <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.card, styles.resize, {
+            borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
+            backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+            gap: '3%'
+          }]}
+            onPress={() => {//console.log(`Opening setting card for ${id}`); 
+              Linking.openURL('https://turquoise-steps-597400.framer.app/')
+            }}>
+            <MaterialCommunityIcons name="phone-message-outline" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Contact Us • FAQs</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
             </View>
@@ -338,8 +357,8 @@ export default function SettingsScreen() {
               navigation.navigate("LoginMainStack");
               
             }}>
-            <MaterialCommunityIcons name="logout" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
-            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Logout</Text>
+            <MaterialCommunityIcons name="logout" color={theme == 'dark' ? 'red' : 'red'} size={Platform.OS=='web' ? 50 : 40} />
+            <Text style={[styles.text, { color: theme == 'dark' ? 'red' : 'red' }]} >Logout</Text>
           </TouchableOpacity>
 
 

@@ -36,6 +36,8 @@ import Animated, {
     interpolate, Extrapolation
 } from 'react-native-reanimated';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function RoomAdd() {
 
@@ -100,8 +102,8 @@ export default function RoomAdd() {
             return;
         }
 
-        const addUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${houseId}/add-room/` : `http://10.0.2.2:8000/api/houses/${houseId}/add-room/`
-
+        //const addUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${houseId}/add-room/` : `http://10.0.2.2:8000/api/houses/${houseId}/add-room/`
+const addUrl = `${API_BASE_URL}/api/houses/${houseId}/add-room/`
         try {
             const response = await fetch(addUrl, {
                 method: "POST",

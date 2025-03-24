@@ -24,6 +24,7 @@ import VerticalSlider from "../vertical-slider";
 import Slider from "react-native-sliders";
 
 import { useTheme } from "../themes/theme";
+import { API_BASE_URL } from "../../src/config";
 
 
 export default function LightsPanel({ device }) {     //width is percentage
@@ -54,9 +55,7 @@ export default function LightsPanel({ device }) {     //width is percentage
         try {
             const response = await fetch(
                 //getDeviceInfoURLS()
-                Platform.OS == 'android'
-                    ? `http://10.0.2.2:8000/api/device/${device.device_id}/get_device_info/`
-                    : `http://127.0.0.1:8000/api/device/${device.device_id}/get_device_info/`
+                `${API_BASE_URL}/api/device/${device.device_id}/get_device_info/`
             );
 
             const data = await response.json();
@@ -82,8 +81,7 @@ export default function LightsPanel({ device }) {     //width is percentage
 
     const [activityLog, setActivityLog] = useState([]);
 
-    const apiUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device.device_id}/get-activity/`;
-
+    const apiUrl = `${API_BASE_URL}/api/device/${device.device_id}/get-activity/`
     // Function to fetch the current activity log when the component loads
     const fetchActivityLog = async () => {
         try {
@@ -99,8 +97,7 @@ export default function LightsPanel({ device }) {     //width is percentage
         }
     };
 
-    const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device.device_id}/activity/add-action/`;
-
+    const actionUrl = `${API_BASE_URL}/api/device/${device.device_id}/activity/add-action/`
     const addAction = async (action) => {
         try {
             const response = await fetch(actionUrl, {
@@ -166,8 +163,7 @@ export default function LightsPanel({ device }) {     //width is percentage
 
 
 
-    const updateUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/update_device_info/` : `http://127.0.0.1:8000/api/device/${device.device_id}/update_device_info/`
-
+    const updateUrl = `${API_BASE_URL}/api/device/${device.device_id}/update_device_info/`
 
     const updateDeviceInfo = async () => {
         //console.log("update TV")
@@ -353,7 +349,7 @@ export default function LightsPanel({ device }) {     //width is percentage
     
                 <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', width: '50%', alignItems: 'center', justifyContent:'center', gap: 10, borderRadius: 50, paddingBottom: 20, paddingTop: 20 }]}>
     
-                    <Text style={{ fontSize: 12, marginTop: 10, marginBottom: 10, fontWeight: 'bold' }}>Light Intensity</Text>
+                    <Text style={{ fontSize: 12, marginTop: 10, marginBottom: 10, fontWeight: 'bold', color:'gray' }}>Light Intensity</Text>
     
     
                     <Slider

@@ -12,6 +12,7 @@ import Home from "../screens/home-screen";
 import Tutorial from "../screens/tutorial";
 import SettingsScreen from "../screens/settings";
 import SettingsItemScreen from "../screens/settings-item";
+import UserDeleteScreen from "../screens/user-delete";
 
 import DevicesScreen from "../screens/devices-screen";
 import RoomAdd from "../screens/room-add-screen";
@@ -181,6 +182,7 @@ export const SettingsStack = () => {
         >
             <Stack.Screen name="Settings" component={SettingsScreen}/>
             <Stack.Screen name="SettingsItem" component={SettingsItemScreen} />
+            <Stack.Screen name="UserDelete" component={UserDeleteScreen} />
             <Stack.Screen name="Sample" component={Sample}/>
         </Stack.Navigator>
     )

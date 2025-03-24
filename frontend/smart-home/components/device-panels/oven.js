@@ -24,6 +24,7 @@ import VerticalSlider from "../vertical-slider";
 import HorizontalSlider from "../horizontal-slider";
 
 import { useTheme } from "../themes/theme";
+import { API_BASE_URL } from "../../src/config";
 
 
 export default function OvenPanel({device}) {
@@ -116,8 +117,7 @@ export default function OvenPanel({device}) {
 
     const [activityLog, setActivityLog] = useState([]);
 
-    const apiUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device.device_id}/get-activity/`;
-
+    const apiUrl = `${API_BASE_URL}/api/device/${device.device_id}/get-activity/`
     // Function to fetch the current activity log when the component loads
     const fetchActivityLog = async () => {
         try {
@@ -133,8 +133,7 @@ export default function OvenPanel({device}) {
         }
     };
 
-    const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device.device_id}/activity/add-action/`;
-
+    const actionUrl = `${API_BASE_URL}/api/device/${device.device_id}/activity/add-action/`
     const addAction = async (action) => {
         try {
             const response = await fetch(actionUrl, {

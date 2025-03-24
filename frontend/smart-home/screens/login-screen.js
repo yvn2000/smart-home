@@ -25,6 +25,8 @@ import { DUMMY_DATA } from "../data/dummy-device-data";
 import 'react-native-gesture-handler';    //important for some reason
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { API_BASE_URL } from "../src/config";
+
 const loginCardWidth = 60
 const StackLogin = createStackNavigator();
 

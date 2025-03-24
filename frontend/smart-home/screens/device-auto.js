@@ -25,6 +25,8 @@ import { TimePickerModal } from 'react-native-paper';
 
 import { Switch } from 'react-native-switch';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function DeviceAuto() {
 
@@ -201,8 +203,8 @@ export default function DeviceAuto() {
     const addAutomation = async () => {
         try {
 
-            const url = Platform.OS == "android" ? `http://10.0.2.2:8000/api/automations/add/` : `http://127.0.0.1:8000/api/automations/add/`
-
+            //const url = Platform.OS == "android" ? `http://10.0.2.2:8000/api/automations/add/` : `http://127.0.0.1:8000/api/automations/add/`
+            const url = `${API_BASE_URL}/api/automations/add/`
             if (autoType == 'time' && (!startTime && !endTime)) {
                 console.log("Give start and end times")
                 return "Give start and end times"
@@ -258,10 +260,11 @@ export default function DeviceAuto() {
 
     const deleteAutomation = async (automationId) => {
         try {
-            const url = Platform.OS === "android" 
-                ? `http://10.0.2.2:8000/api/automations/delete/` 
-                : `http://127.0.0.1:8000/api/automations/delete/`;
-    
+            /*const url = Platform.OS === "android"
+                ? `http://10.0.2.2:8000/api/automations/delete/`
+                : `http://127.0.0.1:8000/api/automations/delete/`;*/
+            const url = `${API_BASE_URL}/api/automations/delete/`
+
             const response = await fetch(url, {
                 method: 'DELETE',
                 headers: {
@@ -275,14 +278,14 @@ export default function DeviceAuto() {
             if (response.status === 204) {
                 return { status: 'success' };
             }
-    
+
             const data = await response.json();
-    
+
             if (!response.ok) {
-                console.log("Fetch error1: "+data.message)
+                console.log("Fetch error1: " + data.message)
                 throw new Error(data.message || 'Failed to delete automation');
             }
-    
+
             return data;
         } catch (error) {
             console.error('Delete error:', error);
@@ -298,9 +301,9 @@ export default function DeviceAuto() {
 
     const fetchAutomations = async () => {
         try {
-            const url = Platform.OS === "android"
-                ? `http://10.0.2.2:8000/api/automations-list/device/${device_id}/`
-                : `http://127.0.0.1:8000/api/automations-list/device/${device_id}/`;
+            
+            
+                const url = `${API_BASE_URL}/api/automations-list/device/${device_id}/`
 
             const response = await fetch(url);
             const data = await response.json();
@@ -328,8 +331,7 @@ export default function DeviceAuto() {
 
     const addAction = async (action) => {
         try {
-            const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device_id}/activity/add-action/`;
-
+            const actionUrl = `${API_BASE_URL}/api/device/${device_id}/activity/add-action/`
             const response = await fetch(actionUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -380,7 +382,7 @@ export default function DeviceAuto() {
 
 
                             <TouchableOpacity style={[styles.backButton, { maxHeight: 80 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
@@ -391,14 +393,14 @@ export default function DeviceAuto() {
 
 
                                 <ScrollView
-                                    style={[{ width: '60%' }]}
+                                    style={[{ width: '100%', maxWidth:1100 }]}
                                     contentContainerStyle={{ alignItems: 'center', justifyContent: 'center', gap: 30, }}
                                 >
 
                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
-                                        style={[styles.autoItem, styles.shadow, {}]}
+                                        style={[styles.autoItem, styles.shadow, {width:'95%'}]}
                                     >
-                                        <TouchableOpacity style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
+                                        <TouchableOpacity style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}
                                             onPress={() => {
                                                 toggleDropdown()
                                             }}
@@ -415,7 +417,7 @@ export default function DeviceAuto() {
                                         <Text style={styles.emptyText}>No automations found for this device</Text>
                                     ) : (
                                         automations.map((item) => (
-                                            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.autoItem, styles.shadow, { flexDirection: 'row', justifyContent: 'flex-start' }]}>
+                                            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.autoItem, styles.shadow, { flexDirection: 'row', justifyContent: 'flex-start', width:'95%' }]}>
                                                 <MaterialCommunityIcons
                                                     name={item.automation_type === 'time' ? 'clock-outline' : 'account-voice'}
                                                     size={50}
@@ -423,22 +425,22 @@ export default function DeviceAuto() {
                                                     style={{ marginLeft: 10 }}
                                                 />
                                                 <View style={{ left: '10%' }}>
-                                                    <Text style={styles.detailText}>
+                                                    <Text style={[styles.detailText, {fontSize:Platform.OS=='web' ? 20 : 15}]}>
                                                         {item.automation_type === 'time'
                                                             //? `Active: ${new Date(item.start_time).toLocaleString()} - ${new Date(item.end_time).toLocaleString()}`
                                                             ? `Time: ${new Date(item.start_time).getHours().toString().padStart(2, '0')}:${new Date(item.start_time).getMinutes().toString().padStart(2, '0')} - ${new Date(item.end_time).getHours().toString().padStart(2, '0')}:${new Date(item.end_time).getMinutes().toString().padStart(2, '0')}`
                                                             : `Phrase: "${item.phrase}"`}
                                                     </Text>
-                                                    <Text style={[styles.detailText, {color:'rgb(194, 194, 194)'}]}>
+                                                    <Text style={[styles.detailText, { color: 'rgb(194, 194, 194)', fontSize:Platform.OS=='web' ? 20 : 15 }]}>
                                                         Status: {item.active ? 'Active' : 'Inactive'}
                                                     </Text>
                                                 </View>
 
                                                 <TouchableOpacity
                                                     style={{
-                                                        position: 'absolute', padding:8,
-                                                        right: '3%', backgroundColor:'red',
-                                                        borderRadius:50,
+                                                        position: 'absolute', padding: 8,
+                                                        right: '3%', backgroundColor: 'red',
+                                                        borderRadius: 50,
                                                     }}
                                                     onPress={async () => {  // Make the handler async
                                                         try {
@@ -492,7 +494,7 @@ export default function DeviceAuto() {
                                     style={[{}]}
                                 >
 
-                                    <View style={[styles.dropdownContainer, styles.shadow, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
+                                    <View style={[styles.dropdownContainer, styles.shadow, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
 
 
 
@@ -516,9 +518,9 @@ export default function DeviceAuto() {
 
                                             <Dropdown
                                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                                                placeholderStyle={{color:theme=='dark' ? 'white' : 'black'}}
-                                                selectedTextStyle={{color:theme=='dark' ? 'white' : 'black'}}
-                                                inputSearchStyle={{color:theme=='dark' ? 'white' : 'black'}}
+                                                placeholderStyle={{ color: theme == 'dark' ? 'white' : 'black' }}
+                                                selectedTextStyle={{ color: theme == 'dark' ? 'white' : 'black' }}
+                                                inputSearchStyle={{ color: theme == 'dark' ? 'white' : 'black' }}
                                                 iconStyle={styles.iconStyle}
                                                 data={data}
                                                 maxHeight={300}
@@ -583,7 +585,7 @@ export default function DeviceAuto() {
                                                 placeholder="Enter Activation Phrase"
                                                 maxLength={20}
                                                 placeholderTextColor={'rgb(156, 156, 156)'}
-                                                style={[{ borderColor: 'rgb(156, 156, 156)', borderWidth: 1, padding: 10, width: '70%', borderRadius: 15, color:theme=='dark' ? 'white' : 'black' }]}
+                                                style={[{ borderColor: 'rgb(156, 156, 156)', borderWidth: 1, padding: 10, width: '70%', borderRadius: 15, color: theme == 'dark' ? 'white' : 'black' }]}
                                                 value={phrase}
                                                 onChangeText={setPhrase}
                                             />

@@ -255,7 +255,8 @@ export default function TabBar({ state, descriptors, navigation }) {
                         </Animated.View>
                         <Animated.Text style={[{
                             color: isFocused ? 'rgba(75, 219, 255, 0.9)' : 'rgb(150, 150, 150)',
-                            fontSize: Platform.OS == "web" ? 12 : 9
+                            fontSize: Platform.OS == "web" ? 12 : 9,
+                            fontWeight:'bold',
                         }, animatedTextStyle]}>
                             {label}
                         </Animated.Text>

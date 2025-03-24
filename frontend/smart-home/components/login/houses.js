@@ -23,6 +23,8 @@ import Modal from "react-native-modal";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { API_BASE_URL } from "../../src/config";
+
 
 
 
@@ -44,9 +46,12 @@ export default function Houses() {
     const [landlords, setLandlords] = useState([]);
 
     const fetchLandlords = async () => {
+        /*
         const apiUrl = Platform.OS === "web"
             ? "http://127.0.0.1:8000/api/landlords/"
             : "http://10.0.2.2:8000/api/landlords/";
+            */
+        const apiUrl = `${API_BASE_URL}/api/landlords`;
 
         try {
             const response = await fetch(apiUrl, {
@@ -80,8 +85,8 @@ export default function Houses() {
         }
         if (!refreshToken) return;
 
-        const refreshUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/token/refresh/" : "http://10.0.2.2:8000/api/token/refresh/"
-
+        //const refreshUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/token/refresh/" : "http://10.0.2.2:8000/api/token/refresh/"
+        const refreshUrl = `${API_BASE_URL}/api/token/refresh/`;
 
 
         try {
@@ -124,7 +129,8 @@ export default function Houses() {
                 return;
             }
 
-            const housesUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/houses/" : "http://10.0.2.2:8000/api/houses/"
+            //const housesUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/houses/" : "http://10.0.2.2:8000/api/houses/"
+            const housesUrl = `${API_BASE_URL}/api/houses/`
 
             const response = await fetch(housesUrl, {
                 /*
@@ -235,7 +241,8 @@ export default function Houses() {
 
         //setLoading(true);
 
-        const addHouseUrl = Platform.OS == 'web' ? 'http://127.0.0.1:8000/api/houses/add/' : 'http://10.0.2.2:8000/api/houses/add/'
+        //const addHouseUrl = Platform.OS == 'web' ? 'http://127.0.0.1:8000/api/houses/add/' : 'http://10.0.2.2:8000/api/houses/add/'
+        const addHouseUrl = `${API_BASE_URL}/api/houses/add/`
 
         try {
             console.log(requestData)
@@ -346,7 +353,7 @@ export default function Houses() {
                                 <TouchableOpacity onPress={() => {
                                     selectHouse(house.id);
 
-                                    if (isNew==true) {
+                                    if (isNew == true) {
                                         navigation.navigate("Tutorial", {
                                             statsAccess: hasStatisticsAccess,
                                             deviceAccess: hasDeviceControlAccess,
@@ -389,7 +396,7 @@ export default function Houses() {
 
                             <Modal
                                 isVisible={isDropdownVisible}
-                                onBackdropPress={() => {setDropdownVisible(false); setInvalid(false);}} // Close when tapping outside
+                                onBackdropPress={() => { setDropdownVisible(false); setInvalid(false); }} // Close when tapping outside
                                 animationIn="fadeInDown"
                                 animationOut="fadeOutUp"
                                 backdropOpacity={0.3}
@@ -405,17 +412,17 @@ export default function Houses() {
 
                                     <TouchableOpacity style={{
                                         alignSelf: 'flex-start', position: 'absolute', top: '10%', left: '5%'
-                                    }} onPress={() => {setDropdownVisible(false); setInvalid(false);}}>
+                                    }} onPress={() => { setDropdownVisible(false); setInvalid(false); }}>
                                         <MaterialCommunityIcons name="chevron-left" color={'rgb(255, 3, 184)'} size={30} />
                                     </TouchableOpacity>
 
 
-                                    <View style={[{ gap: '20%', alignItems: 'center', justifyContent: 'center', marginTop: (Platform.OS == 'web') ? 0 : 10 }]}>
+                                    <View style={[{ gap: '20%', alignItems: 'center', justifyContent: 'center', marginTop: (Platform.OS == 'web') ? 0 : 10, width:'80%' }]}>
                                         <TextInput
                                             //style={[styles.shadow, styles.input]}
                                             placeholder="Enter House Name"
                                             //placeholderTextColor=
-                                            style={[styles.textInput]}
+                                            style={[styles.textInput, {}]}
                                             value={newHouseName}
                                             onChangeText={setNewHouseName}
                                         />
@@ -425,7 +432,7 @@ export default function Houses() {
                                                 padding: 20, flexDirection: 'row', borderRadius: 20, gap: '10%', justifyContent: 'center', alignItems: 'center'
                                             }}>
                                             <Text style={{ color: 'black', fontSize: 20, fontWeight: 'bold' }} >
-                                                {chosenLandlord=='' ? "Select Landlord" : chosenLandlord}
+                                                {chosenLandlord == '' ? "Select Landlord" : chosenLandlord}
                                             </Text>
                                             <MaterialCommunityIcons name="chevron-down" color={'black'} size={30} />
                                         </TouchableOpacity>
@@ -457,7 +464,7 @@ export default function Houses() {
                                         </Modal>
                                     </View>
 
-                                    {invalidSelection && <Text style={{fontWeight:'bold', color:'red'}}>Enter Valid House Name and Landlord!</Text>}
+                                    {invalidSelection && <Text style={{ fontWeight: 'bold', color: 'red' }}>Enter Valid House Name and Landlord!</Text>}
 
                                     <View style={[{ gap: '20%', alignItems: 'center', justifyContent: 'center', marginTop: (Platform.OS == 'web') ? 0 : 10 }]}>
 

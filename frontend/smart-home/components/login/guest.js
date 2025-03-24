@@ -20,6 +20,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { API_BASE_URL } from "../../src/config";
+
 
 const loginCardWidth = 60
 
@@ -73,7 +75,8 @@ export default function Guest() {
     };
 
 
-    const apiUrl = Platform.OS === "web" ? "http://127.0.0.1:8000" : "http://10.0.2.2:8000";
+    //const apiUrl = Platform.OS === "web" ? "http://127.0.0.1:8000" : "http://10.0.2.2:8000";
+    const apiUrl = API_BASE_URL;
 
     const selectHouse = async (houseid) => {
         console.log(houseid)
@@ -82,6 +85,7 @@ export default function Guest() {
 
 
     const handleGuestLogin = async () => {
+        console.log(API_BASE_URL)
         if (!house_id.trim() || (!code.join(''))) {
             console.log("Error", "Please enter both House ID and Guest Code.");
             return;
@@ -102,6 +106,7 @@ export default function Guest() {
                     await AsyncStorage.setItem('statsAccess', "false");
                     await AsyncStorage.setItem('petAccess', "true");
                     await AsyncStorage.setItem('first_name', "Guest");
+                    await AsyncStorage.setItem('user_type', 'guest');
                     selectHouse(house_id);
                     navigation.navigate("Main", {
                         statsAccess: false,

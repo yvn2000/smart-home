@@ -16,6 +16,9 @@ import { Checkbox } from 'expo-checkbox';
 
 
 import 'react-native-gesture-handler';    //important for some reason
+import Modal from "react-native-modal";
+
+import { API_BASE_URL } from "../../src/config";
 
 
 const loginCardWidth = 60
@@ -89,7 +92,8 @@ export default function Register() {
 
     const handleRegister = async () => {
 
-        const registerUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/register/" : "http://10.0.2.2:8000/api/register/"
+        //const registerUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/register/" : "http://10.0.2.2:8000/api/register/"
+        const registerUrl = `${API_BASE_URL}/api/register/`
 
         let checkFail = false;
 
@@ -186,7 +190,7 @@ export default function Register() {
     };
 
 
-
+    const [isVis, setVis] = useState(false);
 
 
 
@@ -342,6 +346,12 @@ export default function Register() {
                             />
                             <Text> Remember Me</Text>
                         </View>
+
+                        <TouchableOpacity style={{ right: '10%' }}
+                            onPress={() => { setVis(true) }}
+                        >
+                            <Text style={{ color: 'rgba(48, 164, 218, 0.9)', fontWeight:'bold' }}>Terms & Conditions</Text>
+                        </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
@@ -350,9 +360,163 @@ export default function Register() {
                     <View style={{ flexDirection: 'row' }}>
                         <Text>Already have an account?  </Text>
                         <TouchableOpacity onPress={() => { navigation.goBack() }}>
-                            <Text style={{ color: 'rgba(48, 164, 218, 0.9)' }}>Log In</Text>
+                            <Text style={{ color: 'rgba(48, 164, 218, 0.9)', fontWeight:'bold' }}>Log In</Text>
                         </TouchableOpacity>
                     </View>
+
+                    <Modal
+                        isVisible={isVis}
+                        onBackdropPress={() => setVis(false)} // Close when tapping outside
+                        animationIn="fadeInDown"
+                        animationOut="fadeOutUp"
+                        backdropOpacity={0.5}
+                        style={[{}]}
+                    >
+
+                        <View style={[{
+                            maxWidth: 800, alignSelf: 'flex-end', position: 'absolute', backgroundColor: 'white',
+                            padding: 30, borderRadius: 50, maxHeight: 500, alignItems: 'center', width:'95%'
+
+                        }]}>
+
+                            <Text style={{ color: 'rgb(255, 3, 184)', fontSize: 20, fontWeight: 'bold' }}>Terms & Conditions</Text>
+                            
+                            <ScrollView style={[{ width: '100%', gap: 20, maxWidth: 1200 }]}
+                                contentContainerStyle={{ alignItems: 'center' }}
+                            >
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    1. Introduction
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    These Terms and Conditions govern your use of our products and services. By purchasing from us or using our website, you agree to abide by these terms.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    2. Product and Services {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    Our company provides sustainable home solutions, including but not limited to the Smart Home Dashboard System. All products and services are subject to availability and may vary based on region.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    3. Orders and Payments {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    All orders must be placed through contacting our authorized representatives. Payment must be made in full at the time of purchase unless otherwise agreed upon. We accept various payment methods, including credit/debit cards and online transactions.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    4. Installation and Warranty {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    Installation services, where applicable, will be carried out by our certified professionals. Products come with a limited warranty as specified at the time of purchase. Warranty coverage does not include damages due to improper use, unauthorized modifications, or external factors.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    5. Returns and Refunds {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    Customers may return products within 30 days of purchase, subject to inspection and approval. Refunds will be processed in accordance with our refund policy. Installation fees are non-refundable.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    6. Liability and Disclaimer {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    We strive to provide high-quality, sustainable solutions, but we do not guarantee specific energy savings or environmental benefits. We are not liable for any indirect, incidental, or consequential damages resulting from product use.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    7. Privacy Policy {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    Your personal data is protected under our Privacy Policy. We do not sell or share customer information with third parties without consent.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    8. Governing Law {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    These Terms and Conditions are governed by the laws of the UAE. Any disputes shall be resolved in the appropriate legal jurisdiction.
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 20, fontWeight: 'bold', alignSelf: 'flex-start'
+                                }}>
+                                    9. Changes to Terms {'\n'}
+                                </Text>
+
+                                <Text style={{
+                                    fontSize: 15, alignSelf: 'flex-start', marginLeft: 35
+                                }}>
+                                    We reserve the right to modify these Terms and Conditions at any time. Customers will be notified of significant changes. For further inquiries, please contact our authorized representatives.
+                                </Text>
+
+
+                            </ScrollView>
+
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: 'rgb(216, 75, 255)', marginTop: 40,
+                                    alignItems: 'center', justifyContent: 'center', paddingLeft: 20, paddingRight: 20, padding: 10,
+                                    borderRadius: 20,
+                                }}
+                                onPress={() => {
+                                    setVis(false)
+                                }}
+                            >
+                                <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Close</Text>
+                            </TouchableOpacity>
+
+
+
+
+                        </View>
+
+
+                    </Modal>
 
                 </View>
 

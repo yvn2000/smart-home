@@ -25,6 +25,8 @@ import Modal from "react-native-modal";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function DevicesScreen() {
 
@@ -130,6 +132,30 @@ export default function DevicesScreen() {
         return houseid;
 
     }
+    const [guest, setGuest] = useState(false)
+    const [guestCode, setGuestCode] = useState('')
+    const getGuest = async () => {
+        try {
+
+            const guestCode = await AsyncStorage.getItem('guestCode')
+            if (guestCode && guestCode != null && guestCode != 'null') {
+                if (guestCode.length == 4) {
+                    console.log("Guest Code: " + guestCode)
+                    setGuestCode(guestCode)
+                    setGuest(true)
+                    return 1;
+                }
+
+            }
+            setGuest(false)
+            return 0;
+
+        } catch (error) {
+            console.error('Error :', error);
+        } finally {
+
+        }
+    }
 
 
     /*
@@ -148,8 +174,8 @@ export default function DevicesScreen() {
 
     const fetchRooms2 = async (house_id) => {
 
-        const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/rooms/` : `http://10.0.2.2:8000/api/houses/${house_id}/rooms/`
-
+        //const roomsUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/rooms/` : `http://10.0.2.2:8000/api/houses/${house_id}/rooms/`
+        const roomsUrl = `${API_BASE_URL}/api/houses/${house_id}/rooms/`
         try {
             const response = await fetch(roomsUrl);
             console.log(response)
@@ -225,6 +251,7 @@ export default function DevicesScreen() {
             const refresh = async () => {
                 const id = await getHouse();
                 const fetchedRooms = await fetchRooms2(id);
+                const guest = await getGuest()
 
                 // Retrieve saved currentRoom
                 const savedCurrentRoom = await AsyncStorage.getItem('currentRoom');
@@ -235,9 +262,9 @@ export default function DevicesScreen() {
                     if (savedCurrentRoom) {
                         const savedRoomId = parseInt(savedCurrentRoom, 10);
                         const roomExists = fetchedRooms.some(room => room.room_id === savedRoomId);
-                        newCurrentRoom = roomExists ? savedRoomId : (fetchedRooms.length!=0 ? fetchedRooms[0].room_id : 0);
+                        newCurrentRoom = roomExists ? savedRoomId : (fetchedRooms.length != 0 ? fetchedRooms[0].room_id : 0);
                     } else {
-                        if (fetchedRooms.length!=0) {
+                        if (fetchedRooms.length != 0) {
                             newCurrentRoom = fetchedRooms[0].room_id;
                         }
                         else {
@@ -245,7 +272,7 @@ export default function DevicesScreen() {
                         }
                     }
                     // Force devices update
-                    if (fetchedRooms.length!=0) {
+                    if (fetchedRooms.length != 0) {
                         setCurrentRoom(newCurrentRoom);
                         //const roomData = rooms.find(item => item.room_id === currentRoom);
                         const roomData = fetchedRooms.find(room => room.room_id === newCurrentRoom);
@@ -367,14 +394,14 @@ export default function DevicesScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20, justifyContent: 'center' }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Device Control
                                 </Text>
                                 {true &&
 
                                     <View style={[{ position: 'absolute', alignSelf: 'flex-end', paddingRight: 10, }]}>
                                         <TouchableOpacity style={[{}]} onPress={toggleDropdown}>
-                                            <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} />
+                                            <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} />
                                         </TouchableOpacity>
 
                                         <Modal
@@ -387,7 +414,7 @@ export default function DevicesScreen() {
                                         >
 
                                             <View style={[styles.dropdownContainer, { borderRadius: 30, }]}>
-                                                <TouchableOpacity style={styles.dropdownItem}
+                                                {guestCode == '' && <TouchableOpacity style={styles.dropdownItem}
                                                     onPress={() => {
                                                         setDropdownVisible(false)
                                                         navigation.navigate("Room-Add", {
@@ -410,7 +437,7 @@ export default function DevicesScreen() {
                                                         <MaterialCommunityIcons name="plus" size={Platform.OS == 'web' ? 70 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
                                                         <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Add Room</Text>
                                                     </View>
-                                                </TouchableOpacity>
+                                                </TouchableOpacity>}
                                                 {rooms.length != 0 && <TouchableOpacity style={styles.dropdownItem}
                                                     onPress={() => {
                                                         setDropdownVisible(false)
@@ -425,7 +452,7 @@ export default function DevicesScreen() {
                                                     </View>
                                                 </TouchableOpacity>}
 
-                                                {rooms.length != 0 && <TouchableOpacity style={{}} onPress={() => {
+                                                {rooms.length != 0 && guestCode == '' && <TouchableOpacity style={{}} onPress={() => {
                                                     toggleDropdown()
                                                     navigation.navigate("Room-Delete", {
                                                         roomName: currentRoomName,
@@ -517,7 +544,7 @@ export default function DevicesScreen() {
 
 
 
-                                            {Platform.OS == 'web' && <TouchableOpacity
+                                            {Platform.OS == 'web' && guestCode == '' && <TouchableOpacity
                                                 style={[styles.room,
                                                 {
                                                     backgroundColor: (theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'), aspectRatio: 1,
@@ -639,7 +666,7 @@ export default function DevicesScreen() {
 
                                                 </LinearGradient>
 
-                                                <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                                {guestCode == '' && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                                     style={[styles.shadow, {
                                                         width: '20%',
                                                         maxWidth: 120,
@@ -665,7 +692,7 @@ export default function DevicesScreen() {
                                                         <MaterialCommunityIcons name="home-remove-outline" size={Platform.OS == 'web' ? 70 : 40} color={"white"} />
                                                     </TouchableOpacity>
 
-                                                </LinearGradient>
+                                                </LinearGradient>}
 
                                             </View>
 
@@ -684,7 +711,7 @@ export default function DevicesScreen() {
 
 
                             <View style={[]}>
-                                <DevicesGrid currentRoom={currentRoom} house_id={house_id} allRooms={rooms} />
+                                <DevicesGrid currentRoom={currentRoom} house_id={house_id} allRooms={rooms} guestCode={guestCode} />
                             </View>
 
 

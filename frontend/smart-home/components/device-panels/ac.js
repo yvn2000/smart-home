@@ -23,6 +23,7 @@ import Animated, {
 import TempDial from "../dial";
 
 import { useTheme } from "../themes/theme";
+import { API_BASE_URL } from "../../src/config";
 
 
 export default function ACPanel({ device }) {     //width is percentage
@@ -51,9 +52,10 @@ export default function ACPanel({ device }) {     //width is percentage
         try {
             const response = await fetch(
                 //getDeviceInfoURLS()
-                Platform.OS == 'android'
+                /*Platform.OS == 'android'
                     ? `http://10.0.2.2:8000/api/device/${device.device_id}/get_device_info/`
-                    : `http://127.0.0.1:8000/api/device/${device.device_id}/get_device_info/`
+                    : `http://127.0.0.1:8000/api/device/${device.device_id}/get_device_info/`*/
+                `${API_BASE_URL}/api/device/${device.device_id}/get_device_info/`
             );
 
             const data = await response.json();
@@ -79,7 +81,8 @@ export default function ACPanel({ device }) {     //width is percentage
 
     const [activityLog, setActivityLog] = useState([]);
 
-    const apiUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device.device_id}/get-activity/`;
+    //const apiUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device.device_id}/get-activity/`;
+    const apiUrl = `${API_BASE_URL}/api/device/${device.device_id}/get-activity/`
 
     // Function to fetch the current activity log when the component loads
     const fetchActivityLog = async () => {
@@ -96,7 +99,9 @@ export default function ACPanel({ device }) {     //width is percentage
         }
     };
 
-    const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device.device_id}/activity/add-action/`;
+    //const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device.device_id}/activity/add-action/`;
+    const actionUrl = `${API_BASE_URL}/api/device/${device.device_id}/activity/add-action/`
+
 
     const addAction = async (action) => {
         try {
@@ -184,8 +189,8 @@ export default function ACPanel({ device }) {     //width is percentage
 
 
 
-    const updateUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/update_device_info/` : `http://127.0.0.1:8000/api/device/${device.device_id}/update_device_info/`
-
+    //const updateUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/update_device_info/` : `http://127.0.0.1:8000/api/device/${device.device_id}/update_device_info/`
+    const updateUrl = `${API_BASE_URL}/api/device/${device.device_id}/update_device_info/`
 
     const updateDeviceInfo = async () => {
         //console.log("update TV")

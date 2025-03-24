@@ -24,6 +24,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Modal from "react-native-modal";
 import { Knob } from 'primereact/knob';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function Tutorial() {
 
@@ -130,8 +132,7 @@ export default function Tutorial() {
         }
         if (!refreshToken) return;
 
-        const refreshUrl = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/token/refresh/" : "http://10.0.2.2:8000/api/token/refresh/"
-
+        const refreshUrl = `${API_BASE_URL}/api/token/refresh/`
 
         try {
             const response = await fetch(refreshUrl, {
@@ -172,8 +173,8 @@ export default function Tutorial() {
                 return;
             }
 
-            const url = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/update-user-noob/" : "http://10.0.2.2:8000/api/update-user-noob/"
-
+            //const url = Platform.OS == 'web' ? "http://127.0.0.1:8000/api/update-user-noob/" : "http://10.0.2.2:8000/api/update-user-noob/"
+            const url = `${API_BASE_URL}/api/update-user-noob/`
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {

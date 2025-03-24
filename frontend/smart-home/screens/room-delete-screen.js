@@ -36,6 +36,8 @@ import Animated, {
     interpolate, Extrapolation
 } from 'react-native-reanimated';
 
+import { API_BASE_URL } from "../src/config";
+
 
 export default function RoomDelete() {
 
@@ -64,27 +66,27 @@ export default function RoomDelete() {
 
 
 
-    
-// Delete a room
-const deleteRoom = async () => {
 
-    const delUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/delete-room/${currentRoom}/` : `http://10.0.2.2:8000/api/delete-room/${currentRoom}/`
+    // Delete a room
+    const deleteRoom = async () => {
 
-    try {
-        const response = await fetch(delUrl, { method: "DELETE" });
+        //const delUrl = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/delete-room/${currentRoom}/` : `http://10.0.2.2:8000/api/delete-room/${currentRoom}/`
+        const delUrl = `${API_BASE_URL}/api/delete-room/${currentRoom}/`
+        try {
+            const response = await fetch(delUrl, { method: "DELETE" });
 
-        if (response.ok) {
-            setRoomCount(-1)
-            navigation.goBack();
-            //Alert.alert("Success", "Room deleted!");
-            //fetchRooms(); // Refresh list
-        } else {
-            //Alert.alert("Error", "Failed to delete room");
+            if (response.ok) {
+                setRoomCount(-1)
+                navigation.goBack();
+                //Alert.alert("Success", "Room deleted!");
+                //fetchRooms(); // Refresh list
+            } else {
+                //Alert.alert("Error", "Failed to delete room");
+            }
+        } catch (error) {
+            //console.error("Error deleting room:", error);
         }
-    } catch (error) {
-        //console.error("Error deleting room:", error);
-    }
-};
+    };
 
 
 
@@ -114,39 +116,39 @@ const deleteRoom = async () => {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
 
-                            <TouchableOpacity style={[styles.backButton, {maxHeight:90, top:0, left:0}]} >
-                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} style={{alignSelf:'center'}} />
+                            <TouchableOpacity style={[styles.backButton, { maxHeight: 90, top: 0, left: 0 }]} >
+                                <MaterialCommunityIcons name="chevron-left" color={theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} style={{ alignSelf: 'center' }} />
                             </TouchableOpacity>
 
 
                             <View style={[styles.mainContainer]}>
 
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: Platform.OS=='web' ? 30 :30, color:'red' }}
+                                    style={{ fontWeight: 'bold', fontSize: Platform.OS == 'web' ? 30 : 30, color: 'red' }}
                                 >
                                     Delete Room
                                 </Text>
 
-                                <Text style={{textAlign:'center', width:'80%', fontSize: Platform.OS=='web' ? 40 : 30, fontWeight:'bold', color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'}}>
+                                <Text style={{ textAlign: 'center', width: '80%', fontSize: Platform.OS == 'web' ? 40 : 30, fontWeight: 'bold', color: theme == 'crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Are you sure you want {'\n'}
-                                    to delete the following room? 
+                                    to delete the following room?
                                 </Text>
-                                <Text style={{textAlign:'center', width:'80%', fontSize: Platform.OS=='web' ? 40 : 30, top:-20, fontWeight:'bold', color:'rgb(255, 3, 3)'}}>
+                                <Text style={{ textAlign: 'center', width: '80%', fontSize: Platform.OS == 'web' ? 40 : 30, top: -20, fontWeight: 'bold', color: 'rgb(255, 3, 3)' }}>
                                     {roomName} with ID: {currentRoom}
                                 </Text>
 
 
-                                
 
 
-                                <View style={{ flexDirection: 'row', gap: 20, maxHeight:100 }}>
+
+                                <View style={{ flexDirection: 'row', gap: 20, maxHeight: 100 }}>
                                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                         style={[styles.shadow, { backgroundColor: 'rgb(255, 0, 0)', padding: 20, borderRadius: 25, alignItems: 'center', justifyContent: 'center' }]}
                                     >
                                         <TouchableOpacity onPress={() => {
                                             //addDeviceOld(newDeviceName, newDeviceLogo, newDeviceTemp)
                                             deleteRoom()
-                                            
+
                                         }}
                                             style={{ alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
                                             <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'white' }}>Delete Room</Text>

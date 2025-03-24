@@ -21,6 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import TempDial from "../dial";
+import { API_BASE_URL } from "../../src/config";
 
 
 export default function ThermoPanel({ device }) {     //width is percentage

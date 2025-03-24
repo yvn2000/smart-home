@@ -19,8 +19,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import CustomSwitch from '../components/switch'
 import { Switch } from 'react-native-switch';
 
+import { API_BASE_URL } from "../src/config";
 
-export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
+
+export default function DevicesGrid({ currentRoom, house_id, allRooms, guestCode }) {
 
     const [loading, setLoading] = useState(true);
 
@@ -188,7 +190,8 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
 
             try {
                 const response = await fetch(
-                    Platform.OS == 'android' ? `http://10.0.2.2:8000/api/add-device/` : `http://127.0.0.1:8000/api/add-device/`,
+                    //Platform.OS == 'android' ? `http://10.0.2.2:8000/api/add-device/` : `http://127.0.0.1:8000/api/add-device/`,
+                    `${API_BASE_URL}/api/add-device/`,
                     //`http://127.0.0.1:8000/api/add-device/`,
                     {
                         method: 'POST',
@@ -217,6 +220,7 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
 
     };
 
+    /*
     const deleteDevice = async (deviceId) => {
         //console.log(deviceId)
         try {
@@ -239,6 +243,7 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
             console.error("Error deleting device:", err.message);
         }
     };
+    */
 
 
 
@@ -250,8 +255,8 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
         //formData.append("status", newStatus);
         formData.append("status", newStatus.toLowerCase()); // Ensure lowercase
 
-        const url = Platform.OS == "android" ? `http://10.0.2.2:8000/api/update-device-status/${device_id}/` : `http://127.0.0.1:8000/api/update-device-status/${device_id}/`
-
+        //const url = Platform.OS == "android" ? `http://10.0.2.2:8000/api/update-device-status/${device_id}/` : `http://127.0.0.1:8000/api/update-device-status/${device_id}/`
+        const url = `${API_BASE_URL}/api/update-device-status/${device_id}/`
         try {
             const response = await fetch(
                 url + `?t=${Date.now()}`
@@ -268,7 +273,7 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
                 //Alert.alert("Success", `Device status updated to ${newStatus}`);
                 console.log("Device status changed")
                 addAction(device_id, "Turned Device " + newStatus)
-                
+
             } else {
                 //Alert.alert("Error", data.error || "Failed to update status");
             }
@@ -308,9 +313,7 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
 
 
     const setEnergyConsumption = async (deviceId, incrementValue) => {
-        const apiUrl = Platform.OS === 'android'
-            ? `http://10.0.2.2:8000/api/device/${deviceId}/set_energy/`
-            : `http://127.0.0.1:8000/api/device/${deviceId}/set_energy/`;
+        const apiUrl = `${API_BASE_URL}/api/device/${deviceId}/set_energy/`;
 
         try {
             //console.log("IncrementValue: " + incrementValue)
@@ -391,8 +394,8 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
 
     const addAction = async (device_id, action) => {
         try {
-            const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device_id}/activity/add-action/`;
-
+            //const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device_id}/activity/add-action/`;
+            const actionUrl = `${API_BASE_URL}/api/device/${device_id}/activity/add-action/`
             const response = await fetch(actionUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -430,7 +433,7 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
             {/* Dynamic grid container */}
             <View style={[styles.gridContainer]}>
 
-                {allRooms.length!=[] && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.gridItem, styles.shadow]}>
+                {allRooms.length != [] && guestCode == '' && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']} style={[styles.gridItem, styles.shadow]}>
                     <TouchableOpacity title="Add Device"
                         //onPress={openPopup/*addDevice*/
                         onPress={() => {
@@ -467,7 +470,8 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
                                         temp: device.temperature,
                                         room: allRooms.find(item => item.room_id === currentRoom)?.name,
                                         power: device.power_save,
-                                        deleteDevice: deleteDevice
+                                        guestCode: guestCode
+                                        //deleteDevice: deleteDevice
                                     }
                                     );
                                 }}
@@ -569,9 +573,9 @@ export default function DevicesGrid({ currentRoom, house_id, allRooms }) {
                                 <View style={[styles.deviceLower, { marginLeft: 4 }]}>
 
                                     <View style={{ bottom: '5%', left: '10%' }}>
-                                        <View style={{ flexDirection: 'row', alignItems:'center' }}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                             <Text style={[{ fontSize: Platform.OS == 'web' ? 27 : 20, fontWeight: 'bold', color: 'white' }]}>
-                                                {device.name} 
+                                                {device.name}
                                             </Text>
                                             {device.power_save && <MaterialCommunityIcons
 
