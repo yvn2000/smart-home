@@ -176,7 +176,7 @@ export default function DoorsPanel({ device }) {     //width is percentage
     const updateDeviceInfo = async () => {
         //console.log("update TV")
         // Validate inputs
-        if (!doorStatus) {
+        if (!code) {
             //Alert.alert('Error', 'All fields are required');
             return;
         }
@@ -237,12 +237,15 @@ export default function DoorsPanel({ device }) {     //width is percentage
     };
 
     useEffect(() => {
+        console.log("Door Changed")
         updateDeviceInfo();
     }, [doorStatus, code]);
 
+    
     useEffect(() => {
         addAction("Changed Code to " + code.join(''))
     }, [code]);
+    
 
 
 
@@ -254,6 +257,7 @@ export default function DoorsPanel({ device }) {     //width is percentage
     useEffect(() => {
         if (deviceInfo.data) {
             //console.log(deviceInfo)
+            console.log(deviceInfo.data.locked)
             setDoor(deviceInfo.data.locked)
             setCode(convertToArray(deviceInfo.data.access_code))
         }
@@ -283,17 +287,17 @@ export default function DoorsPanel({ device }) {     //width is percentage
             }]}
             >
 
-                <TouchableOpacity onPress={() => { setLock(!doorStatus) }}
+                <TouchableOpacity onPress={() => { setLock(!doorStatus); addAction(!doorStatus ? "Locked Door" : "Unlocked Door") }}
                     style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 30, width: '95%' }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >
-                        <MaterialCommunityIcons name={(doorStatus) ? "lock-open-variant-outline" : "lock-outline"} size={50} color="white"
+                        <MaterialCommunityIcons name={(!doorStatus) ? "lock-open-variant-outline" : "lock-outline"} size={50} color="white"
                         />
                         {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
                     </LinearGradient>
 
-                    <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 20, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{(doorStatus) ? "Unlocked" : "Locked"}</Text>
+                    <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 20, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{(!doorStatus) ? "Unlocked" : "Locked"}</Text>
 
                 </TouchableOpacity>
                 <View style={[styles.shadow, { width: '90%', borderRadius: 40, gap: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', padding: 40 }]}>
@@ -320,7 +324,7 @@ export default function DoorsPanel({ device }) {     //width is percentage
                                     ]}
                                     selectionColor={'rgb(216, 75, 255)'}
                                     value={value}
-                                    onChangeText={(text) => handleChange(index, text)}
+                                    onChangeText={(text) => {handleChange(index, text); }}
                                     maxLength={1}
                                     keyboardType="numeric"
                                     ref={inputRefs[index]}
@@ -363,17 +367,17 @@ export default function DoorsPanel({ device }) {     //width is percentage
         }]}
         >
 
-            <TouchableOpacity onPress={() => { setLock(!doorStatus) }}
+            <TouchableOpacity onPress={() => { setLock(!doorStatus); addAction(!doorStatus ? "Locked Door" : "Unlocked Door") }}
                 style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30, width: '35%' }]}>
                 <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                     style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                 >
-                    <MaterialCommunityIcons name={(doorStatus) ? "lock-open-variant-outline" : "lock-outline"} size={70} color="white"
+                    <MaterialCommunityIcons name={(!doorStatus) ? "lock-open-variant-outline" : "lock-outline"} size={70} color="white"
                     />
                     {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
                 </LinearGradient>
 
-                <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 30, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{(doorStatus) ? "Unlocked" : "Locked"}</Text>
+                <Text style={{ marginLeft: 30, marginRight: 30, fontSize: 30, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>{(!doorStatus) ? "Unlocked" : "Locked"}</Text>
 
             </TouchableOpacity>
             <View style={[{ width: '40%', borderRadius: 40, gap: 10, justifyContent: 'center', alignItems: 'center' }]}>
@@ -400,7 +404,7 @@ export default function DoorsPanel({ device }) {     //width is percentage
                                 ]}
                                 selectionColor={'rgb(216, 75, 255)'}
                                 value={value}
-                                onChangeText={(text) => handleChange(index, text)}
+                                onChangeText={(text) => {handleChange(index, text);}}
                                 maxLength={1}
                                 keyboardType="numeric"
                                 ref={inputRefs[index]}

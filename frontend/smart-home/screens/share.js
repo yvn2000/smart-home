@@ -86,7 +86,7 @@ export default function ShareStatsScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <TouchableOpacity style={[styles.backButton]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>

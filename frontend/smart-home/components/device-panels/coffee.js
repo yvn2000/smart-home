@@ -26,7 +26,7 @@ import HorizontalSlider from "../horizontal-slider";
 import { useTheme } from "../themes/theme";
 
 
-export default function CoffeePanel() {
+export default function CoffeePanel({ device }) {
 
 
     const { theme, toggleTheme } = useTheme()
@@ -83,6 +83,49 @@ export default function CoffeePanel() {
             setTemp(temp + value)
         }
     }
+
+
+    const [activityLog, setActivityLog] = useState([]);
+
+    const apiUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device.device_id}/get-activity/`;
+
+    // Function to fetch the current activity log when the component loads
+    const fetchActivityLog = async () => {
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            if (response.ok) {
+                setActivityLog(data.activity_log);
+            } else {
+                //Alert.alert('Error', 'Failed to fetch activity log');
+            }
+        } catch (error) {
+            //Alert.alert('Error', 'Failed to fetch activity log');
+        }
+    };
+
+    const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device.device_id}/activity/add-action/`;
+
+    const addAction = async (action) => {
+        try {
+            const response = await fetch(actionUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action }),
+            });
+
+            if (!response.ok) {
+                //Alert.alert('Error', 'Failed to add action');
+            }
+        } catch (error) {
+            //Alert.alert('Error', 'Failed to connect to server');
+        }
+    };
+
+    useEffect(() => {
+        // Fetch the activity log when the component mounts
+        fetchActivityLog();
+    }, []);
 
 
 
@@ -224,7 +267,10 @@ export default function CoffeePanel() {
                     >
 
                         {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
-                        <TouchableOpacity style={{ marginLeft: 30, marginRight: 30, }}>
+                        <TouchableOpacity style={{ marginLeft: 30, marginRight: 30, }}
+                        onPress={()=> {
+                            addAction("Started Brew")
+                        }}>
                             <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>Brew</Text>
 
                         </TouchableOpacity>
@@ -384,7 +430,10 @@ export default function CoffeePanel() {
                 >
 
                     {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
-                    <TouchableOpacity style={{ marginLeft: 30, marginRight: 30, }}>
+                    <TouchableOpacity style={{ marginLeft: 30, marginRight: 30, }}
+                    onPress={()=> {
+                        addAction("Started Brew")
+                    }}>
                         <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>Brew</Text>
 
                     </TouchableOpacity>

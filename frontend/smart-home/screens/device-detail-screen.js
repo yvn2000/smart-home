@@ -415,13 +415,13 @@ export default function DeviceDetail() {
 
 
                             <TouchableOpacity style={[styles.backButton, { maxHeight: 80 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
                             <View style={[{ position: 'absolute', paddingRight: 10, top: Platform.OS == 'web' ? 20 : 80, right: Platform.OS == 'web' ? 15 : 10 }]}>
                                 <TouchableOpacity style={[{}]} onPress={toggleDropdown}>
-                                    <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={'rgb(255, 3, 184)'} />
+                                    <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} />
                                 </TouchableOpacity>
 
                                 <Modal

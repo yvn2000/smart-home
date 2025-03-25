@@ -668,8 +668,8 @@ export default function HomeScreen() {
                                     >
 
                                         <View style={[{
-                                            minWidth: 400, alignSelf: 'flex-end', position: 'absolute',
-                                            top: 0
+                                            minWidth: 200, alignSelf: 'flex-end', position: 'absolute',
+                                            top: 40
                                         }]}>
 
                                             <View style={{
@@ -680,13 +680,13 @@ export default function HomeScreen() {
                                             }}>
                                                 <Text style={{
                                                     color: 'rgb(255, 3, 184)', fontWeight: 'bold',
-                                                    fontSize: 30,
+                                                    fontSize: 24,
                                                 }}>
                                                     {firstName + " " + lastName}
                                                 </Text>
                                                 <Text style={{
                                                     color: 'rgb(199, 199, 199)', fontWeight: 'bold',
-                                                    fontSize: 20,
+                                                    fontSize: 15,
                                                 }}>
                                                     {userType == 'home_owner' ? "Home Owner" : "Landlord"}
                                                 </Text>
@@ -703,7 +703,7 @@ export default function HomeScreen() {
                                                     flexDirection: 'row', alignItems: 'center', gap: 10,
                                                 }}>
                                                     <MaterialCommunityIcons name="theme-light-dark" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
-                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 18 }}>
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>
                                                         Toggle Theme ({theme == 'dark' ? "Dark" : (theme == 'light' ? "Light" : "Freaky")})
                                                     </Text>
                                                 </View>
@@ -1199,7 +1199,7 @@ export default function HomeScreen() {
                                                     flexDirection: 'row', alignItems: 'center', gap: 10,
                                                 }}>
                                                     <MaterialCommunityIcons name="cog" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
-                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Settings</Text>
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 18 }}>Settings</Text>
                                                 </View>
                                             </TouchableOpacity>
 
@@ -1217,7 +1217,7 @@ export default function HomeScreen() {
                                                     borderBottomRightRadius: Platform.OS == 'web' ? 30 : 20
                                                 }}>
                                                     <MaterialCommunityIcons name="logout" size={Platform.OS == 'web' ? 50 : 20} color={theme == 'dark' ? 'white' : 'rgb(255, 3, 184)'} />
-                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Logout</Text>
+                                                    <Text style={{ color: theme == 'dark' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 18 }}>Logout</Text>
                                                 </View>
                                             </TouchableOpacity>
 

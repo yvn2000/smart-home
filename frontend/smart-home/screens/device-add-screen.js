@@ -114,14 +114,14 @@ export default function DeviceAdd() {
 
 
                             <TouchableOpacity style={[styles.backButton, { maxHeight: 100 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
                             <View style={[styles.mainContainer]}>
 
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: 30, color: 'rgb(255, 3, 184)' }}
+                                    style={{ fontWeight: 'bold', fontSize: 30, color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}
                                 >
                                     Add Device
                                 </Text>

@@ -214,7 +214,7 @@ export default function RoomAuto() {
 
 
                             <TouchableOpacity style={[styles.backButton, { maxHeight: 80 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 

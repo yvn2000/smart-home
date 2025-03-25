@@ -69,6 +69,11 @@ export default function SettingsItemScreen() {
         fetchProfile()
     }, [house_id])
 
+    useEffect(() => {
+        fetchGuestCodes()
+        fetchProfile()
+    }, [])
+
 
 
     const [guestCodes, setGuestCodes] = useState([]);
@@ -428,7 +433,7 @@ export default function SettingsItemScreen() {
             if (response.ok) {
                 await AsyncStorage.clear();
                 navigation.navigate("LoginMainStack");
-                
+
             } else {
                 //Alert.alert('Error', data.error || 'Failed to add house');
                 console.log("failed to delete house")
@@ -466,7 +471,7 @@ export default function SettingsItemScreen() {
                             padding: 30, width: '30%', minWidth: 300, marginTop: 30,
                         }]}>
                         <TouchableOpacity onPress={() => { addGuestCode() }}
-                            style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                            style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={[styles.text, { fontSize: 20, color: 'white', fontWeight: 'bold' }]} >Generate Guest Codes</Text>
                         </TouchableOpacity>
 
@@ -526,12 +531,13 @@ export default function SettingsItemScreen() {
 
                     <View style={{ flexDirection: 'row', gap: '2%', justifyContent: 'center', width: '90%', alignItems: 'center' }}>
 
-                        <Text style={[styles.text, { color: 'rgb(255, 3, 184)' }]}>Language</Text>
+                        <Text style={[styles.text, { color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', fontSize:Platform.OS=='web' ? 35 : 25 }]}>
+                            Language</Text>
                         <View style={{
                             padding: 20, paddingRight: 60, borderRadius: 20,
                             backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'
                         }}>
-                            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]}>
+                            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black', fontSize:Platform.OS=='web' ? 35 : 25 }]}>
                                 {language}
                             </Text>
                         </View>
@@ -540,12 +546,12 @@ export default function SettingsItemScreen() {
 
                     <View style={{ flexDirection: 'row', gap: '2%', justifyContent: 'center', width: '90%', alignItems: 'center' }}>
 
-                        <Text style={[styles.text, { color: 'rgb(255, 3, 184)' }]}>Region</Text>
+                        <Text style={[styles.text, { color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', fontSize:Platform.OS=='web' ? 35 : 25 }]}>Region</Text>
                         <View style={{
                             padding: 20, paddingRight: 60, borderRadius: 20,
                             backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'
                         }}>
-                            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]}>
+                            <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black', fontSize:Platform.OS=='web' ? 35 : 25 }]}>
                                 {region}
                             </Text>
                         </View>
@@ -561,27 +567,29 @@ export default function SettingsItemScreen() {
 
         else if (setting_name === "Social") {
             return (
-                <View style={[{ marginTop: 80, width: '100%', alignItems: 'center', gap: 50, flexDirection: 'row', justifyContent: 'center' }]}>
+                <View style={[{ marginTop: 80, width: '100%', alignItems: 'center', gap: 50, flexDirection: Platform.OS=='web' ? 'row' : 'column', justifyContent: 'center' }]}>
 
 
                     <View style={{
-                        alignItems: 'center', justifyContent: 'center', padding: 40, borderRadius: 30,
-                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)', height: 320,
+                        alignItems: 'center', justifyContent: 'center', borderRadius: 30,
+                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+                        height: Platform.OS=='web' ? 320 : 100, padding: Platform.OS=='web' ? 40 : 10,
+                        flexDirection: Platform.OS=='web' ? 'column' : 'row', gap: Platform.OS=='web' ? 0 : 15,
 
                     }}>
 
-                        <MaterialCommunityIcons name={"instagram"} color={'rgb(255, 3, 184)'} size={100} />
+                        <MaterialCommunityIcons name={"instagram"} color={'rgb(255, 3, 184)'} size={Platform.OS=='web' ? 100 : 50} />
 
                         <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'rgb(255, 3, 184)' }}>Instagram</Text>
 
-                        <View style={{ flexDirection: 'row', marginTop: 40, alignItems: 'center', height: 50 }}>
-                            <MaterialCommunityIcons name={"check-bold"} color={'rgb(3, 255, 11)'} size={50} style={{}} />
+                        <View style={{ flexDirection: 'row', marginTop: Platform.OS=='web' ? 40 : 0, alignItems: 'center' }}>
+                            <MaterialCommunityIcons name={"check-bold"} color={'rgb(3, 255, 11)'} size={Platform.OS=='web' ? 50 : 30} style={{}} />
 
                             <View style={{
                                 backgroundColor: 'red', padding: 5, marginLeft: 20, alignItems: 'center',
                                 justifyContent: 'center', aspectRatio: 1, borderRadius: 20,
                             }}>
-                                <MaterialCommunityIcons name={"delete"} color={'rgb(255, 255, 255)'} size={40} />
+                                <MaterialCommunityIcons name={"delete"} color={'rgb(255, 255, 255)'} size={Platform.OS=='web' ? 40 : 25} />
                             </View>
                         </View>
 
@@ -590,40 +598,44 @@ export default function SettingsItemScreen() {
 
 
                     <View style={{
-                        alignItems: 'center', justifyContent: 'center', padding: 40, borderRadius: 30,
-                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)', height: 320,
+                        alignItems: 'center', justifyContent: 'center', borderRadius: 30,
+                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+                        height: Platform.OS=='web' ? 320 : 100, padding: Platform.OS=='web' ? 40 : 10,
+                        flexDirection: Platform.OS=='web' ? 'column' : 'row', gap: Platform.OS=='web' ? 0 : 15,
 
                     }}>
 
-                        <MaterialCommunityIcons name={"twitter"} color={'rgb(255, 3, 184)'} size={100} />
+                        <MaterialCommunityIcons name={"twitter"} color={'rgb(255, 3, 184)'} size={Platform.OS=='web' ? 100 : 50} />
 
                         <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'rgb(255, 3, 184)' }}>Twitter</Text>
 
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{
-                                flexDirection: 'row', marginTop: 40, alignItems: 'center', height: 50, padding: 10,
-                                backgroundColor: 'rgb(216, 75, 255)', width: '100%', borderRadius: 20, justifyContent: 'center'
+                                flexDirection: 'row', marginTop: Platform.OS=='web' ? 40 : 0, alignItems: 'center', padding: 10,
+                                backgroundColor: 'rgb(216, 75, 255)', width: Platform.OS=='web' ? '100%' : '35%', borderRadius: 20, justifyContent: 'center'
                             }}>
-                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20, }}>Setup</Text>
+                            <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20, alignSelf:'center', textAlign:'center' }}>Setup</Text>
                         </LinearGradient>
 
                     </View>
 
 
                     <View style={{
-                        alignItems: 'center', justifyContent: 'center', padding: 40, borderRadius: 30,
-                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)', height: 320,
+                        alignItems: 'center', justifyContent: 'center',borderRadius: 30,
+                        backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)',
+                        height: Platform.OS=='web' ? 320 : 100, padding: Platform.OS=='web' ? 40 : 10,
+                        flexDirection: Platform.OS=='web' ? 'column' : 'row', gap: Platform.OS=='web' ? 0 : 15,
 
                     }}>
 
-                        <MaterialCommunityIcons name={"facebook"} color={'rgb(255, 3, 184)'} size={100} />
+                        <MaterialCommunityIcons name={"facebook"} color={'rgb(255, 3, 184)'} size={Platform.OS=='web' ? 100 : 50} />
 
                         <Text style={{ fontWeight: 'bold', fontSize: 25, color: 'rgb(255, 3, 184)' }}>Facebook</Text>
 
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{
-                                flexDirection: 'row', marginTop: 40, alignItems: 'center', height: 50, padding: 10,
-                                backgroundColor: 'rgb(216, 75, 255)', width: '100%', borderRadius: 20, justifyContent: 'center'
+                                flexDirection: 'row', marginTop: Platform.OS=='web' ? 40 : 0, alignItems: 'center', padding: 10,
+                                backgroundColor: 'rgb(216, 75, 255)', width: Platform.OS=='web' ? '100%' : '35%', borderRadius: 20, justifyContent: 'center'
                             }}>
                             <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 20, }}>Setup</Text>
                         </LinearGradient>
@@ -641,7 +653,7 @@ export default function SettingsItemScreen() {
             if (guest && guestCode != 'null') {
                 return (
                     <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 50, gap: 30, }}>
-                        <Text style={{ fontSize: 60, color: 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Guest {guestCode}</Text>
+                        <Text style={{ fontSize: 60, color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold' }}>Guest {guestCode}</Text>
                         <Text style={{ color: theme == 'dark' ? 'white' : 'black', fontSize: 20, fontWeight: 'bold' }}>No Account Settings for Guests</Text>
                     </View>
                 )
@@ -661,18 +673,19 @@ export default function SettingsItemScreen() {
 
 
             return (
-                <View style={[{ marginTop: 10, width: '100%', alignItems: 'center', gap: 50, justifyContent: 'center' }]}>
+                <View style={[{ marginTop: 40, width: '100%', alignItems: 'center', gap: Platform.OS=='web' ? 50 : 20, justifyContent: 'center' }]}>
 
                     <View style={{ borderRadius: 1000, backgroundColor: 'rgb(114, 114, 114)' }}>
-                        <MaterialCommunityIcons name={"account-circle"} color={'rgb(184, 184, 184)'} size={250} />
+                        <MaterialCommunityIcons name={"account-circle"} color={'rgb(184, 184, 184)'} size={Platform.OS == 'web' ? 250 : 170} />
                     </View>
 
 
                     <View>
-                        <Text style={{ color: 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: 40, }}>{userType}</Text>
+                        <Text style={{ color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', fontWeight: 'bold', fontSize: Platform.OS=='web' ? 40 : 30, }}>{userType}</Text>
                     </View>
 
-                    <View style={{ flexDirection: 'row', gap: 30, alignItems: 'center', justifyContent: 'center', width: '90%' }}>
+                    {Platform.OS == 'web' && <View style={{ flexDirection: 'row', gap: 30, alignItems: 'center', justifyContent: 'center', width: '90%', marginBottom:40, }}>
+
 
                         <TextInput
                             //style={[styles.shadow, styles.input]}
@@ -715,7 +728,7 @@ export default function SettingsItemScreen() {
                         >
                             <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                 style={{
-                                    width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center',
+                                    width: '100%', alignItems: 'center', justifyContent: 'center',
                                     borderRadius: 30, backgroundColor: 'rgb(216, 75, 255)', padding: 20,
                                 }}
                             >
@@ -730,7 +743,70 @@ export default function SettingsItemScreen() {
                             </LinearGradient>
                         </TouchableOpacity>
 
-                    </View>
+                    </View>}
+
+                    {Platform.OS != 'web' && <View style={{ width: '90%', alignItems:'center', gap:20, marginBottom:40, }}>
+
+                        <View style={{ flexDirection: 'row', gap: 30, alignItems: 'center', justifyContent: 'center', width: '90%' }}>
+                            <TextInput
+                                //style={[styles.shadow, styles.input]}
+                                placeholder="Should be Empty"
+                                placeholderTextColor={'red'}
+                                style={[{
+                                    width: '48%',
+                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                    color: theme == 'dark' ? 'white' : 'black', padding: 20,
+                                    fontSize: 20, borderRadius: 30, fontWeight: 'bold',
+                                }]}
+                                value={firstName}
+                                onChangeText={setFirstName}
+                            />
+
+                            <TextInput
+                                //style={[styles.shadow, styles.input]}
+                                placeholder="Should be Empty"
+                                placeholderTextColor={'red'}
+                                style={[{
+                                    width: '48%',
+                                    backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'white',
+                                    color: theme == 'dark' ? 'white' : 'black', padding: 20,
+                                    fontSize: 20, borderRadius: 30, fontWeight: 'bold',
+                                }]}
+                                value={lastName}
+                                onChangeText={setLastName}
+                            />
+
+                        </View>
+
+                        <TouchableOpacity
+                            style={{
+                                width: '40%', alignItems: 'center', justifyContent: 'center',
+                                maxWidth: 500, borderRadius: 30,
+                            }}
+
+                            onPress={() => {
+                                updateUserName()
+                            }}
+
+                        >
+                            <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
+                                style={{
+                                    width: '100%', alignItems: 'center', justifyContent: 'center',
+                                    borderRadius: 30, backgroundColor: 'rgb(216, 75, 255)', padding: 10,
+                                }}
+                            >
+
+                                <Text style={{
+                                    fontWeight: 'bold', fontSize: 20,
+                                    color: 'white'
+                                }}>
+                                    Save
+                                </Text>
+
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                    </View>}
 
 
 
@@ -748,14 +824,20 @@ export default function SettingsItemScreen() {
 
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{
-                                width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center',
+                                width: '100%', alignItems: 'center', justifyContent: 'center',
                                 borderRadius: 30, backgroundColor: 'rgb(216, 75, 255)', padding: 25,
                             }}>
                             <Text style={{
-                                fontWeight: 'bold', fontSize: 30,
-                                color: 'white'
+                                fontWeight: 'bold', fontSize: Platform.OS == 'web' ? 30 : 24,
+                                color: 'white', textAlign: 'center',
                             }}>
                                 Change Login Credentials
+                            </Text>
+                            <Text style={{
+                                fontWeight: 'bold', fontSize: Platform.OS == 'web' ? 15 : 12,
+                                color: 'white', textAlign: 'center',
+                            }}>
+                                (An Email Will Be Sent)
                             </Text>
                         </LinearGradient>
 
@@ -777,7 +859,7 @@ export default function SettingsItemScreen() {
 
                         <LinearGradient colors={['rgb(255, 0, 0)', 'transparent']}
                             style={{
-                                width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center',
+                                width: '100%', alignItems: 'center', justifyContent: 'center',
                                 borderRadius: 30, backgroundColor: 'rgb(255, 0, 0)', padding: 20,
                             }}>
                             <Text style={{
@@ -791,7 +873,6 @@ export default function SettingsItemScreen() {
 
                     </TouchableOpacity>
 
-                    <Text style={{ color: 'white' }}>Change Login Credentials {"->"} Email Was Sent</Text>
 
                 </View>
             )
@@ -824,7 +905,7 @@ export default function SettingsItemScreen() {
 
                             </LinearGradient>}
 
-                            <Text style={{ color: 'rgb(255, 3, 184)', fontSize: 30, fontWeight: 'bold' }}>Page {indexWeb + 1}</Text>
+                            <Text style={{ color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', fontSize: 30, fontWeight: 'bold' }}>Page {indexWeb + 1}</Text>
 
                             {indexWeb < screensWeb.length - 1 && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                 style={{ backgroundColor: 'rgb(216, 75, 255)', borderRadius: 40, }}>
@@ -856,7 +937,7 @@ export default function SettingsItemScreen() {
 
 
 
-                        <View style={{ height: '70%', aspectRatio: 1 / 2.2, alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ height: '80%', aspectRatio: 1 / 2.1, alignItems: 'center', justifyContent: 'center', marginTop:-60 }}>
                             <Image style={{ height: '100%', width: '100%' }} source={screensMob[indexMob]} />
                         </View>
 
@@ -866,25 +947,25 @@ export default function SettingsItemScreen() {
                                 style={{ backgroundColor: 'rgb(216, 75, 255)', borderRadius: 40, }}>
 
                                 <TouchableOpacity
-                                    style={{ padding: 20 }}
+                                    style={{ padding: 15 }}
                                     onPress={() => { changeIndexMob(-1) }}
                                 >
-                                    <MaterialCommunityIcons name={"undo"} size={30} color={'rgb(255, 255, 255)'} />
+                                    <MaterialCommunityIcons name={"undo"} size={25} color={'rgb(255, 255, 255)'} />
 
                                 </TouchableOpacity>
 
                             </LinearGradient>}
 
-                            <Text style={{ color: 'rgb(255, 3, 184)', fontSize: 30, fontWeight: 'bold' }}>Page {indexMob + 1}</Text>
+                            <Text style={{ color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', fontSize: 25, fontWeight: 'bold' }}>Page {indexMob + 1}</Text>
 
                             {indexMob < screensMob.length - 1 && <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                 style={{ backgroundColor: 'rgb(216, 75, 255)', borderRadius: 40, }}>
 
                                 <TouchableOpacity
-                                    style={{ padding: 20 }}
+                                    style={{ padding: 15 }}
                                     onPress={() => { changeIndexMob(1) }}
                                 >
-                                    <MaterialCommunityIcons name={"redo"} size={30} color={'rgb(255, 255, 255)'} />
+                                    <MaterialCommunityIcons name={"redo"} size={25} color={'rgb(255, 255, 255)'} />
 
                                 </TouchableOpacity>
 
@@ -917,11 +998,11 @@ export default function SettingsItemScreen() {
 
 
                     <Text style={[styles.text, { color: 'rgb(255, 3, 3)', textAlign: 'center' }]}>Are you sure you want to DELETE this house?</Text>
-                    <Text style={[styles.text, { color: 'rgb(255, 3, 184)', textAlign: 'center', fontSize: 25, }]}>
+                    <Text style={[styles.text, { color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', textAlign: 'center', fontSize: 25, }]}>
                         All rooms and devices, along with your cute precious little pet will be DELETED!!
                     </Text>
 
-                    <Text style={[styles.text, { color: 'rgb(255, 3, 184)', textAlign: 'center', fontSize: 25, }]}>
+                    <Text style={[styles.text, { color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', textAlign: 'center', fontSize: 25, }]}>
                         You will also be logged out.
                     </Text>
 
@@ -939,7 +1020,7 @@ export default function SettingsItemScreen() {
 
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={[{
-                                width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center',
+                                width: '100%', alignItems: 'center', justifyContent: 'center',
                                 backgroundColor: 'rgb(255, 0, 0)', borderRadius: 30,
                                 padding: 30,
                             }]}>
@@ -990,13 +1071,17 @@ export default function SettingsItemScreen() {
                     <SafeAreaProvider style={[{ height: '100%', width: '100%' }]}>
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
-                            <TouchableOpacity style={[styles.backButton, { maxHeight: 100 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
-                            </TouchableOpacity>
+                            <View style={[{ flexDirection: 'row', alignItems: 'center', marginTop: 20, width: '100%' }]}>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: '2%', left: '7%' }}>
-                                <MaterialCommunityIcons name={logo} color={'rgb(255, 3, 184)'} size={60} />
-                                <Text style={[styles.text, { color: 'rgb(255, 3, 184)' }]} >{setting_name}</Text>
+                                <TouchableOpacity style={[styles.backButton, { maxHeight: 100, position: 'absolute' }, Platform.OS != 'web' && { left: -30 }]} >
+                                    <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
+                                </TouchableOpacity>
+
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: '2%', left: Platform.OS == 'web' ? '7%' : 40, width: '60%' }}>
+                                    <MaterialCommunityIcons name={logo} color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={Platform.OS == 'web' ? 60 : 40} />
+                                    <Text style={[styles.text, { color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)', fontSize: Platform.OS == 'web' ? 40 : 25 }]} >{setting_name}</Text>
+                                </View>
+
                             </View>
 
                             <View style={[styles.mainContainer]}>

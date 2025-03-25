@@ -265,7 +265,7 @@ export default function TempDial( {device_id, deviceName, changeable, tempArg} )
                 onPress={() => {
                     changeTemp(1, "plus")
                 }}>
-                <Text style={{ fontSize: 0.4 * radius, color:'rgb(255, 3, 184)' }}>+</Text>
+                <Text style={{ fontSize: 0.4 * radius, color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>+</Text>
             </TouchableOpacity>}
             <View>
                 <View style={[styles.container, styles.shadow]}>
@@ -311,7 +311,7 @@ export default function TempDial( {device_id, deviceName, changeable, tempArg} )
                 onPress={() => {
                     changeTemp(1, "minus")
                 }}>
-                <Text style={{ fontSize: 0.4 * radius, color:'rgb(255, 3, 184)' }}>-</Text>
+                <Text style={{ fontSize: 0.4 * radius, color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>-</Text>
             </TouchableOpacity>}
 
         </View>

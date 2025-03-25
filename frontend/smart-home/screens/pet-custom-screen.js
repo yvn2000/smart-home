@@ -797,7 +797,7 @@ export default function PetCustomScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold',  color:'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold',  color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Pet Customisation
                                 </Text>
                             </View>

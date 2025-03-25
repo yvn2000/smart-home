@@ -156,7 +156,7 @@ export default function SettingsScreen() {
                 logo: "account-circle-outline"
               });
             }}>
-            <MaterialCommunityIcons name="account-circle-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="account-circle-outline" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Account</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
@@ -177,7 +177,7 @@ export default function SettingsScreen() {
                 logo: "share-variant-outline"
               });
             }}>
-            <MaterialCommunityIcons name="share-variant-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="share-variant-outline" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Social</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
@@ -198,7 +198,7 @@ export default function SettingsScreen() {
                 logo: "web",
               });
             }}>
-            <MaterialCommunityIcons name="web" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="web" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Language & Region</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
@@ -218,7 +218,7 @@ export default function SettingsScreen() {
                 logo: "account-group",
               });
             }}>
-            <MaterialCommunityIcons name="account-group" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="account-group" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Guest Codes</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
@@ -240,10 +240,10 @@ export default function SettingsScreen() {
             backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255, 255, 255)'
           }]}>
             <View style={[{ alignItems: 'center', flexDirection: 'row', gap: '19%', }]}>
-              <MaterialCommunityIcons name="theme-light-dark" color={theme == 'dark' ? 'white' : 'black'} size={50} />
-              <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Theme</Text>
+              <MaterialCommunityIcons name="theme-light-dark" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
+              {Platform.OS=='web' && <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Theme</Text>}
             </View>
-            <View style={[styles.buttonContainer,]}>
+            <View style={[styles.buttonContainer, Platform.OS!='web' && {left: -20}]}>
               <TouchableOpacity style={[styles.buttonLight]} onPress={() => { toggleTheme("light") }} >
                 <Text style={styles.buttonText}>Light</Text>
               </TouchableOpacity>
@@ -255,6 +255,10 @@ export default function SettingsScreen() {
               </TouchableOpacity>
             </View>
           </View>
+
+
+
+
 
           <TouchableOpacity style={[styles.card, styles.resize, {
             borderColor: theme == 'dark' ? 'rgb(26, 28, 77)' : '#c5c5c5',
@@ -268,7 +272,7 @@ export default function SettingsScreen() {
                 logo: "school-outline",
               });
             }}>
-            <MaterialCommunityIcons name="school-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="school-outline" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Tutorial</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
@@ -291,7 +295,7 @@ export default function SettingsScreen() {
                 logo: "file-document-edit-outline",
               });
             }}>
-            <MaterialCommunityIcons name="file-document-edit-outline" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="file-document-edit-outline" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Terms & Conditions?</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
@@ -315,7 +319,7 @@ export default function SettingsScreen() {
                 logo: "delete",
               });
             }}>
-            <MaterialCommunityIcons name="delete" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="delete" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Delete House</Text>
             <View style={{ position: 'absolute', right: 20 }}>
               <MaterialCommunityIcons name="chevron-right" size={42} color={theme == 'dark' ? 'white' : 'black'} />
@@ -334,7 +338,7 @@ export default function SettingsScreen() {
               navigation.navigate("LoginMainStack");
               
             }}>
-            <MaterialCommunityIcons name="logout" color={theme == 'dark' ? 'white' : 'black'} size={50} />
+            <MaterialCommunityIcons name="logout" color={theme == 'dark' ? 'white' : 'black'} size={Platform.OS=='web' ? 50 : 40} />
             <Text style={[styles.text, { color: theme == 'dark' ? 'white' : 'black' }]} >Logout</Text>
           </TouchableOpacity>
 
@@ -415,19 +419,19 @@ const styles = StyleSheet.create({
 
 
   text: {
-    fontSize: 35,
+    fontSize: Platform.OS=='web' ? 35 : 20,
     fontWeight: 'bold',
   },
   card: {
-    width: '90%',
+    width: '95%',
     maxWidth: 1000,
     backgroundColor: 'rgb(246, 246, 246)',
     borderWidth: 1,
     borderColor: '#c5c5c5',
-    borderRadius: 10,
+    borderRadius: 30,
     marginVertical: 5,
-    paddingTop: 30,
-    paddingBottom: 30,
+    paddingTop: Platform.OS=='web' ? 30 : 20,
+    paddingBottom: Platform.OS=='web' ? 30 : 20,
     paddingLeft: 30,
     flexDirection: 'row',
     //justifyContent:'center',
@@ -438,12 +442,12 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 30,
+    gap: Platform.OS=='web' ? 30 : 10,
     right: 50,
   },
   buttonLight: {
-    height: 100,
-    width: 100,
+    height: Platform.OS=='web' ? 100 : 60,
+    width: Platform.OS=='web' ? 100 : 60,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgb(255, 255, 255)',
@@ -453,8 +457,8 @@ const styles = StyleSheet.create({
 
   },
   buttonDark: {
-    height: 100,
-    width: 100,
+    height: Platform.OS=='web' ? 100 : 60,
+    width: Platform.OS=='web' ? 100 : 60,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgb(17, 18, 44)',
@@ -463,8 +467,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonCrazy: {
-    height: 100,
-    width: 100,
+    height: Platform.OS=='web' ? 100 : 60,
+    width: Platform.OS=='web' ? 100 : 60,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgb(255, 100, 239)',
@@ -473,7 +477,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: Platform.OS=='web' ? 20 : 15,
     fontFamily: 'monospace'
   },
 

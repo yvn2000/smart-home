@@ -25,7 +25,7 @@ import VerticalSlider from "../vertical-slider";
 import { useTheme } from "../themes/theme";
 
 
-export default function PurifierPanel({ }) {     //width is percentage
+export default function PurifierPanel({ device }) {     //width is percentage
 
     const { theme, toggleTheme } = useTheme()
 
@@ -103,14 +103,150 @@ export default function PurifierPanel({ }) {     //width is percentage
 
 
 
+    const [deviceInfo, setDeviceInfo] = useState({});
+    const [loading, setLoading] = useState(true); // Track loading state
+
+    const fetchDeviceInfo = async () => {
+        try {
+            const response = await fetch(
+                //getDeviceInfoURLS()
+                Platform.OS == 'android'
+                    ? `http://10.0.2.2:8000/api/device/${device.device_id}/get_device_info/`
+                    : `http://127.0.0.1:8000/api/device/${device.device_id}/get_device_info/`
+            );
+
+            const data = await response.json();
+            //console.log(data)
+            if (response.ok) {
+                setDeviceInfo(data); // Update state with fetched device information
+                //console.log(deviceInfo)
+            } else {
+                //Alert.alert("Error", "Failed to fetch device information");
+            }
+        } catch (error) {
+            //Alert.alert("Error", "Network request failed");
+        } finally {
+            setLoading(false); // Stop the loading indicator once the fetch is complete
+        }
+    };
+
+
+    useEffect(() => {
+        fetchDeviceInfo();
+    }, [device.device_id]); // Fetch whenever device_id changes
+
+
+    const [activityLog, setActivityLog] = useState([]);
+
+    const apiUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device.device_id}/get-activity/`;
+
+    // Function to fetch the current activity log when the component loads
+    const fetchActivityLog = async () => {
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            if (response.ok) {
+                setActivityLog(data.activity_log);
+            } else {
+                //Alert.alert('Error', 'Failed to fetch activity log');
+            }
+        } catch (error) {
+            //Alert.alert('Error', 'Failed to fetch activity log');
+        }
+    };
+
+    const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device.device_id}/activity/add-action/`;
+
+    const addAction = async (action) => {
+        try {
+            const response = await fetch(actionUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action }),
+            });
+
+            if (!response.ok) {
+                //Alert.alert('Error', 'Failed to add action');
+            }
+        } catch (error) {
+            //Alert.alert('Error', 'Failed to connect to server');
+        }
+    };
+
+    useEffect(() => {
+        // Fetch the activity log when the component mounts
+        fetchActivityLog();
+    }, []);
+
+
+
+    const updateUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/update_device_info/` : `http://127.0.0.1:8000/api/device/${device.device_id}/update_device_info/`
+
+
+    const updateDeviceInfo = async () => {
+        //console.log("update TV")
+        // Validate inputs
+        if (!prevFan) {
+            //Alert.alert('Error', 'All fields are required');
+            return;
+        }
+
+        try {
+            const response = await fetch(updateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    fan_speed: prevFan,
+                }),
+            });
+
+            //console.log("Values Updated: " + bright + "" + input)
+
+            const data = await response.json();
+
+            if (response.ok) {
+                //Alert.alert('Success', 'Television updated successfully');
+                // You can reset the form or handle additional UI logic here
+            } else {
+                //Alert.alert('Error', 'Failed to update television');
+            }
+        } catch (error) {
+            //Alert.alert('Error', 'Failed to update television');
+        }
+    };
+
+
+    useEffect(() => {
+        updateDeviceInfo();
+    }, [prevFan]);
+
+
+
+
+
+
+    useEffect(() => {
+        if (deviceInfo.data) {
+            //console.log(deviceInfo)
+            setPrevFan(deviceInfo.data.fan_speed)
+        }
+    }, [deviceInfo, device.device_id, deviceInfo.data])
+
+
+
+
+
+
     if (Platform.OS != 'web') {
         return (
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 50, width: '100%', top:-30 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 50, width: '100%', top: -30 }}>
 
 
 
-                <View style={[{borderRadius: 50, padding: 30, alignItems: 'center', width:'90%' }]}>
+                <View style={[{ borderRadius: 50, padding: 30, alignItems: 'center', width: '90%' }]}>
 
                     <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Air Quality</Text>
 
@@ -129,8 +265,8 @@ export default function PurifierPanel({ }) {     //width is percentage
 
                     <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10, marginTop: 20, color: 'rgb(165, 165, 165)' }}>Fan</Text>
 
-                    <TouchableOpacity onPress={() => { newFan() }}
-                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
+                    <TouchableOpacity onPress={() => { newFan(); addAction("Set Fan Speed to "+getNextItem(fanOptions, prevFan)); }}
+                        style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                         <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                             style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                         >
@@ -184,7 +320,7 @@ export default function PurifierPanel({ }) {     //width is percentage
 
 
 
-            <View style={[styles.shadow, { backgroundColor: theme=='dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
+            <View style={[styles.shadow, { backgroundColor: theme == 'dark' ? 'rgb(26, 28, 77)' : 'rgb(255,255,255)', borderRadius: 50, padding: 30, alignItems: 'center' }]}>
 
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: 'rgb(165, 165, 165)' }}>Air Quality</Text>
 
@@ -203,8 +339,8 @@ export default function PurifierPanel({ }) {     //width is percentage
 
                 <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 30, color: 'rgb(165, 165, 165)' }}>Fan</Text>
 
-                <TouchableOpacity onPress={() => { newFan() }}
-                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme=='dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
+                <TouchableOpacity onPress={() => { newFan(); addAction("Set Fan Speed to "+getNextItem(fanOptions, prevFan)); }}
+                    style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                     <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                         style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
                     >

@@ -74,7 +74,7 @@ export default function LoginScreen() {
                                     }}
                                 >
                                     <Image style={{
-                                        width: 300, height: 300
+                                        width: Platform.OS=='web' ? 300 : 200, height: Platform.OS=='web' ? 300 : 200
                                     }} source={require('../assets/images/app/app_logo.png')} />
                                 </View>
                                 <View>

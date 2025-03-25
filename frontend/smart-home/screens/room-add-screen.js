@@ -152,7 +152,7 @@ export default function RoomAdd() {
 
 
                             <TouchableOpacity style={[styles.backButton, {position:'absolute', top:Platform.OS=='web' ? 0 : 30,}]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50}
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50}
                                     onPress={() => {
                                         navigation.goBack()
                                         //navigation.navigate("Devices")
@@ -164,7 +164,7 @@ export default function RoomAdd() {
                             <View style={[styles.mainContainer, {marginTop:50,}]}>
 
                                 <Text
-                                    style={{ fontWeight: 'bold', fontSize: 30, color:'rgb(255, 3, 184)' }}
+                                    style={{ fontWeight: 'bold', fontSize: 30, color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}
                                 >
                                     Add Room
                                 </Text>

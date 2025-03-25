@@ -401,7 +401,7 @@ export default function DeviceStatisticsScreen() {
 
                                 <View style={[{ position: 'absolute', alignSelf: 'flex-end', paddingRight: 15, top: 85 }]}>
                                     <TouchableOpacity style={[{}]} onPress={toggleDropdown}>
-                                        <MaterialCommunityIcons name="lightbulb-outline" size={Platform.OS == 'web' ? 40 : 30} color={'rgb(255, 3, 184)'} />
+                                        <MaterialCommunityIcons name="lightbulb-outline" size={Platform.OS == 'web' ? 40 : 30} color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} />
                                     </TouchableOpacity>
 
                                     <Modal
@@ -416,8 +416,8 @@ export default function DeviceStatisticsScreen() {
                                         <View style={[styles.shadow, styles.dropdownContainer, {}]}>
                                             <View style={[styles.shadow, styles.recommend, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white'}]}>
                                                 <Text style={[styles.recText, { alignSelf: 'center' }]}>--- Recommendations ---</Text>
-                                                {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 00:00 - 00:00</Text>}
-                                                {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• {device.name} has been running for too long, turn it off?</Text>}
+                                                {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 14:00 - 18:00</Text>}
+                                                {healthStatus != 'Faulty' && status=='on' && <Text style={[styles.recText, {}]}>• {device.name} has been running for quite a while, turn it off?</Text>}
 
                                                 {healthStatus == 'Sick' && <Text style={[styles.recText, {}]}>• Enable Low Power Mode</Text>}
 
@@ -454,7 +454,7 @@ export default function DeviceStatisticsScreen() {
 
 
                                 <TouchableOpacity style={[styles.backButton, { maxHeight: 100 }]} >
-                                    <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                    <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                                 </TouchableOpacity>
 
 
@@ -652,7 +652,7 @@ export default function DeviceStatisticsScreen() {
 
 
                             <TouchableOpacity style={[styles.backButton]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
@@ -801,8 +801,11 @@ export default function DeviceStatisticsScreen() {
 
                                             <View style={[styles.shadow, styles.recommend, {backgroundColor:theme=='dark' ? 'rgb(39, 41, 112)' : 'rgb(243, 243, 243)'}]}>
                                                 <Text style={[styles.recText, { alignSelf: 'center' }]}>--- Recommendations ---</Text>
-                                                {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 00:00 - 00:00</Text>}
-                                                {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• {device.name} has been running for too long, turn it off?</Text>}
+
+
+                                                {/*healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be {Math.floor(Math.random()*6)+6}:00 - {Math.floor(Math.random()*12)+6}:00</Text>*/}
+                                                {healthStatus != 'Faulty' && <Text style={[styles.recText, {}]}>• A good time to run {device.name} would be 14:00 - 18:00</Text>}
+                                                {healthStatus != 'Faulty' && status=='on' && <Text style={[styles.recText, {}]}>• {device.name} has been running for quite a while, turn it off?</Text>}
 
                                                 {healthStatus == 'Sick' && <Text style={[styles.recText, {}]}>• Enable Low Power Mode</Text>}
 

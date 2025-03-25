@@ -115,7 +115,7 @@ const deleteRoom = async () => {
 
 
                             <TouchableOpacity style={[styles.backButton, {maxHeight:90, top:0, left:0}]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} style={{alignSelf:'center'}} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} style={{alignSelf:'center'}} />
                             </TouchableOpacity>
 
 
@@ -127,7 +127,7 @@ const deleteRoom = async () => {
                                     Delete Room
                                 </Text>
 
-                                <Text style={{textAlign:'center', width:'80%', fontSize: Platform.OS=='web' ? 40 : 30, fontWeight:'bold', color:'rgb(255, 3, 184)'}}>
+                                <Text style={{textAlign:'center', width:'80%', fontSize: Platform.OS=='web' ? 40 : 30, fontWeight:'bold', color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'}}>
                                     Are you sure you want {'\n'}
                                     to delete the following room? 
                                 </Text>

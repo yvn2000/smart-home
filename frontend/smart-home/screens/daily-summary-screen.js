@@ -194,11 +194,11 @@ export default function DailySummaryScreen() {
 
 
                             <TouchableOpacity style={[styles.backButton, {maxHeight:100}]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20, top: Platform.OS=='web' ? 0 : -30 }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color:theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Today's Activity Summary
                                 </Text>
                             </View>

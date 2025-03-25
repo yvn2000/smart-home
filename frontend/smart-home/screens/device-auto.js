@@ -380,7 +380,7 @@ export default function DeviceAuto() {
 
 
                             <TouchableOpacity style={[styles.backButton, { maxHeight: 80 }]} >
-                                <MaterialCommunityIcons name="chevron-left" color='rgb(255, 3, 184)' size={50} onPress={() => navigation.goBack()} />
+                                <MaterialCommunityIcons name="chevron-left" color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} size={50} onPress={() => navigation.goBack()} />
                             </TouchableOpacity>
 
 
@@ -492,7 +492,7 @@ export default function DeviceAuto() {
                                     style={[{}]}
                                 >
 
-                                    <View style={[styles.dropdownContainer, styles.shadow, {}]}>
+                                    <View style={[styles.dropdownContainer, styles.shadow, {backgroundColor:theme=='dark' ? 'rgb(26, 28, 77)' : 'white' }]}>
 
 
 
@@ -516,9 +516,9 @@ export default function DeviceAuto() {
 
                                             <Dropdown
                                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                                                placeholderStyle={styles.placeholderStyle}
-                                                selectedTextStyle={styles.selectedTextStyle}
-                                                inputSearchStyle={styles.inputSearchStyle}
+                                                placeholderStyle={{color:theme=='dark' ? 'white' : 'black'}}
+                                                selectedTextStyle={{color:theme=='dark' ? 'white' : 'black'}}
+                                                inputSearchStyle={{color:theme=='dark' ? 'white' : 'black'}}
                                                 iconStyle={styles.iconStyle}
                                                 data={data}
                                                 maxHeight={300}
@@ -583,7 +583,7 @@ export default function DeviceAuto() {
                                                 placeholder="Enter Activation Phrase"
                                                 maxLength={20}
                                                 placeholderTextColor={'rgb(156, 156, 156)'}
-                                                style={[{ borderColor: 'rgb(156, 156, 156)', borderWidth: 1, padding: 10, width: '70%', borderRadius: 15, }]}
+                                                style={[{ borderColor: 'rgb(156, 156, 156)', borderWidth: 1, padding: 10, width: '70%', borderRadius: 15, color:theme=='dark' ? 'white' : 'black' }]}
                                                 value={phrase}
                                                 onChangeText={setPhrase}
                                             />

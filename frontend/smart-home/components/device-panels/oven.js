@@ -26,7 +26,7 @@ import HorizontalSlider from "../horizontal-slider";
 import { useTheme } from "../themes/theme";
 
 
-export default function OvenPanel() {
+export default function OvenPanel({device}) {
 
     const { theme, toggleTheme } = useTheme()
 
@@ -112,6 +112,59 @@ export default function OvenPanel() {
         var stringSec = (newSec < 10) ? ("0" + newSec.toString()) : (newSec.toString())
         setSeconds(stringSec)
     }
+
+
+    const [activityLog, setActivityLog] = useState([]);
+
+    const apiUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/get-activity/` : `http://127.0.0.1:8000/api/device/${device.device_id}/get-activity/`;
+
+    // Function to fetch the current activity log when the component loads
+    const fetchActivityLog = async () => {
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            if (response.ok) {
+                setActivityLog(data.activity_log);
+            } else {
+                //Alert.alert('Error', 'Failed to fetch activity log');
+            }
+        } catch (error) {
+            //Alert.alert('Error', 'Failed to fetch activity log');
+        }
+    };
+
+    const actionUrl = Platform.OS === 'android' ? `http://10.0.2.2:8000/api/device/${device.device_id}/activity/add-action/` : `http://127.0.0.1:8000/api/device/${device.device_id}/activity/add-action/`;
+
+    const addAction = async (action) => {
+        try {
+            const response = await fetch(actionUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action }),
+            });
+
+            if (!response.ok) {
+                //Alert.alert('Error', 'Failed to add action');
+            }
+        } catch (error) {
+            //Alert.alert('Error', 'Failed to connect to server');
+        }
+    };
+
+    useEffect(() => {
+        // Fetch the activity log when the component mounts
+        fetchActivityLog();
+    }, []);
+
+
+
+
+
+
+
+
+
+
 
 
     if (Platform.OS != 'web') {
@@ -319,7 +372,7 @@ export default function OvenPanel() {
                     <View style={{ alignItems: 'center' }}>
                         <Text style={{ fontSize: 25, fontWeight: 'bold', marginBottom: 10, marginTop: 10, color: 'rgb(165, 165, 165)' }}>Mode</Text>
 
-                        <TouchableOpacity onPress={() => { newMode() }}
+                        <TouchableOpacity onPress={() => { newMode(); }}
                             style={[styles.shadow, { flexDirection: 'row', alignItems: 'center', backgroundColor: theme == 'dark' ? 'rgb(42, 45, 125)' : 'rgb(255,255,255)', borderRadius: 30 }]}>
                             <LinearGradient colors={['rgb(255, 3, 184)', 'transparent']}
                                 style={{ backgroundColor: 'rgb(216, 75, 255)', padding: 15, borderRadius: 30, justifyContent: 'center', alignItems: 'center', aspectRatio: 1 }}
@@ -342,7 +395,11 @@ export default function OvenPanel() {
                 >
 
                     {/*<Text style={{fontSize: 15, fontWeight: 'bold', color: 'white' }}>Fan</Text>*/}
-                    <TouchableOpacity style={{ marginLeft: 30, marginRight: 30, }}>
+                    <TouchableOpacity 
+                        onPress={()=> {
+                            addAction("Started")
+                        }}
+                        style={{ marginLeft: 30, marginRight: 30, }}>
                         <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>Start</Text>
 
                     </TouchableOpacity>

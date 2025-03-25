@@ -16,6 +16,9 @@ import { ThemeProvider } from '../components/themes/theme';
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
+import { LogBox } from 'react-native'
+LogBox.ignoreAllLogs()
+
 export default function Index() {
 
   /*

@@ -367,14 +367,14 @@ export default function DevicesScreen() {
                         <SafeAreaView style={[{ height: '100%', width: '100%' }]}>
 
                             <View style={[{ width: '100%', alignItems: 'center', padding: 20, justifyContent: 'center' }]}>
-                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: 'rgb(255, 3, 184)' }}>
+                                <Text style={{ fontSize: Platform.OS == 'web' ? 35 : 15, fontWeight: 'bold', color: theme=='crazy' ? 'white' : 'rgb(255, 3, 184)' }}>
                                     Device Control
                                 </Text>
                                 {true &&
 
                                     <View style={[{ position: 'absolute', alignSelf: 'flex-end', paddingRight: 10, }]}>
                                         <TouchableOpacity style={[{}]} onPress={toggleDropdown}>
-                                            <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={'rgb(255, 3, 184)'} />
+                                            <MaterialCommunityIcons name="menu" size={Platform.OS == 'web' ? 40 : 30} color={theme=='crazy' ? 'white' : 'rgb(255, 3, 184)'} />
                                         </TouchableOpacity>
 
                                         <Modal
