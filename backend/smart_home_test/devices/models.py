@@ -303,8 +303,6 @@ class Automation(models.Model):
             raise ValidationError("Voice-based automations require a phrase.")
 
 
-
-
 class Energy(models.Model):
     device = models.OneToOneField(Device, related_name='energy', on_delete=models.CASCADE)
     energy1 = models.FloatField(default=100)  # Energy value in mW for current time

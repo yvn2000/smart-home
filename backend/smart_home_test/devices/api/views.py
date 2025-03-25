@@ -1990,11 +1990,46 @@ class UpdateDeviceView(APIView):
             if not device:
                 try:
                     device = AirPurifier.objects.get(device_id=device_id)
+                    house_id = device.room.house.id
+                    house = House.objects.get(pk=house_id)
+                    pet = house.pet 
+
+                    old_health = device.get_health_status()
+
                     device_type = 'AirPurifier'
                     serializer = AirPurifierSerializer(device, data=request.data, partial=True)
                     if serializer.is_valid():
                         serializer.save()
-                        return Response({'message': 'Device updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+                        #return Response({'message': 'Device updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+                    fan_energy = 80 if device.fan_speed=='High' else 0
+
+                    device.extra_energy = fan_energy
+
+                    device.save()
+
+                    if (device.statusBool==True):
+                        if (device.power_save==True):
+                            device.energy_consumption = device.base_energy
+                        else:
+                            device.energy_consumption = device.base_energy + device.extra_energy
+                    else:
+                        device.energy_consumption = 0
+
+                    
+                    device.save()
+
+                    new_health = device.get_health_status()
+
+                    if ((old_health=='Sick' or old_health=='Faulty') and (new_health=='Healthy')):
+                        pet.actual_xp += 5
+                    
+                    pet.save()
+                    
+                    return Response({'message': 'Device updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+                
+                
                 except AirPurifier.DoesNotExist:
                     pass
 
@@ -2034,11 +2069,43 @@ class UpdateDeviceView(APIView):
             if not device:
                 try:
                     device = WashingMachine.objects.get(device_id=device_id)
+                    house_id = device.room.house.id
+                    house = House.objects.get(pk=house_id)
+                    pet = house.pet 
+
+                    old_health = device.get_health_status()
+
                     device_type = 'WashingMachine'
                     serializer = WashingMachineSerializer(device, data=request.data, partial=True)
                     if serializer.is_valid():
                         serializer.save()
-                        return Response({'message': 'Device updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+                        #return Response({'message': 'Device updated successfully', 'data': serializer.data}, status=status.HTTP_200_OK)
+                
+                    wash_energy = 200 if device.wash_cycle=='Heavy' else 0
+
+                    device.extra_energy = wash_energy
+
+                    device.save()
+
+                    if (device.statusBool==True):
+                        if (device.power_save==True):
+                            device.energy_consumption = device.base_energy
+                        else:
+                            device.energy_consumption = device.base_energy + device.extra_energy
+                    else:
+                        device.energy_consumption = 0
+
+                    
+                    device.save()
+
+                    new_health = device.get_health_status()
+
+                    if ((old_health=='Sick' or old_health=='Faulty') and (new_health=='Healthy')):
+                        pet.actual_xp += 5
+                    
+                    pet.save()
+
+                
                 except WashingMachine.DoesNotExist:
                     pass
 
