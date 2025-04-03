@@ -108,7 +108,7 @@ export default function HomeScreen() {
     }, [firstName])
 
     useEffect(() => {
-        getThermo()
+        getThermo(house_id)
         //setBoolThermo(true)
     }, [house_id])
 
@@ -147,7 +147,7 @@ export default function HomeScreen() {
 
 
 
-    const getThermo = async () => {
+    const getThermo = async (house_id) => {
 
         try {
             //const url = Platform.OS == 'web' ? `http://127.0.0.1:8000/api/houses/${house_id}/get-thermostat/` : `http://10.0.2.2:8000/api/houses/${house_id}/get-thermostat/`
@@ -257,9 +257,15 @@ export default function HomeScreen() {
             const reloadData = async () => {
                 const id = await getHouse() // Get fresh ID on focus
                 await getFirstName();
+                
                 if (id) {
-                    console.log("Reloading data for house:", id)
                     const userType = await getUserType();
+                    if (userType!='landlord') {
+                        await getThermo(id);
+                    }
+                    //await getThermo(id);
+                    console.log("Reloading data for house:", id)
+                    
                     const fetchedPet = await fetchPet(id)
                     if (fetchedPet) {
                         await fetchSickDevices(id, fetchedPet)
@@ -627,7 +633,7 @@ export default function HomeScreen() {
 
             }
 
-            return 0;
+            return userType;
 
         } catch (error) {
             console.error('Error :', error);
@@ -908,7 +914,7 @@ export default function HomeScreen() {
 
                                             }
 
-                                            {boolThermo &&
+                                            {boolThermo && userType!='landlord' &&
                                                 <View style={[{ justifyContent: 'center', alignItems: 'center', padding: 15, }]}>
 
 
